@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ISSI Screener — Saham Syariah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0f0d;
+      --surface: #111a15;
+      --surface2: #162019;
+      --border: #1f3028;
+      --border2: #2a4035;
+      --accent: #3dff8f;
+      --accent2: #00c96a;
+      --accent-dim: rgba(61,255,143,0.12);
+      --accent-glow: rgba(61,255,143,0.25);
+      --red: #ff4d6d;
+      --red-dim: rgba(255,77,109,0.12);
+      --yellow: #ffd166;
+      --text: #d4e8dc;
+      --text2: #8aab97;
+      --text3: #4d7060;
+      --mono: 'Space Mono', monospace;
+      --serif: 'Noto Serif', serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--mono);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    /* NOISE TEXTURE */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 999; opacity: 0.4;
+    }
+
+    /* HEADER */
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 2rem;
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,15,13,0.95);
+      backdrop-filter: blur(12px);
+    }
+    .logo {
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .logo-mark {
+      width: 36px; height: 36px;
+      border: 2px solid var(--accent);
+      border-radius: 4px;
+      display: grid; place-items: center;
+      font-size: 0.7rem; font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.05em;
+      line-height: 1;
+      padding: 2px;
+      text-align: center;
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+    .logo-text { font-size: 0.95rem; font-weight: 700; letter-spacing: 0.15em; }
+    .logo-sub { font-size: 0.6rem; color: var(--text2); letter-spacing: 0.2em; margin-top: 2px; }
+    .header-right { display: flex; align-items: center; gap: 1rem; font-size: 0.7rem; color: var(--text3); }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: inline-block; margin-right: 4px; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+    .last-update { color: var(--text3); font-size: 0.65rem; }
+
+    /* STATS BAR */
+    .stats-bar {
+      display: flex; gap: 0; border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+    .stat-item {
+      padding: 0.75rem 1.5rem;
+      border-right: 1px solid var(--border);
+      min-width: fit-content;
+      font-size: 0.65rem;
+    }
+    .stat-label { color: var(--text3); letter-spacing: 0.1em; margin-bottom: 2px; }
+    .stat-value { font-size: 1rem; font-weight: 700; color: var(--accent); }
+    .stat-value.neutral { color: var(--text2); }
+
+    /* MAIN LAYOUT */
+    main { display: flex; min-height: calc(100vh - 110px); }
+
+    /* SIDEBAR / TABLE AREA */
+    .table-area {
+      flex: 1; padding: 1.5rem;
+      transition: all 0.3s ease;
+    }
+    .table-area.panel-open { margin-right: 420px; }
+
+    /* FILTER BAR */
+    .filter-bar {
+      display: flex; align-items: center; gap: 0.75rem;
+      margin-bottom: 1rem; flex-wrap: wrap;
+    }
+    .filter-label { font-size: 0.65rem; color: var(--text3); letter-spacing: 0.1em; }
+    .search-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.4rem 0.75rem;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      width: 160px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-box:focus { border-color: var(--accent); }
+    .search-box::placeholder { color: var(--text3); }
+    .sort-btn, .filter-tag {
+      padding: 0.35rem 0.7rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--text2);
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 0.05em;
+    }
+    .sort-btn:hover, .filter-tag:hover, .filter-tag.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+    .count-badge {
+      margin-left: auto;
+      font-size: 0.65rem;
+      color: var(--text3);
+    }
+    .count-badge span { color: var(--accent); font-weight: 700; }
+
+    /* TABLE */
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.72rem;
+    }
+    thead th {
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+      color: var(--text3);
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.15s;
+    }
+    thead th:hover { color: var(--text); }
+    thead th.sort-asc::after { content: ' ↑'; color: var(--accent); }
+    thead th.sort-desc::after { content: ' ↓'; color: var(--accent); }
+    tbody tr {
+      border-bottom: 1px solid rgba(31,48,40,0.5);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    tbody tr:hover { background: var(--accent-dim); }
+    tbody tr.selected { background: rgba(61,255,143,0.06); border-left: 2px solid var(--accent); }
+    tbody td {
+      padding: 0.6rem 0.75rem;
+      white-space: nowrap;
+    }
+    .ticker-cell {
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+    .price-cell { font-weight: 700; }
+    .badge-ema {
+      display: inline-block;
+      padding: 1px 5px;
+      border-radius: 2px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .badge-bull { background: rgba(61,255,143,0.15); color: var(--accent); }
+    .badge-bear { background: rgba(255,77,109,0.15); color: var(--red); }
+    .badge-neu { background: rgba(255,209,102,0.1); color: var(--yellow); }
+
+    .val-up { color: var(--accent); }
+    .val-down { color: var(--red); }
+    .val-neu { color: var(--text2); }
+
+    /* SKELETON LOADING */
+    .skeleton {
+      animation: shimmer 1.4s infinite linear;
+      background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+      background-size: 200% 100%;
+      border-radius: 3px;
+      height: 12px; display: inline-block;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* ERROR / EMPTY */
+    .table-msg {
+      text-align: center; padding: 3rem;
+      color: var(--text3); font-size: 0.8rem;
+    }
+    .table-msg .icon { font-size: 2rem; margin-bottom: 0.5rem; }
+
+    /* DETAIL PANEL */
+    .detail-panel {
+      width: 420px;
+      position: fixed; right: 0; top: 0;
+      height: 100vh;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+      z-index: 200;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    .detail-panel.open { transform: translateX(0); }
+
+    .panel-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; justify-content: space-between;
+      background: var(--surface2);
+    }
+    .panel-ticker { font-size: 1.5rem; font-weight: 700; color: var(--accent); letter-spacing: 0.1em; }
+    .panel-company { font-size: 0.7rem; color: var(--text2); margin-top: 2px; font-family: var(--serif); font-style: italic; }
+    .panel-price { font-size: 1.3rem; font-weight: 700; text-align: right; }
+    .panel-change { font-size: 0.75rem; text-align: right; margin-top: 2px; }
+    .close-btn {
+      position: absolute; top: 1rem; right: 1rem;
+      background: none; border: 1px solid var(--border);
+      color: var(--text2); cursor: pointer;
+      width: 28px; height: 28px; border-radius: 3px;
+      font-size: 0.9rem; display: grid; place-items: center;
+      transition: all 0.15s; font-family: var(--mono);
+    }
+    .close-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .panel-body {
+      flex: 1; overflow-y: auto;
+      padding: 1rem 1.5rem;
+    }
+    .panel-body::-webkit-scrollbar { width: 4px; }
+    .panel-body::-webkit-scrollbar-track { background: transparent; }
+    .panel-body::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+    .section-title {
+      font-size: 0.6rem; letter-spacing: 0.2em;
+      color: var(--text3);
+      text-transform: uppercase;
+      margin: 1.25rem 0 0.6rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-title:first-child { margin-top: 0; }
+
+    /* INDICATOR ROWS */
+    .ind-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem;
+    }
+    .ind-item {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.5rem 0.65rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .ind-name { font-size: 0.62rem; color: var(--text3); }
+    .ind-value { font-size: 0.72rem; font-weight: 700; }
+    .ind-signal { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.05em; }
+    .sig-bull { color: var(--accent); }
+    .sig-bear { color: var(--red); }
+    .sig-neu { color: var(--yellow); }
+
+    /* SIGNAL SUMMARY BAR */
+    .signal-summary {
+      display: flex; gap: 0; border: 1px solid var(--border);
+      border-radius: 4px; overflow: hidden;
+      margin-bottom: 0.75rem;
+    }
+    .sig-seg {
+      flex: 1; padding: 0.5rem; text-align: center; font-size: 0.62rem;
+    }
+    .sig-seg .num { font-size: 1rem; font-weight: 700; display: block; }
+    .sig-seg.bull-seg { background: rgba(61,255,143,0.08); color: var(--accent); }
+    .sig-seg.bear-seg { background: rgba(255,77,109,0.08); color: var(--red); }
+    .sig-seg.neu-seg { background: rgba(255,209,102,0.06); color: var(--yellow); }
+
+    /* MACD / RSI BAR */
+    .gauge-row {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 4px; padding: 0.6rem 0.75rem;
+      margin-bottom: 0.4rem;
+    }
+    .gauge-top { display: flex; justify-content: space-between; font-size: 0.62rem; color: var(--text3); margin-bottom: 0.3rem; }
+    .gauge-bar { height: 4px; background: var(--border); border-radius: 2px; position: relative; overflow: hidden; }
+    .gauge-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+    .rsi-fill { background: var(--accent); }
+    .stoch-fill { background: var(--yellow); }
+
+    /* VALUE TABLE */
+    .val-table { width: 100%; font-size: 0.7rem; }
+    .val-table tr { border-bottom: 1px solid rgba(31,48,40,0.4); }
+    .val-table td { padding: 0.4rem 0.1rem; }
+    .val-table td:first-child { color: var(--text3); }
+    .val-table td:last-child { text-align: right; font-weight: 700; }
+
+    /* LOADING SPINNER */
+    .spinner {
+      width: 24px; height: 24px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin: 2rem auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      background: var(--surface2); border: 1px solid var(--border2);
+      color: var(--text); font-size: 0.72rem;
+      padding: 0.5rem 1rem; border-radius: 4px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s; z-index: 9999;
+    }
+    .toast.show { opacity: 1; }
+
+    /* PROGRESS */
+    .progress-bar {
+      position: fixed; top: 0; left: 0; height: 2px;
+      background: var(--accent);
+      transition: width 0.2s ease;
+      z-index: 999;
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+
+    /* REFRESH BTN */
+    .refresh-btn {
+      padding: 0.35rem 0.75rem;
+      background: var(--accent-dim);
+      border: 1px solid var(--accent);
+      border-radius: 3px;
+      color: var(--accent);
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      cursor: pointer;
+      letter-spacing: 0.1em;
+      transition: all 0.15s;
+    }
+    .refresh-btn:hover { background: var(--accent); color: var(--bg); }
+    .refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    @media (max-width: 768px) {
+      .detail-panel { width: 100%; }
+      .table-area.panel-open { margin-right: 0; }
+      header { padding: 1rem; }
+      .stats-bar .stat-item:not(:nth-child(-n+3)) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar" style="width:0%"></div>
+<div class="toast" id="toast"></div>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">ISSI</div>
+    <div>
+      <div class="logo-text">SYARIAH SCREENER</div>
+      <div class="logo-sub">IDX SHARIAH STOCK INDEX</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span><span class="status-dot"></span><span id="statusText">Memuat data...</span></span>
+    <span class="last-update" id="lastUpdate">—</span>
+  </div>
+</header>
+
+<div class="stats-bar" id="statsBar">
+  <div class="stat-item"><div class="stat-label">TOTAL SAHAM</div><div class="stat-value neutral" id="statTotal">—</div></div>
+  <div class="stat-item"><div class="stat-label">DI ATAS EMA ALL</div><div class="stat-value" id="statAboveAll">—</div></div>
+  <div class="stat-item"><div class="stat-label">BULLISH SIGNAL</div><div class="stat-value" id="statBull">—</div></div>
+  <div class="stat-item"><div class="stat-label">BEARISH SIGNAL</div><div class="stat-value" style="color:var(--red)" id="statBear">—</div></div>
+  <div class="stat-item"><div class="stat-label">DIPROSES</div><div class="stat-value neutral" id="statProcessed">—</div></div>
+</div>
+
+<main>
+  <div class="table-area" id="tableArea">
+    <div class="filter-bar">
+      <span class="filter-label">FILTER:</span>
+      <input class="search-box" id="searchBox" placeholder="Cari ticker..." type="text">
+      <button class="filter-tag active" id="filterAll" onclick="setFilter('all')">Semua</button>
+      <button class="filter-tag" id="filterAbove" onclick="setFilter('above')">↑ Di atas EMA3/5/10/20</button>
+      <button class="filter-tag" id="filterBull" onclick="setFilter('bull')">▲ Bullish Dominan</button>
+      <button class="filter-tag" id="filterBear" onclick="setFilter('bear')">▼ Bearish Dominan</button>
+      <button class="refresh-btn" id="refreshBtn" onclick="startScreening()">↻ Refresh</button>
+      <span class="count-badge">Menampilkan <span id="countShown">—</span> saham</span>
+    </div>
+
+    <div class="table-wrap">
+      <table id="mainTable">
+        <thead>
+          <tr>
+            <th onclick="sortTable('ticker')">TICKER</th>
+            <th onclick="sortTable('price')">HARGA</th>
+            <th onclick="sortTable('pct')">%CHG</th>
+            <th>EMA3</th>
+            <th>EMA5</th>
+            <th>EMA10</th>
+            <th>EMA20</th>
+            <th onclick="sortTable('signals')">SINYAL</th>
+            <th onclick="sortTable('value')">NILAI TRX</th>
+            <th onclick="sortTable('avgVol')">AVG 5D VOL</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr><td colspan="10"><div class="table-msg"><div class="icon">⟳</div>Memulai screening...</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- DETAIL PANEL -->
+  <div class="detail-panel" id="detailPanel">
+    <div class="panel-header">
+      <div>
+        <div class="panel-ticker" id="panelTicker">—</div>
+        <div class="panel-company" id="panelCompany">—</div>
+      </div>
+      <div style="text-align:right">
+        <div class="panel-price" id="panelPrice">—</div>
+        <div class="panel-change" id="panelChange">—</div>
+      </div>
+      <button class="close-btn" onclick="closePanel()">✕</button>
+    </div>
+    <div class="panel-body" id="panelBody">
+      <div class="spinner"></div>
+    </div>
+  </div>
+</main>
+
+<script>
+// ============================================================
+// DATA & STATE
+// ============================================================
+const ISSI_TICKERS = ["AADI","AALI","ABMM","ACES","ACST","ADCP","ADES","ADHI","ADMG","ADMR","ADRO","AGAR","AGII","AIMS","AISA","AKKU","AKPI","AKRA","AKSI","ALDO","ALKA","AMAN","AMFG","AMIN","ANDI","ANJT","ANTM","APII","APLI","APLN","ARCI","AREA","ARGO","ARII","ARNA","ARTA","ASGR","ASHA","ASII","ASLC","ASLI","ASPI","ASRI","ASSA","ATAP","ATIC","ATLA","AUTO","AVIA","AWAN","AXIO","AYAM","AYLS","BABY","BAIK","BANK","BAPI","BATA","BATR","BAUT","BAYU","BBRM","BBSS","BCIP","BDKR","BEEF","BELI","BELL","BESS","BEST","BIKE","BINO","BIPP","BIRD","BISI","BKDP","BKSL","BLES","BLOG","BLTA","BLTZ","BLUE","BMHS","BMSR","BMTR","BNBR","BOAT","BOBA","BOGA","BOLA","BOLT","BRAM","BRIS","BRMS","BRNA","BRPT","BRRC","BSBK","BSDE","BSML","BSSR","BTPS","BUAH","BUKK","BULL","BUMI","BUVA","BYAN","CAKK","CAMP","CANI","CARE","CASS","CBDK","CBPE","CBRE","CCSI","CEKA","CGAS","CHEK","CHEM","CINT","CITA","CITY","CLEO","CLPI","CMNP","CMPP","CMRY","CNKO","CNMA","COAL","CPIN","CPRO","CRAB","CRSN","CSAP","CSIS","CSMI","CSRA","CTBN","CTRA","CYBR","DAAZ","DADA","DATA","DAYA","DCII","DEFI","DEPO","DEWA","DEWI","DGIK","DGNS","DGWG","DILD","DIVA","DKFT","DKHH","DMAS","DMMX","DMND","DOOH","DOSS","DRMA","DSFI","DSNG","DSSA","DUTI","DVLA","DWGL","DYAN","EAST","ECII","EDGE","EKAD","ELIT","ELPI","ELSA","ELTY","EMDE","ENAK","ENRG","EPAC","EPMT","ERAA","ERAL","ESIP","ESSA","ESTA","EXCL","FAST","FASW","FILM","FIRE","FISH","FITT","FMII","FOLK","FOOD","FORE","FPNI","FUTR","FWCT","GDST","GDYR","GEMA","GEMS","GGRP","GHON","GIAA","GJTL","GLVA","GMTD","GOLD","GOLF","GOOD","GPRA","GPSO","GRIA","GRPH","GTBO","GTRA","GTSI","GULA","GUNA","GWSA","GZCO","HADE","HAIS","HALO","HATM","HDIT","HEAL","HERO","HEXA","HGII","HITS","HOKI","HOMI","HOPE","HRME","HRUM","HUMI","HYGN","IATA","IBST","ICBP","ICON","IDPR","IFII","IFSH","IGAR","IIKP","IKAI","IKAN","IKBI","IKPM","IMPC","INCI","INCO","INDF","INDR","INDS","INDX","INDY","INET","INKP","INPP","INTD","INTP","IOTF","IPCC","IPCM","IPOL","IPTV","IRRA","IRSX","ISAT","ISSP","ITMA","ITMG","JAST","JATI","JAWA","JAYA","JECC","JGLE","JIHD","JKON","JMAS","JPFA","JRPT","JSMR","JSPT","JTPE","KAQI","KARW","KBAG","KBLI","KBLM","KDSI","KDTN","KEEN","KEJU","KETR","KIAS","KICI","KIJA","KINO","KIOS","KJEN","KKES","KKGI","KLAS","KLBF","KMDS","KOBX","KOCI","KOIN","KOKA","KONI","KOPI","KOTA","KPIG","KREN","KRYA","KSIX","KUAS","LABA","LABS","LAJU","LAND","LCKM","LION","LIVE","LMPI","LMSH","LPCK","LPIN","LPKR","LPLI","LPPF","LRNA","LSIP","LTLS","LUCK","MAHA","MAIN","MAPA","MAPB","MAPI","MARK","MAXI","MBAP","MBMA","MBTO","MCAS","MCOL","MDIY","MDKA","MDKI","MDLA","MEDC","MEDS","MERI","MERK","META","MFMI","MGNA","MHKI","MICE","MIDI","MIKA","MINA","MINE","MIRA","MITI","MKAP","MKPI","MKTR","MLIA","MLPL","MLPT","MMIX","MMLP","MNCN","MORA","MPIX","MPMX","MPOW","MPPA","MPRO","MRAT","MSIN","MSJA","MSKY","MSTI","MTDL","MTEL","MTFN","MTLA","MTMH","MTPS","MTSM","MUTU","MYOH","MYOR","NAIK","NASA","NASI","NCKL","NELY","NEST","NETV","NFCX","NICE","NICL","NIKL","NPGF","NRCA","NTBK","NZIA","OASA","OBAT","OBMD","OILS","OKAS","OMED","OMRE","PADA","PALM","PAMG","PANI","PANR","PART","PBID","PBSA","PCAR","PDES","PDPP","PEHA","PEVE","PGAS","PGEO","PGLI","PGUN","PICO","PIPA","PJAA","PJHB","PKPK","PLIN","PMJS","PMUI","PNBS","PNGO","PNSE","POLI","POLU","PORT","POWR","PPRE","PPRI","PPRO","PRAY","PRDA","PRIM","PSAB","PSAT","PSDN","PSGO","PSKT","PSSI","PTBA","PTIS","PTMP","PTMR","PTPP","PTPS","PTPW","PTSN","PTSP","PURA","PURI","PWON","PZZA","RAAM","RAFI","RAJA","RALS","RANC","RATU","RBMS","RDTX","RGAS","RIGS","RISE","RMKE","RMKO","ROCK","RODA","RONY","ROTI","RSGK","RUIS","SAFE","SAGE","SAME","SAMF","SAPX","SATU","SBMA","SCCO","SCNP","SCPI","SEMA","SGER","SGRO","SHID","SHIP","SICO","SIDO","SILO","SIMP","SIPD","SKBM","SKLT","SKRN","SLIS","SMAR","SMBR","SMCB","SMDM","SMDR","SMGA","SMGR","SMIL","SMKL","SMLE","SMMT","SMRA","SMSM","SNLK","SOCI","SOHO","SOLA","SONA","SOSS","SOTS","SPMA","SPTO","SRTG","SSIA","SSTM","STAA","STTP","SULI","SUNI","SUPR","SURI","SWID","TALF","TAMA","TAMU","TAPG","TARA","TAXI","TBMS","TCID","TCPI","TEBE","TFAS","TFCO","TGKA","TGUK","TINS","TIRA","TIRT","TKIM","TLDN","TLKM","TMAS","TMPO","TNCA","TOBA","TOOL","TOSK","TOTL","TOTO","TPIA","TPMA","TRIS","TRJA","TRON","TRST","TRUE","TRUK","TSPC","TYRE","UANG","UCID","UFOE","ULTJ","UNIC","UNIQ","UNTR","UNVR","UVCR","VAST","VERN","VICI","VISI","VKTR","VOKS","WAPO","WEGE","WEHA","WINR","WINS","WIRG","WMUU","WOOD","WOWS","WTON","YELO","YPAS","YUPI","ZATA","ZONE","ZYRX"];
+
+const PROXY = 'https://query1.finance.yahoo.com/v8/finance/chart/';
+const PROXY2 = 'https://query2.finance.yahoo.com/v8/finance/chart/';
+
+let allData = [];
+let filteredData = [];
+let currentFilter = 'all';
+let sortCol = 'signals';
+let sortDir = -1;
+let selectedTicker = null;
+let isScreening = false;
+
+// ============================================================
+// MATH HELPERS
+// ============================================================
+function calcEMA(prices, period) {
+  if (prices.length < period) return null;
+  const k = 2 / (period + 1);
+  let ema = prices.slice(0, period).reduce((a, b) => a + b, 0) / period;
+  for (let i = period; i < prices.length; i++) {
+    ema = prices[i] * k + ema * (1 - k);
+  }
+  return ema;
+}
+
+function calcSMA(prices, period) {
+  if (prices.length < period) return null;
+  return prices.slice(-period).reduce((a, b) => a + b, 0) / period;
+}
+
+function calcRSI(prices, period = 14) {
+  if (prices.length < period + 1) return null;
+  const recent = prices.slice(-period - 1);
+  let gains = 0, losses = 0;
+  for (let i = 1; i < recent.length; i++) {
+    const diff = recent[i] - recent[i - 1];
+    if (diff > 0) gains += diff; else losses -= diff;
+  }
+  const avgGain = gains / period;
+  const avgLoss = losses / period;
+  if (avgLoss === 0) return 100;
+  const rs = avgGain / avgLoss;
+  return 100 - (100 / (1 + rs));
+}
+
+function calcStochRSI(prices, rsiPeriod = 14, stochPeriod = 14) {
+  if (prices.length < rsiPeriod + stochPeriod) return null;
+  const rsiVals = [];
+  for (let i = rsiPeriod; i <= prices.length - 1; i++) {
+    rsiVals.push(calcRSI(prices.slice(0, i + 1), rsiPeriod));
+  }
+  if (rsiVals.length < stochPeriod) return null;
+  const recentRSI = rsiVals.slice(-stochPeriod);
+  const minRSI = Math.min(...recentRSI);
+  const maxRSI = Math.max(...recentRSI);
+  if (maxRSI === minRSI) return 50;
+  return ((rsiVals[rsiVals.length - 1] - minRSI) / (maxRSI - minRSI)) * 100;
+}
+
+function calcMACD(prices) {
+  const ema12 = calcEMA(prices, 12);
+  const ema26 = calcEMA(prices, 26);
+  if (!ema12 || !ema26) return { macd: null, signal: null, hist: null };
+  const macd = ema12 - ema26;
+  // Signal line: 9-period EMA of MACD values
+  if (prices.length < 35) return { macd, signal: null, hist: null };
+  const macdSeries = [];
+  for (let i = 26; i <= prices.length; i++) {
+    const e12 = calcEMA(prices.slice(0, i), 12);
+    const e26 = calcEMA(prices.slice(0, i), 26);
+    if (e12 && e26) macdSeries.push(e12 - e26);
+  }
+  const signal = calcEMA(macdSeries, 9);
+  const hist = macdSeries[macdSeries.length - 1] - (signal || 0);
+  return { macd: macdSeries[macdSeries.length - 1], signal, hist };
+}
+
+function signal(val, compare) {
+  if (val === null || compare === null) return 'neutral';
+  return val > compare ? 'bull' : val < compare ? 'bear' : 'neutral';
+}
+
+// ============================================================
+// DATA FETCHING
+// ============================================================
+async function fetchTickerData(ticker) {
+  const symbol = ticker + '.JK';
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1y`;
+  const corsUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+
+  try {
+    const res = await fetch(corsUrl, { signal: AbortSignal.timeout(8000) });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    const result = json?.chart?.result?.[0];
+    if (!result) throw new Error('No result');
+
+    const meta = result.meta;
+    const timestamps = result.timestamp || [];
+    const quotes = result.indicators?.quote?.[0] || {};
+    const closes = quotes.close || [];
+    const volumes = quotes.volume || [];
+    const highs = quotes.high || [];
+    const lows = quotes.low || [];
+
+    // Filter valid closes
+    const validCloses = closes.filter(c => c !== null && c !== undefined && !isNaN(c));
+    if (validCloses.length < 20) throw new Error('Insufficient data');
+
+    const lastClose = validCloses[validCloses.length - 1];
+    const prevClose = validCloses.length > 1 ? validCloses[validCloses.length - 2] : lastClose;
+    const pctChange = ((lastClose - prevClose) / prevClose) * 100;
+
+    // EMAs
+    const ema3 = calcEMA(validCloses, 3);
+    const ema5 = calcEMA(validCloses, 5);
+    const ema10 = calcEMA(validCloses, 10);
+    const ema20 = calcEMA(validCloses, 20);
+    const sma50 = calcSMA(validCloses, 50);
+    const sma100 = calcSMA(validCloses, 100);
+    const sma200 = calcSMA(validCloses, 200);
+
+    // Indicators
+    const rsi = calcRSI(validCloses, 14);
+    const stochRsi = calcStochRSI(validCloses);
+    const { macd, signal: macdSignal, hist: macdHist } = calcMACD(validCloses);
+
+    // Above EMA check
+    const aboveEma3 = lastClose > ema3;
+    const aboveEma5 = lastClose > ema5;
+    const aboveEma10 = lastClose > ema10;
+    const aboveEma20 = lastClose > ema20;
+    const aboveAll = aboveEma3 && aboveEma5 && aboveEma10 && aboveEma20;
+
+    // Volume / value
+    const validVols = volumes.filter(v => v !== null && !isNaN(v));
+    const lastVol = validVols[validVols.length - 1] || 0;
+    const lastValue = lastVol * lastClose;
+    const onePercentValue = lastValue * 0.01;
+
+    const avg3Vol = validVols.length >= 3 ? validVols.slice(-3).reduce((a, b) => a + b, 0) / 3 : lastVol;
+    const avg5Vol = validVols.length >= 5 ? validVols.slice(-5).reduce((a, b) => a + b, 0) / 5 : lastVol;
+    const avg20Vol = validVols.length >= 20 ? validVols.slice(-20).reduce((a, b) => a + b, 0) / 20 : lastVol;
+
+    const avg3Value = avg3Vol * lastClose;
+    const avg5Value = avg5Vol * lastClose;
+    const avg20Value = avg20Vol * lastClose;
+
+    // Signal count
+    let bullCount = 0, bearCount = 0, neuCount = 0;
+    const sigsList = [
+      signal(lastClose, ema3), signal(lastClose, ema5), signal(lastClose, ema10), signal(lastClose, ema20),
+      signal(lastClose, sma50), signal(lastClose, sma100), signal(lastClose, sma200),
+      rsi ? (rsi > 50 ? 'bull' : rsi < 50 ? 'bear' : 'neutral') : 'neutral',
+      stochRsi ? (stochRsi > 50 ? 'bull' : stochRsi < 50 ? 'bear' : 'neutral') : 'neutral',
+      macd && macdSignal ? (macd > macdSignal ? 'bull' : macd < macdSignal ? 'bear' : 'neutral') : 'neutral',
+    ];
+    sigsList.forEach(s => { if (s === 'bull') bullCount++; else if (s === 'bear') bearCount++; else neuCount++; });
+
+    const company = meta.longName || meta.shortName || ticker;
+
+    return {
+      ticker, company, lastClose, prevClose, pctChange,
+      ema3, ema5, ema10, ema20, sma50, sma100, sma200,
+      aboveEma3, aboveEma5, aboveEma10, aboveEma20, aboveAll,
+      rsi, stochRsi, macd, macdSignal, macdHist,
+      lastVol, lastValue, onePercentValue,
+      avg3Value, avg5Value, avg20Value,
+      bullCount, bearCount, neuCount,
+      signals: bullCount - bearCount,
+      validCloses, timestamps
+    };
+  } catch (e) {
+    return null;
+  }
+}
+
+// ============================================================
+// BATCH PROCESSING
+// ============================================================
+async function startScreening() {
+  if (isScreening) return;
+  isScreening = true;
+  allData = [];
+  filteredData = [];
+
+  const btn = document.getElementById('refreshBtn');
+  btn.disabled = true;
+  btn.textContent = '⟳ Loading...';
+  document.getElementById('statusText').textContent = 'Mengambil data pasar...';
+
+  setProgress(5);
+  renderTable([]);
+
+  const BATCH = 8;
+  const total = ISSI_TICKERS.length;
+  let processed = 0;
+  let failed = 0;
+
+  for (let i = 0; i < ISSI_TICKERS.length; i += BATCH) {
+    const batch = ISSI_TICKERS.slice(i, i + BATCH);
+    const results = await Promise.allSettled(batch.map(t => fetchTickerData(t)));
+
+    results.forEach(r => {
+      if (r.status === 'fulfilled' && r.value !== null) {
+        allData.push(r.value);
+      } else {
+        failed++;
+      }
+      processed++;
+    });
+
+    const pct = 5 + Math.round((processed / total) * 90);
+    setProgress(pct);
+    document.getElementById('statusText').textContent = `Memproses ${processed}/${total} saham...`;
+    document.getElementById('statProcessed').textContent = processed + '/' + total;
+    updateStats();
+    applyFilter();
+    renderTable(filteredData);
+    await new Promise(r => setTimeout(r, 50));
+  }
+
+  setProgress(100);
+  isScreening = false;
+  btn.disabled = false;
+  btn.textContent = '↻ Refresh';
+  document.getElementById('statusText').textContent = `Selesai — ${allData.length} saham berhasil`;
+  document.getElementById('lastUpdate').textContent = 'Update: ' + new Date().toLocaleTimeString('id-ID');
+  updateStats();
+  applyFilter();
+  renderTable(filteredData);
+  setTimeout(() => setProgress(0), 1000);
+}
+
+function setProgress(pct) {
+  document.getElementById('progressBar').style.width = pct + '%';
+}
+
+// ============================================================
+// FILTER & SORT
+// ============================================================
+function setFilter(f) {
+  currentFilter = f;
+  ['filterAll', 'filterAbove', 'filterBull', 'filterBear'].forEach(id => {
+    document.getElementById(id).classList.remove('active');
+  });
+  const map = { all: 'filterAll', above: 'filterAbove', bull: 'filterBull', bear: 'filterBear' };
+  document.getElementById(map[f]).classList.add('active');
+  applyFilter();
+  renderTable(filteredData);
+}
+
+function applyFilter() {
+  const search = document.getElementById('searchBox').value.toUpperCase();
+  let data = [...allData];
+  if (search) data = data.filter(d => d.ticker.includes(search));
+  if (currentFilter === 'above') data = data.filter(d => d.aboveAll);
+  if (currentFilter === 'bull') data = data.filter(d => d.bullCount > d.bearCount);
+  if (currentFilter === 'bear') data = data.filter(d => d.bearCount > d.bullCount);
+
+  // Sort
+  data.sort((a, b) => {
+    let va = a[sortCol] ?? 0;
+    let vb = b[sortCol] ?? 0;
+    if (sortCol === 'ticker') { va = a.ticker; vb = b.ticker; }
+    if (typeof va === 'string') return va.localeCompare(vb) * sortDir;
+    return (va - vb) * sortDir;
+  });
+  filteredData = data;
+  document.getElementById('countShown').textContent = data.length;
+}
+
+function sortTable(col) {
+  if (sortCol === col) sortDir *= -1;
+  else { sortCol = col; sortDir = -1; }
+  document.querySelectorAll('thead th').forEach(th => th.classList.remove('sort-asc', 'sort-desc'));
+  const colIdx = { ticker: 0, price: 1, pct: 2, signals: 7, value: 8, avgVol: 9 };
+  const th = document.querySelectorAll('thead th')[colIdx[col]];
+  if (th) th.classList.add(sortDir === 1 ? 'sort-asc' : 'sort-desc');
+  applyFilter();
+  renderTable(filteredData);
+}
+
+// ============================================================
+// RENDER TABLE
+// ============================================================
+function fmtNum(n, dec = 0) {
+  if (n === null || n === undefined || isNaN(n)) return '—';
+  return n.toLocaleString('id-ID', { maximumFractionDigits: dec, minimumFractionDigits: dec });
+}
+function fmtBil(n) {
+  if (!n || isNaN(n)) return '—';
+  if (n >= 1e12) return 'Rp ' + (n / 1e12).toFixed(2) + 'T';
+  if (n >= 1e9) return 'Rp ' + (n / 1e9).toFixed(2) + 'M';
+  if (n >= 1e6) return 'Rp ' + (n / 1e6).toFixed(1) + 'Jt';
+  return 'Rp ' + fmtNum(n);
+}
+function badgeEma(above) {
+  return above
+    ? `<span class="badge-ema badge-bull">▲</span>`
+    : `<span class="badge-ema badge-bear">▼</span>`;
+}
+
+function renderTable(data) {
+  const tbody = document.getElementById('tableBody');
+  if (data.length === 0) {
+    if (isScreening) {
+      tbody.innerHTML = `<tr><td colspan="10"><div class="table-msg"><div class="spinner"></div>Mengambil data saham syariah...</div></td></tr>`;
+    } else {
+      tbody.innerHTML = `<tr><td colspan="10"><div class="table-msg"><div class="icon">∅</div>Tidak ada saham yang memenuhi filter</div></td></tr>`;
+    }
+    return;
+  }
+
+  tbody.innerHTML = data.map(d => {
+    const pctCls = d.pctChange >= 0 ? 'val-up' : 'val-down';
+    const pctSign = d.pctChange >= 0 ? '+' : '';
+    const sigClass = d.bullCount > d.bearCount ? 'val-up' : d.bearCount > d.bullCount ? 'val-down' : 'val-neu';
+    const selected = selectedTicker === d.ticker ? 'selected' : '';
+    return `<tr class="${selected}" onclick="openPanel('${d.ticker}')">
+      <td class="ticker-cell">${d.ticker}</td>
+      <td class="price-cell">${fmtNum(d.lastClose, 0)}</td>
+      <td class="${pctCls}">${pctSign}${d.pctChange.toFixed(2)}%</td>
+      <td>${badgeEma(d.aboveEma3)}</td>
+      <td>${badgeEma(d.aboveEma5)}</td>
+      <td>${badgeEma(d.aboveEma10)}</td>
+      <td>${badgeEma(d.aboveEma20)}</td>
+      <td class="${sigClass}">${d.bullCount}B / ${d.bearCount}B / ${d.neuCount}N</td>
+      <td>${fmtBil(d.lastValue)}</td>
+      <td>${fmtBil(d.avg5Value)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ============================================================
+// STATS
+// ============================================================
+function updateStats() {
+  document.getElementById('statTotal').textContent = allData.length;
+  document.getElementById('statAboveAll').textContent = allData.filter(d => d.aboveAll).length;
+  document.getElementById('statBull').textContent = allData.filter(d => d.bullCount > d.bearCount).length;
+  document.getElementById('statBear').textContent = allData.filter(d => d.bearCount > d.bullCount).length;
+}
+
+// ============================================================
+// DETAIL PANEL
+// ============================================================
+function openPanel(ticker) {
+  const d = allData.find(x => x.ticker === ticker);
+  if (!d) return;
+  selectedTicker = ticker;
+
+  document.getElementById('detailPanel').classList.add('open');
+  document.getElementById('tableArea').classList.add('panel-open');
+  renderTable(filteredData);
+
+  document.getElementById('panelTicker').textContent = d.ticker;
+  document.getElementById('panelCompany').textContent = d.company || d.ticker;
+
+  const priceEl = document.getElementById('panelPrice');
+  priceEl.textContent = 'Rp ' + fmtNum(d.lastClose, 0);
+  priceEl.className = 'panel-price ' + (d.pctChange >= 0 ? 'val-up' : 'val-down');
+
+  const chgEl = document.getElementById('panelChange');
+  const pctSign = d.pctChange >= 0 ? '+' : '';
+  chgEl.textContent = `${pctSign}${d.pctChange.toFixed(2)}% hari ini`;
+  chgEl.className = 'panel-change ' + (d.pctChange >= 0 ? 'val-up' : 'val-down');
+
+  renderPanelBody(d);
+}
+
+function closePanel() {
+  document.getElementById('detailPanel').classList.remove('open');
+  document.getElementById('tableArea').classList.remove('panel-open');
+  selectedTicker = null;
+  renderTable(filteredData);
+}
+
+function renderPanelBody(d) {
+  const sig = (val, comp) => {
+    if (val === null || comp === null) return ['—', 'neutral'];
+    if (val > comp) return ['BULLISH ▲', 'bull'];
+    if (val < comp) return ['BEARISH ▼', 'bear'];
+    return ['NETRAL —', 'neutral'];
+  };
+
+  const rsiSig = d.rsi !== null
+    ? (d.rsi > 70 ? ['OVERBOUGHT', 'bear'] : d.rsi < 30 ? ['OVERSOLD', 'bull'] : d.rsi > 50 ? ['BULLISH ▲', 'bull'] : ['BEARISH ▼', 'bear'])
+    : ['—', 'neutral'];
+
+  const stochSig = d.stochRsi !== null
+    ? (d.stochRsi > 80 ? ['OVERBOUGHT', 'bear'] : d.stochRsi < 20 ? ['OVERSOLD', 'bull'] : d.stochRsi > 50 ? ['BULLISH ▲', 'bull'] : ['BEARISH ▼', 'bear'])
+    : ['—', 'neutral'];
+
+  const macdSig = d.macd !== null && d.macdSignal !== null
+    ? (d.macd > d.macdSignal ? ['BULLISH ▲', 'bull'] : ['BEARISH ▼', 'bear'])
+    : ['—', 'neutral'];
+
+  const indRows = [
+    { name: 'EMA 3', val: d.ema3, sig: sig(d.lastClose, d.ema3) },
+    { name: 'EMA 5', val: d.ema5, sig: sig(d.lastClose, d.ema5) },
+    { name: 'EMA 10', val: d.ema10, sig: sig(d.lastClose, d.ema10) },
+    { name: 'EMA 20', val: d.ema20, sig: sig(d.lastClose, d.ema20) },
+    { name: 'SMA 50', val: d.sma50, sig: sig(d.lastClose, d.sma50) },
+    { name: 'SMA 100', val: d.sma100, sig: sig(d.lastClose, d.sma100) },
+    { name: 'SMA 200', val: d.sma200, sig: sig(d.lastClose, d.sma200) },
+  ];
+
+  const totalSigs = d.bullCount + d.bearCount + d.neuCount;
+
+  document.getElementById('panelBody').innerHTML = `
+    <!-- SIGNAL OVERVIEW -->
+    <div class="section-title">Ringkasan Sinyal (${totalSigs} Indikator)</div>
+    <div class="signal-summary">
+      <div class="sig-seg bull-seg"><span class="num">${d.bullCount}</span>BULLISH</div>
+      <div class="sig-seg neu-seg"><span class="num">${d.neuCount}</span>NETRAL</div>
+      <div class="sig-seg bear-seg"><span class="num">${d.bearCount}</span>BEARISH</div>
+    </div>
+
+    <!-- MOVING AVERAGES -->
+    <div class="section-title">Moving Averages</div>
+    <div class="ind-grid">
+      ${indRows.map(r => `
+        <div class="ind-item">
+          <div>
+            <div class="ind-name">${r.name}</div>
+            <div class="ind-value">${r.val !== null ? fmtNum(r.val, 0) : '—'}</div>
+          </div>
+          <div class="ind-signal sig-${r.sig[1]}">${r.sig[0]}</div>
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- OSCILLATORS -->
+    <div class="section-title">Oscillators</div>
+    <div class="gauge-row">
+      <div class="gauge-top">
+        <span>RSI(14)</span>
+        <span class="sig-${rsiSig[1]}">${d.rsi !== null ? d.rsi.toFixed(1) : '—'} — ${rsiSig[0]}</span>
+      </div>
+      <div class="gauge-bar">
+        <div class="gauge-fill rsi-fill" style="width:${d.rsi || 0}%"></div>
+      </div>
+    </div>
+    <div class="gauge-row">
+      <div class="gauge-top">
+        <span>Stoch RSI</span>
+        <span class="sig-${stochSig[1]}">${d.stochRsi !== null ? d.stochRsi.toFixed(1) : '—'} — ${stochSig[0]}</span>
+      </div>
+      <div class="gauge-bar">
+        <div class="gauge-fill stoch-fill" style="width:${d.stochRsi || 0}%"></div>
+      </div>
+    </div>
+
+    <!-- MACD -->
+    <div class="section-title">MACD</div>
+    <div class="ind-grid">
+      <div class="ind-item">
+        <div><div class="ind-name">MACD Line</div><div class="ind-value">${d.macd !== null ? d.macd.toFixed(2) : '—'}</div></div>
+        <div class="ind-signal sig-${macdSig[1]}">${macdSig[0]}</div>
+      </div>
+      <div class="ind-item">
+        <div><div class="ind-name">Signal Line</div><div class="ind-value">${d.macdSignal !== null ? d.macdSignal.toFixed(2) : '—'}</div></div>
+        <div class="ind-signal sig-${d.macdHist > 0 ? 'bull' : 'bear'}">${d.macdHist !== null ? (d.macdHist > 0 ? 'HIST ▲' : 'HIST ▼') : '—'}</div>
+      </div>
+    </div>
+
+    <!-- NILAI TRANSAKSI -->
+    <div class="section-title">Nilai Transaksi</div>
+    <table class="val-table">
+      <tr><td>Nilai Transaksi Hari Ini</td><td class="${d.pctChange >= 0 ? 'val-up' : 'val-down'}">${fmtBil(d.lastValue)}</td></tr>
+      <tr><td>1% Nilai Transaksi Hari Ini</td><td>${fmtBil(d.onePercentValue)}</td></tr>
+      <tr><td>Rata-rata 3 Hari</td><td>${fmtBil(d.avg3Value)}</td></tr>
+      <tr><td>Rata-rata 5 Hari</td><td>${fmtBil(d.avg5Value)}</td></tr>
+      <tr><td>Rata-rata 20 Hari</td><td>${fmtBil(d.avg20Value)}</td></tr>
+      <tr><td>Volume Hari Ini</td><td>${fmtNum(d.lastVol)} lot</td></tr>
+    </table>
+
+    <div style="margin-top:1rem; padding: 0.75rem; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; font-size: 0.62rem; color: var(--text3); line-height: 1.6;">
+      ⚠ Data dari Yahoo Finance. Bukan rekomendasi beli/jual.<br>
+      Selalu lakukan analisis mandiri sebelum berinvestasi.
+    </div>
+  `;
+}
+
+// ============================================================
+// SEARCH
+// ============================================================
+document.getElementById('searchBox').addEventListener('input', () => {
+  applyFilter();
+  renderTable(filteredData);
+});
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ============================================================
+// AUTO-START
+// ============================================================
+window.addEventListener('load', () => {
+  startScreening();
+});
+</script>
+</body>
+</html>
