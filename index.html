@@ -1,976 +1,1009 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ISSI Screener — Saham Syariah</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #0a0f0d;
-      --surface: #111a15;
-      --surface2: #162019;
-      --border: #1f3028;
-      --border2: #2a4035;
-      --accent: #3dff8f;
-      --accent2: #00c96a;
-      --accent-dim: rgba(61,255,143,0.12);
-      --accent-glow: rgba(61,255,143,0.25);
-      --red: #ff4d6d;
-      --red-dim: rgba(255,77,109,0.12);
-      --yellow: #ffd166;
-      --text: #d4e8dc;
-      --text2: #8aab97;
-      --text3: #4d7060;
-      --mono: 'Space Mono', monospace;
-      --serif: 'Noto Serif', serif;
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: var(--mono);
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-    /* NOISE TEXTURE */
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-      pointer-events: none; z-index: 999; opacity: 0.4;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ISSI Screener — Saham Syariah IDX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f5f6f8;
+  --bg3: #eef0f3;
+  --border: #dde1e7;
+  --border2: #c8cdd6;
+  --text: #1a1d23;
+  --text2: #4a5060;
+  --text3: #8a919e;
+  --accent: #1a56db;
+  --accent-bg: #eff4ff;
+  --accent-hover: #1645b0;
+  --green: #057a55;
+  --green-bg: #def7ec;
+  --red: #c81e1e;
+  --red-bg: #fde8e8;
+  --yellow: #92400e;
+  --yellow-bg: #fef3c7;
+  --orange: #9a3412;
+  --orange-bg: #ffedd5;
+  --purple: #5521b5;
+  --purple-bg: #edebfe;
+  --teal: #005661;
+  --teal-bg: #d0f7fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+  --font: 'IBM Plex Sans', sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+  --radius: 6px;
+  --radius-sm: 4px;
+}
+[data-theme="dark"] {
+  --bg: #111318;
+  --bg2: #1a1d24;
+  --bg3: #22262f;
+  --border: #2e3340;
+  --border2: #3d4454;
+  --text: #e8eaf0;
+  --text2: #9aa0b0;
+  --text3: #5c6370;
+  --accent: #4d8af0;
+  --accent-bg: #1a2540;
+  --accent-hover: #6b9ff5;
+  --green: #31c48d;
+  --green-bg: #052e20;
+  --red: #f05252;
+  --red-bg: #2d1515;
+  --yellow: #f6c90e;
+  --yellow-bg: #2d2505;
+  --orange: #fb923c;
+  --orange-bg: #2d1a05;
+  --purple: #a78bfa;
+  --purple-bg: #1e1640;
+  --teal: #22d3ee;
+  --teal-bg: #062025;
+  --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body {
+  font-family: var(--font);
+  background: var(--bg2);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+  transition: background 0.2s, color 0.2s;
+}
 
-    /* HEADER */
-    header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1.25rem 2rem;
-      border-bottom: 1px solid var(--border);
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(10,15,13,0.95);
-      backdrop-filter: blur(12px);
-    }
-    .logo {
-      display: flex; align-items: center; gap: 0.75rem;
-    }
-    .logo-mark {
-      width: 36px; height: 36px;
-      border: 2px solid var(--accent);
-      border-radius: 4px;
-      display: grid; place-items: center;
-      font-size: 0.7rem; font-weight: 700;
-      color: var(--accent);
-      letter-spacing: -0.05em;
-      line-height: 1;
-      padding: 2px;
-      text-align: center;
-      box-shadow: 0 0 12px var(--accent-glow);
-    }
-    .logo-text { font-size: 0.95rem; font-weight: 700; letter-spacing: 0.15em; }
-    .logo-sub { font-size: 0.6rem; color: var(--text2); letter-spacing: 0.2em; margin-top: 2px; }
-    .header-right { display: flex; align-items: center; gap: 1rem; font-size: 0.7rem; color: var(--text3); }
-    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: inline-block; margin-right: 4px; animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
-    .last-update { color: var(--text3); font-size: 0.65rem; }
+/* TOPBAR */
+.topbar {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  height: 56px;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: var(--shadow);
+  gap: 1rem;
+}
+.topbar-brand {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-weight: 700; font-size: 1rem; letter-spacing: -0.01em;
+  color: var(--text);
+  flex-shrink: 0;
+}
+.brand-icon {
+  width: 28px; height: 28px;
+  background: var(--accent);
+  border-radius: var(--radius-sm);
+  display: grid; place-items: center;
+  font-size: 0.65rem; font-weight: 700;
+  color: white; letter-spacing: 0.02em;
+}
+.topbar-meta {
+  display: flex; align-items: center; gap: 1.25rem;
+  font-size: 0.78rem; color: var(--text3);
+  flex: 1;
+}
+.meta-item { display: flex; align-items: center; gap: 0.3rem; }
+.meta-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green); flex-shrink: 0;
+}
+.meta-dot.idle { background: var(--text3); }
+.meta-dot.loading { background: var(--accent); animation: blink 1s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-    /* STATS BAR */
-    .stats-bar {
-      display: flex; gap: 0; border-bottom: 1px solid var(--border);
-      overflow-x: auto;
-    }
-    .stat-item {
-      padding: 0.75rem 1.5rem;
-      border-right: 1px solid var(--border);
-      min-width: fit-content;
-      font-size: 0.65rem;
-    }
-    .stat-label { color: var(--text3); letter-spacing: 0.1em; margin-bottom: 2px; }
-    .stat-value { font-size: 1rem; font-weight: 700; color: var(--accent); }
-    .stat-value.neutral { color: var(--text2); }
+.topbar-right { display: flex; align-items: center; gap: 0.5rem; margin-left: auto; }
+.btn-icon {
+  display: flex; align-items: center; gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text2);
+  font-family: var(--font);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 500;
+}
+.btn-icon:hover { background: var(--bg3); border-color: var(--border2); color: var(--text); }
+.btn-icon.active { background: var(--bg3); color: var(--text); }
 
-    /* MAIN LAYOUT */
-    main { display: flex; min-height: calc(100vh - 110px); }
+.btn-fetch {
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: var(--accent);
+  color: white;
+  font-family: var(--font);
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.btn-fetch:hover { background: var(--accent-hover); }
+.btn-fetch:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-fetch svg { flex-shrink: 0; }
 
-    /* SIDEBAR / TABLE AREA */
-    .table-area {
-      flex: 1; padding: 1.5rem;
-      transition: all 0.3s ease;
-    }
-    .table-area.panel-open { margin-right: 420px; }
+/* PROGRESS */
+.progress-wrap {
+  height: 2px; background: var(--border);
+  position: sticky; top: 56px; z-index: 99;
+}
+.progress-fill {
+  height: 100%; background: var(--accent);
+  transition: width 0.3s ease;
+  width: 0%;
+}
 
-    /* FILTER BAR */
-    .filter-bar {
-      display: flex; align-items: center; gap: 0.75rem;
-      margin-bottom: 1rem; flex-wrap: wrap;
-    }
-    .filter-label { font-size: 0.65rem; color: var(--text3); letter-spacing: 0.1em; }
-    .search-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 0.4rem 0.75rem;
-      color: var(--text);
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      width: 160px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .search-box:focus { border-color: var(--accent); }
-    .search-box::placeholder { color: var(--text3); }
-    .sort-btn, .filter-tag {
-      padding: 0.35rem 0.7rem;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      color: var(--text2);
-      font-family: var(--mono);
-      font-size: 0.65rem;
-      cursor: pointer;
-      transition: all 0.15s;
-      letter-spacing: 0.05em;
-    }
-    .sort-btn:hover, .filter-tag:hover, .filter-tag.active {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: var(--accent-dim);
-    }
-    .count-badge {
-      margin-left: auto;
-      font-size: 0.65rem;
-      color: var(--text3);
-    }
-    .count-badge span { color: var(--accent); font-weight: 700; }
+/* MAIN */
+.container { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
 
-    /* TABLE */
-    .table-wrap { overflow-x: auto; }
-    table {
-      width: 100%; border-collapse: collapse;
-      font-size: 0.72rem;
-    }
-    thead th {
-      padding: 0.6rem 0.75rem;
-      text-align: left;
-      color: var(--text3);
-      font-weight: 400;
-      letter-spacing: 0.1em;
-      border-bottom: 1px solid var(--border);
-      white-space: nowrap;
-      cursor: pointer;
-      user-select: none;
-      transition: color 0.15s;
-    }
-    thead th:hover { color: var(--text); }
-    thead th.sort-asc::after { content: ' ↑'; color: var(--accent); }
-    thead th.sort-desc::after { content: ' ↓'; color: var(--accent); }
-    tbody tr {
-      border-bottom: 1px solid rgba(31,48,40,0.5);
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    tbody tr:hover { background: var(--accent-dim); }
-    tbody tr.selected { background: rgba(61,255,143,0.06); border-left: 2px solid var(--accent); }
-    tbody td {
-      padding: 0.6rem 0.75rem;
-      white-space: nowrap;
-    }
-    .ticker-cell {
-      font-weight: 700;
-      color: var(--accent);
-      letter-spacing: 0.05em;
-    }
-    .price-cell { font-weight: 700; }
-    .badge-ema {
-      display: inline-block;
-      padding: 1px 5px;
-      border-radius: 2px;
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-    }
-    .badge-bull { background: rgba(61,255,143,0.15); color: var(--accent); }
-    .badge-bear { background: rgba(255,77,109,0.15); color: var(--red); }
-    .badge-neu { background: rgba(255,209,102,0.1); color: var(--yellow); }
+/* PANEL CARD */
+.card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+.card-body { padding: 1rem 1.25rem; }
 
-    .val-up { color: var(--accent); }
-    .val-down { color: var(--red); }
-    .val-neu { color: var(--text2); }
+/* SEARCH */
+.search-wrap {
+  position: relative;
+}
+.search-icon {
+  position: absolute; left: 0.85rem; top: 50%;
+  transform: translateY(-50%);
+  color: var(--text3);
+  pointer-events: none;
+}
+.search-input {
+  width: 100%;
+  padding: 0.6rem 0.85rem 0.6rem 2.3rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.search-input::placeholder { color: var(--text3); }
+.search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent); }
 
-    /* SKELETON LOADING */
-    .skeleton {
-      animation: shimmer 1.4s infinite linear;
-      background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
-      background-size: 200% 100%;
-      border-radius: 3px;
-      height: 12px; display: inline-block;
-    }
-    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+/* FILTER SECTION */
+.filter-section { padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--border); }
+.filter-label {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+  color: var(--text3); text-transform: uppercase;
+  display: flex; align-items: center; gap: 0.3rem;
+  margin-bottom: 0.6rem;
+}
+.filter-label::before { content:''; width:3px; height:12px; background:var(--accent); border-radius:2px; display:inline-block; }
 
-    /* ERROR / EMPTY */
-    .table-msg {
-      text-align: center; padding: 3rem;
-      color: var(--text3); font-size: 0.8rem;
-    }
-    .table-msg .icon { font-size: 2rem; margin-bottom: 0.5rem; }
+.tag-group { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.tag {
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text2);
+  font-family: var(--font);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 500;
+  user-select: none;
+}
+.tag:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
+.tag.active { background: var(--accent); border-color: var(--accent); color: white; font-weight: 600; }
 
-    /* DETAIL PANEL */
-    .detail-panel {
-      width: 420px;
-      position: fixed; right: 0; top: 0;
-      height: 100vh;
-      background: var(--surface);
-      border-left: 1px solid var(--border);
-      transform: translateX(100%);
-      transition: transform 0.3s cubic-bezier(.4,0,.2,1);
-      z-index: 200;
-      display: flex; flex-direction: column;
-      overflow: hidden;
-    }
-    .detail-panel.open { transform: translateX(0); }
+/* MA FILTER */
+.ma-filter-grid {
+  display: flex; flex-wrap: wrap; gap: 0.4rem;
+}
+.ma-tag {
+  padding: 0.25rem 0.65rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text2);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 500;
+  user-select: none;
+  letter-spacing: 0.02em;
+}
+.ma-tag:hover { border-color: var(--green); color: var(--green); }
+.ma-tag.active { background: var(--green-bg); border-color: var(--green); color: var(--green); font-weight: 700; }
 
-    .panel-header {
-      padding: 1.25rem 1.5rem;
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: flex-start; justify-content: space-between;
-      background: var(--surface2);
-    }
-    .panel-ticker { font-size: 1.5rem; font-weight: 700; color: var(--accent); letter-spacing: 0.1em; }
-    .panel-company { font-size: 0.7rem; color: var(--text2); margin-top: 2px; font-family: var(--serif); font-style: italic; }
-    .panel-price { font-size: 1.3rem; font-weight: 700; text-align: right; }
-    .panel-change { font-size: 0.75rem; text-align: right; margin-top: 2px; }
-    .close-btn {
-      position: absolute; top: 1rem; right: 1rem;
-      background: none; border: 1px solid var(--border);
-      color: var(--text2); cursor: pointer;
-      width: 28px; height: 28px; border-radius: 3px;
-      font-size: 0.9rem; display: grid; place-items: center;
-      transition: all 0.15s; font-family: var(--mono);
-    }
-    .close-btn:hover { border-color: var(--accent); color: var(--accent); }
+/* PERIOD ROW */
+.period-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.select-wrap select {
+  padding: 0.35rem 1.8rem 0.35rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.8rem;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a919e' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  transition: border-color 0.15s;
+}
+.select-wrap select:focus { border-color: var(--accent); }
+.btn-reset {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text2);
+  font-family: var(--font);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-reset:hover { border-color: var(--border2); color: var(--text); }
 
-    .panel-body {
-      flex: 1; overflow-y: auto;
-      padding: 1rem 1.5rem;
-    }
-    .panel-body::-webkit-scrollbar { width: 4px; }
-    .panel-body::-webkit-scrollbar-track { background: transparent; }
-    .panel-body::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+/* STATS BAR */
+.stats-row {
+  display: flex; align-items: center; gap: 1.5rem;
+  padding: 0.6rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.78rem;
+  color: var(--text3);
+  flex-wrap: wrap;
+}
+.stat-pill { display: flex; align-items: center; gap: 0.3rem; }
+.stat-pill strong { color: var(--text); font-weight: 600; }
+.stat-pill.bull strong { color: var(--green); }
+.stat-pill.bear strong { color: var(--red); }
+.stat-pill.above strong { color: var(--accent); }
 
-    .section-title {
-      font-size: 0.6rem; letter-spacing: 0.2em;
-      color: var(--text3);
-      text-transform: uppercase;
-      margin: 1.25rem 0 0.6rem;
-      padding-bottom: 0.3rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .section-title:first-child { margin-top: 0; }
+/* TABLE */
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+thead th {
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text2);
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  background: var(--bg2);
+  transition: color 0.15s;
+}
+thead th:hover { color: var(--text); }
+thead th.sort-asc::after { content: ' ↑'; color: var(--accent); }
+thead th.sort-desc::after { content: ' ↓'; color: var(--accent); }
+thead th:first-child { padding-left: 1.25rem; }
 
-    /* INDICATOR ROWS */
-    .ind-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem;
-    }
-    .ind-item {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 0.5rem 0.65rem;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .ind-name { font-size: 0.62rem; color: var(--text3); }
-    .ind-value { font-size: 0.72rem; font-weight: 700; }
-    .ind-signal { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.05em; }
-    .sig-bull { color: var(--accent); }
-    .sig-bear { color: var(--red); }
-    .sig-neu { color: var(--yellow); }
+tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.1s;
+}
+tbody tr:hover { background: var(--bg2); }
+tbody tr:last-child { border-bottom: none; }
+tbody td {
+  padding: 0.55rem 0.75rem;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+tbody td:first-child { padding-left: 1.25rem; }
 
-    /* SIGNAL SUMMARY BAR */
-    .signal-summary {
-      display: flex; gap: 0; border: 1px solid var(--border);
-      border-radius: 4px; overflow: hidden;
-      margin-bottom: 0.75rem;
-    }
-    .sig-seg {
-      flex: 1; padding: 0.5rem; text-align: center; font-size: 0.62rem;
-    }
-    .sig-seg .num { font-size: 1rem; font-weight: 700; display: block; }
-    .sig-seg.bull-seg { background: rgba(61,255,143,0.08); color: var(--accent); }
-    .sig-seg.bear-seg { background: rgba(255,77,109,0.08); color: var(--red); }
-    .sig-seg.neu-seg { background: rgba(255,209,102,0.06); color: var(--yellow); }
+.td-no { color: var(--text3); font-size: 0.72rem; width: 32px; }
+.td-ticker {
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--accent);
+}
+.td-company {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text2);
+  font-size: 0.75rem;
+}
+.td-price { font-family: var(--mono); font-weight: 600; }
+.td-pct { font-family: var(--mono); font-size: 0.75rem; font-weight: 600; }
+.td-val { font-family: var(--mono); font-size: 0.75rem; }
+.td-ind { font-family: var(--mono); font-size: 0.75rem; }
 
-    /* MACD / RSI BAR */
-    .gauge-row {
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: 4px; padding: 0.6rem 0.75rem;
-      margin-bottom: 0.4rem;
-    }
-    .gauge-top { display: flex; justify-content: space-between; font-size: 0.62rem; color: var(--text3); margin-bottom: 0.3rem; }
-    .gauge-bar { height: 4px; background: var(--border); border-radius: 2px; position: relative; overflow: hidden; }
-    .gauge-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
-    .rsi-fill { background: var(--accent); }
-    .stoch-fill { background: var(--yellow); }
+.up { color: var(--green); }
+.down { color: var(--red); }
+.neu { color: var(--text3); }
 
-    /* VALUE TABLE */
-    .val-table { width: 100%; font-size: 0.7rem; }
-    .val-table tr { border-bottom: 1px solid rgba(31,48,40,0.4); }
-    .val-table td { padding: 0.4rem 0.1rem; }
-    .val-table td:first-child { color: var(--text3); }
-    .val-table td:last-child { text-align: right; font-weight: 700; }
+/* BADGE */
+.badge {
+  display: inline-flex; align-items: center;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  line-height: 1.6;
+}
+.badge-bull { background: var(--green-bg); color: var(--green); }
+.badge-bear { background: var(--red-bg); color: var(--red); }
+.badge-neu { background: var(--bg3); color: var(--text3); }
 
-    /* LOADING SPINNER */
-    .spinner {
-      width: 24px; height: 24px;
-      border: 2px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.6s linear infinite;
-      margin: 2rem auto;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+/* MA CELL badges */
+.ma-cell { display: flex; gap: 2px; flex-wrap: wrap; }
+.ma-pip {
+  width: 18px; height: 18px;
+  border-radius: 3px;
+  font-size: 0.58rem;
+  font-weight: 700;
+  display: grid; place-items: center;
+  font-family: var(--mono);
+}
+.ma-pip.above { background: var(--green-bg); color: var(--green); }
+.ma-pip.below { background: var(--red-bg); color: var(--red); }
 
-    /* TOAST */
-    .toast {
-      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
-      background: var(--surface2); border: 1px solid var(--border2);
-      color: var(--text); font-size: 0.72rem;
-      padding: 0.5rem 1rem; border-radius: 4px;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.3s; z-index: 9999;
-    }
-    .toast.show { opacity: 1; }
+/* RSI gauge */
+.rsi-wrap { display: flex; align-items: center; gap: 0.4rem; }
+.rsi-bar { width: 50px; height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; flex-shrink: 0; }
+.rsi-fill { height: 100%; border-radius: 2px; }
 
-    /* PROGRESS */
-    .progress-bar {
-      position: fixed; top: 0; left: 0; height: 2px;
-      background: var(--accent);
-      transition: width 0.2s ease;
-      z-index: 999;
-      box-shadow: 0 0 8px var(--accent-glow);
-    }
+/* EMPTY / ERROR */
+.table-empty {
+  padding: 3rem; text-align: center;
+  color: var(--text3); font-size: 0.85rem;
+}
+.table-empty .icon { font-size: 2rem; margin-bottom: 0.5rem; }
 
-    /* REFRESH BTN */
-    .refresh-btn {
-      padding: 0.35rem 0.75rem;
-      background: var(--accent-dim);
-      border: 1px solid var(--accent);
-      border-radius: 3px;
-      color: var(--accent);
-      font-family: var(--mono);
-      font-size: 0.65rem;
-      cursor: pointer;
-      letter-spacing: 0.1em;
-      transition: all 0.15s;
-    }
-    .refresh-btn:hover { background: var(--accent); color: var(--bg); }
-    .refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+/* SKELETON */
+@keyframes skeleton { 0%{opacity:0.5} 50%{opacity:1} 100%{opacity:0.5} }
+.skel { animation: skeleton 1.2s infinite; background: var(--bg3); border-radius: 3px; display: inline-block; height: 12px; }
 
-    @media (max-width: 768px) {
-      .detail-panel { width: 100%; }
-      .table-area.panel-open { margin-right: 0; }
-      header { padding: 1rem; }
-      .stats-bar .stat-item:not(:nth-child(-n+3)) { display: none; }
-    }
-  </style>
+/* TOAST */
+.toast-wrap {
+  position: fixed; bottom: 1.5rem; right: 1.5rem;
+  display: flex; flex-direction: column; gap: 0.4rem;
+  z-index: 999;
+}
+.toast {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.6rem 1rem;
+  font-size: 0.8rem;
+  color: var(--text);
+  box-shadow: var(--shadow-md);
+  transform: translateX(110%);
+  transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+  max-width: 300px;
+}
+.toast.show { transform: translateX(0); }
+.toast.success { border-left: 3px solid var(--green); }
+.toast.error { border-left: 3px solid var(--red); }
+.toast.info { border-left: 3px solid var(--accent); }
+
+/* FETCH STATUS */
+.fetch-status {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.78rem; color: var(--text2);
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.fetch-status span.highlight { color: var(--accent); font-weight: 600; font-family: var(--mono); }
+
+/* No data banner */
+.no-data-banner {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  border: 1px dashed var(--border2);
+  border-radius: var(--radius);
+  text-align: center;
+  color: var(--text3);
+  background: var(--bg);
+}
+.no-data-banner strong { display: block; color: var(--text); font-size: 0.9rem; margin-bottom: 0.4rem; }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .topbar-meta { display: none; }
+  .container { padding: 1rem; }
+}
+@media (max-width: 600px) {
+  .topbar { padding: 0 1rem; }
+  .topbar-brand span { display: none; }
+}
+</style>
 </head>
 <body>
 
-<div class="progress-bar" id="progressBar" style="width:0%"></div>
-<div class="toast" id="toast"></div>
-
-<header>
-  <div class="logo">
-    <div class="logo-mark">ISSI</div>
-    <div>
-      <div class="logo-text">SYARIAH SCREENER</div>
-      <div class="logo-sub">IDX SHARIAH STOCK INDEX</div>
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-brand">
+    <div class="brand-icon">IDX</div>
+    <span>ISSI Screener</span>
+  </div>
+  <div class="topbar-meta">
+    <div class="meta-item">
+      <span class="meta-dot idle" id="statusDot"></span>
+      <span id="statusText">Belum ada data</span>
+    </div>
+    <div class="meta-item" id="lastFetchWrap" style="display:none">
+      <span>🕐</span>
+      <span id="lastFetchTime">—</span>
     </div>
   </div>
-  <div class="header-right">
-    <span><span class="status-dot"></span><span id="statusText">Memuat data...</span></span>
-    <span class="last-update" id="lastUpdate">—</span>
+  <div class="topbar-right">
+    <button class="btn-icon" id="darkToggle" onclick="toggleDark()" title="Toggle Dark Mode">
+      <span id="darkIcon">🌙</span> <span id="darkLabel">Dark</span>
+    </button>
+    <button class="btn-fetch" id="fetchBtn" onclick="startFetch()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+      Ambil Data Saham
+    </button>
   </div>
 </header>
 
-<div class="stats-bar" id="statsBar">
-  <div class="stat-item"><div class="stat-label">TOTAL SAHAM</div><div class="stat-value neutral" id="statTotal">—</div></div>
-  <div class="stat-item"><div class="stat-label">DI ATAS EMA ALL</div><div class="stat-value" id="statAboveAll">—</div></div>
-  <div class="stat-item"><div class="stat-label">BULLISH SIGNAL</div><div class="stat-value" id="statBull">—</div></div>
-  <div class="stat-item"><div class="stat-label">BEARISH SIGNAL</div><div class="stat-value" style="color:var(--red)" id="statBear">—</div></div>
-  <div class="stat-item"><div class="stat-label">DIPROSES</div><div class="stat-value neutral" id="statProcessed">—</div></div>
-</div>
+<div class="progress-wrap"><div class="progress-fill" id="progressFill"></div></div>
 
-<main>
-  <div class="table-area" id="tableArea">
-    <div class="filter-bar">
-      <span class="filter-label">FILTER:</span>
-      <input class="search-box" id="searchBox" placeholder="Cari ticker..." type="text">
-      <button class="filter-tag active" id="filterAll" onclick="setFilter('all')">Semua</button>
-      <button class="filter-tag" id="filterAbove" onclick="setFilter('above')">↑ Di atas EMA3/5/10/20</button>
-      <button class="filter-tag" id="filterBull" onclick="setFilter('bull')">▲ Bullish Dominan</button>
-      <button class="filter-tag" id="filterBear" onclick="setFilter('bear')">▼ Bearish Dominan</button>
-      <button class="refresh-btn" id="refreshBtn" onclick="startScreening()">↻ Refresh</button>
-      <span class="count-badge">Menampilkan <span id="countShown">—</span> saham</span>
+<div class="container">
+
+  <!-- SEARCH -->
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-body">
+      <div class="search-wrap">
+        <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="search-input" id="searchInput" placeholder="Cari ticker atau nama perusahaan..." type="text" oninput="applyFilters()">
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="card" style="margin-bottom:1rem">
+
+    <!-- FILTER SINYAL -->
+    <div class="filter-section">
+      <div class="filter-label">Filter Sinyal</div>
+      <div class="tag-group">
+        <span class="tag active" id="sig-all" onclick="setSig('all')">Semua</span>
+        <span class="tag" id="sig-bull" onclick="setSig('bull')">▲ Bullish Dominan</span>
+        <span class="tag" id="sig-bear" onclick="setSig('bear')">▼ Bearish Dominan</span>
+        <span class="tag" id="sig-above4" onclick="setSig('above4')">↑ Di atas EMA3/5/10/20</span>
+        <span class="tag" id="sig-rsi-ob" onclick="setSig('rsi-ob')">RSI Overbought (>70)</span>
+        <span class="tag" id="sig-rsi-os" onclick="setSig('rsi-os')">RSI Oversold (&lt;30)</span>
+      </div>
     </div>
 
-    <div class="table-wrap">
+    <!-- FILTER MA -->
+    <div class="filter-section" style="border-bottom:none">
+      <div class="filter-label">Filter Moving Average (harga tutup <em>di atas</em> MA)</div>
+      <div class="ma-filter-grid" id="maFilters">
+        <span class="ma-tag" id="maf-ema3" onclick="toggleMA('ema3')">EMA 3</span>
+        <span class="ma-tag" id="maf-ema5" onclick="toggleMA('ema5')">EMA 5</span>
+        <span class="ma-tag" id="maf-ema10" onclick="toggleMA('ema10')">EMA 10</span>
+        <span class="ma-tag" id="maf-ema20" onclick="toggleMA('ema20')">EMA 20</span>
+        <span class="ma-tag" id="maf-sma50" onclick="toggleMA('sma50')">SMA 50</span>
+        <span class="ma-tag" id="maf-sma100" onclick="toggleMA('sma100')">SMA 100</span>
+        <span class="ma-tag" id="maf-sma200" onclick="toggleMA('sma200')">SMA 200</span>
+        <span class="btn-reset" style="font-size:0.72rem;padding:0.2rem 0.5rem" onclick="resetMAFilters()">Reset MA</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TABLE CARD -->
+  <div class="card" id="mainCard">
+
+    <!-- STATS -->
+    <div class="stats-row" id="statsRow" style="display:none">
+      <span class="stat-pill">Total: <strong id="st-total">0</strong></span>
+      <span class="stat-pill">Tampil: <strong id="st-shown">0</strong></span>
+      <span class="stat-pill bull">Bullish: <strong id="st-bull">0</strong></span>
+      <span class="stat-pill bear">Bearish: <strong id="st-bear">0</strong></span>
+      <span class="stat-pill above">Di atas EMA4: <strong id="st-above">0</strong></span>
+    </div>
+
+    <!-- FETCH STATUS DURING LOADING -->
+    <div class="fetch-status" id="fetchStatus" style="display:none">
+      <span id="fetchStatusText">Memproses saham...</span>
+    </div>
+
+    <div class="table-scroll">
       <table id="mainTable">
         <thead>
           <tr>
-            <th onclick="sortTable('ticker')">TICKER</th>
-            <th onclick="sortTable('price')">HARGA</th>
-            <th onclick="sortTable('pct')">%CHG</th>
-            <th>EMA3</th>
-            <th>EMA5</th>
-            <th>EMA10</th>
-            <th>EMA20</th>
-            <th onclick="sortTable('signals')">SINYAL</th>
-            <th onclick="sortTable('value')">NILAI TRX</th>
-            <th onclick="sortTable('avgVol')">AVG 5D VOL</th>
+            <th class="td-no">NO</th>
+            <th onclick="sortBy('ticker')">TICKER</th>
+            <th onclick="sortBy('company')">NAMA</th>
+            <th onclick="sortBy('price')">HARGA</th>
+            <th onclick="sortBy('pct')">% CHG</th>
+            <th title="EMA3 EMA5 EMA10 EMA20 SMA50 SMA100 SMA200">MA SINYAL</th>
+            <th onclick="sortBy('rsi')">RSI(14)</th>
+            <th onclick="sortBy('stochRsi')">Stoch RSI</th>
+            <th onclick="sortBy('atr')">ATR(14)</th>
+            <th onclick="sortBy('adr')">ADR%</th>
+            <th onclick="sortBy('lastValue')">TRX HARI INI</th>
+            <th onclick="sortBy('avg20Value')">AVG TRX 20H</th>
+            <th onclick="sortBy('pct1avg20')">1% AVG 20H</th>
           </tr>
         </thead>
         <tbody id="tableBody">
-          <tr><td colspan="10"><div class="table-msg"><div class="icon">⟳</div>Memulai screening...</div></td></tr>
+          <tr><td colspan="13"><div class="table-empty"><div class="icon">📊</div>Klik "Ambil Data Saham" untuk memulai screening</div></td></tr>
         </tbody>
       </table>
     </div>
+
   </div>
 
-  <!-- DETAIL PANEL -->
-  <div class="detail-panel" id="detailPanel">
-    <div class="panel-header">
-      <div>
-        <div class="panel-ticker" id="panelTicker">—</div>
-        <div class="panel-company" id="panelCompany">—</div>
-      </div>
-      <div style="text-align:right">
-        <div class="panel-price" id="panelPrice">—</div>
-        <div class="panel-change" id="panelChange">—</div>
-      </div>
-      <button class="close-btn" onclick="closePanel()">✕</button>
-    </div>
-    <div class="panel-body" id="panelBody">
-      <div class="spinner"></div>
-    </div>
+  <div style="font-size:0.7rem;color:var(--text3);text-align:center;margin-top:0.75rem;padding-bottom:1.5rem">
+    ⚠️ Data dari Yahoo Finance. Bukan rekomendasi investasi. Gunakan untuk referensi analisis mandiri.
   </div>
-</main>
+</div>
+
+<!-- TOAST -->
+<div class="toast-wrap" id="toastWrap"></div>
 
 <script>
-// ============================================================
-// DATA & STATE
-// ============================================================
-const ISSI_TICKERS = ["AADI","AALI","ABMM","ACES","ACST","ADCP","ADES","ADHI","ADMG","ADMR","ADRO","AGAR","AGII","AIMS","AISA","AKKU","AKPI","AKRA","AKSI","ALDO","ALKA","AMAN","AMFG","AMIN","ANDI","ANJT","ANTM","APII","APLI","APLN","ARCI","AREA","ARGO","ARII","ARNA","ARTA","ASGR","ASHA","ASII","ASLC","ASLI","ASPI","ASRI","ASSA","ATAP","ATIC","ATLA","AUTO","AVIA","AWAN","AXIO","AYAM","AYLS","BABY","BAIK","BANK","BAPI","BATA","BATR","BAUT","BAYU","BBRM","BBSS","BCIP","BDKR","BEEF","BELI","BELL","BESS","BEST","BIKE","BINO","BIPP","BIRD","BISI","BKDP","BKSL","BLES","BLOG","BLTA","BLTZ","BLUE","BMHS","BMSR","BMTR","BNBR","BOAT","BOBA","BOGA","BOLA","BOLT","BRAM","BRIS","BRMS","BRNA","BRPT","BRRC","BSBK","BSDE","BSML","BSSR","BTPS","BUAH","BUKK","BULL","BUMI","BUVA","BYAN","CAKK","CAMP","CANI","CARE","CASS","CBDK","CBPE","CBRE","CCSI","CEKA","CGAS","CHEK","CHEM","CINT","CITA","CITY","CLEO","CLPI","CMNP","CMPP","CMRY","CNKO","CNMA","COAL","CPIN","CPRO","CRAB","CRSN","CSAP","CSIS","CSMI","CSRA","CTBN","CTRA","CYBR","DAAZ","DADA","DATA","DAYA","DCII","DEFI","DEPO","DEWA","DEWI","DGIK","DGNS","DGWG","DILD","DIVA","DKFT","DKHH","DMAS","DMMX","DMND","DOOH","DOSS","DRMA","DSFI","DSNG","DSSA","DUTI","DVLA","DWGL","DYAN","EAST","ECII","EDGE","EKAD","ELIT","ELPI","ELSA","ELTY","EMDE","ENAK","ENRG","EPAC","EPMT","ERAA","ERAL","ESIP","ESSA","ESTA","EXCL","FAST","FASW","FILM","FIRE","FISH","FITT","FMII","FOLK","FOOD","FORE","FPNI","FUTR","FWCT","GDST","GDYR","GEMA","GEMS","GGRP","GHON","GIAA","GJTL","GLVA","GMTD","GOLD","GOLF","GOOD","GPRA","GPSO","GRIA","GRPH","GTBO","GTRA","GTSI","GULA","GUNA","GWSA","GZCO","HADE","HAIS","HALO","HATM","HDIT","HEAL","HERO","HEXA","HGII","HITS","HOKI","HOMI","HOPE","HRME","HRUM","HUMI","HYGN","IATA","IBST","ICBP","ICON","IDPR","IFII","IFSH","IGAR","IIKP","IKAI","IKAN","IKBI","IKPM","IMPC","INCI","INCO","INDF","INDR","INDS","INDX","INDY","INET","INKP","INPP","INTD","INTP","IOTF","IPCC","IPCM","IPOL","IPTV","IRRA","IRSX","ISAT","ISSP","ITMA","ITMG","JAST","JATI","JAWA","JAYA","JECC","JGLE","JIHD","JKON","JMAS","JPFA","JRPT","JSMR","JSPT","JTPE","KAQI","KARW","KBAG","KBLI","KBLM","KDSI","KDTN","KEEN","KEJU","KETR","KIAS","KICI","KIJA","KINO","KIOS","KJEN","KKES","KKGI","KLAS","KLBF","KMDS","KOBX","KOCI","KOIN","KOKA","KONI","KOPI","KOTA","KPIG","KREN","KRYA","KSIX","KUAS","LABA","LABS","LAJU","LAND","LCKM","LION","LIVE","LMPI","LMSH","LPCK","LPIN","LPKR","LPLI","LPPF","LRNA","LSIP","LTLS","LUCK","MAHA","MAIN","MAPA","MAPB","MAPI","MARK","MAXI","MBAP","MBMA","MBTO","MCAS","MCOL","MDIY","MDKA","MDKI","MDLA","MEDC","MEDS","MERI","MERK","META","MFMI","MGNA","MHKI","MICE","MIDI","MIKA","MINA","MINE","MIRA","MITI","MKAP","MKPI","MKTR","MLIA","MLPL","MLPT","MMIX","MMLP","MNCN","MORA","MPIX","MPMX","MPOW","MPPA","MPRO","MRAT","MSIN","MSJA","MSKY","MSTI","MTDL","MTEL","MTFN","MTLA","MTMH","MTPS","MTSM","MUTU","MYOH","MYOR","NAIK","NASA","NASI","NCKL","NELY","NEST","NETV","NFCX","NICE","NICL","NIKL","NPGF","NRCA","NTBK","NZIA","OASA","OBAT","OBMD","OILS","OKAS","OMED","OMRE","PADA","PALM","PAMG","PANI","PANR","PART","PBID","PBSA","PCAR","PDES","PDPP","PEHA","PEVE","PGAS","PGEO","PGLI","PGUN","PICO","PIPA","PJAA","PJHB","PKPK","PLIN","PMJS","PMUI","PNBS","PNGO","PNSE","POLI","POLU","PORT","POWR","PPRE","PPRI","PPRO","PRAY","PRDA","PRIM","PSAB","PSAT","PSDN","PSGO","PSKT","PSSI","PTBA","PTIS","PTMP","PTMR","PTPP","PTPS","PTPW","PTSN","PTSP","PURA","PURI","PWON","PZZA","RAAM","RAFI","RAJA","RALS","RANC","RATU","RBMS","RDTX","RGAS","RIGS","RISE","RMKE","RMKO","ROCK","RODA","RONY","ROTI","RSGK","RUIS","SAFE","SAGE","SAME","SAMF","SAPX","SATU","SBMA","SCCO","SCNP","SCPI","SEMA","SGER","SGRO","SHID","SHIP","SICO","SIDO","SILO","SIMP","SIPD","SKBM","SKLT","SKRN","SLIS","SMAR","SMBR","SMCB","SMDM","SMDR","SMGA","SMGR","SMIL","SMKL","SMLE","SMMT","SMRA","SMSM","SNLK","SOCI","SOHO","SOLA","SONA","SOSS","SOTS","SPMA","SPTO","SRTG","SSIA","SSTM","STAA","STTP","SULI","SUNI","SUPR","SURI","SWID","TALF","TAMA","TAMU","TAPG","TARA","TAXI","TBMS","TCID","TCPI","TEBE","TFAS","TFCO","TGKA","TGUK","TINS","TIRA","TIRT","TKIM","TLDN","TLKM","TMAS","TMPO","TNCA","TOBA","TOOL","TOSK","TOTL","TOTO","TPIA","TPMA","TRIS","TRJA","TRON","TRST","TRUE","TRUK","TSPC","TYRE","UANG","UCID","UFOE","ULTJ","UNIC","UNIQ","UNTR","UNVR","UVCR","VAST","VERN","VICI","VISI","VKTR","VOKS","WAPO","WEGE","WEHA","WINR","WINS","WIRG","WMUU","WOOD","WOWS","WTON","YELO","YPAS","YUPI","ZATA","ZONE","ZYRX"];
+// =============================================
+// CONSTANTS
+// =============================================
+const TICKERS = ["AADI","AALI","ABMM","ACES","ACST","ADCP","ADES","ADHI","ADMG","ADMR","ADRO","AGAR","AGII","AIMS","AISA","AKKU","AKPI","AKRA","AKSI","ALDO","ALKA","AMAN","AMFG","AMIN","ANDI","ANJT","ANTM","APII","APLI","APLN","ARCI","AREA","ARGO","ARII","ARNA","ARTA","ASGR","ASHA","ASII","ASLC","ASLI","ASPI","ASRI","ASSA","ATAP","ATIC","ATLA","AUTO","AVIA","AWAN","AXIO","AYAM","AYLS","BABY","BAIK","BANK","BAPI","BATA","BATR","BAUT","BAYU","BBRM","BBSS","BCIP","BDKR","BEEF","BELI","BELL","BESS","BEST","BIKE","BINO","BIPP","BIRD","BISI","BKDP","BKSL","BLES","BLOG","BLTA","BLTZ","BLUE","BMHS","BMSR","BMTR","BNBR","BOAT","BOBA","BOGA","BOLA","BOLT","BRAM","BRIS","BRMS","BRNA","BRPT","BRRC","BSBK","BSDE","BSML","BSSR","BTPS","BUAH","BUKK","BULL","BUMI","BUVA","BYAN","CAKK","CAMP","CANI","CARE","CASS","CBDK","CBPE","CBRE","CCSI","CEKA","CGAS","CHEK","CHEM","CINT","CITA","CITY","CLEO","CLPI","CMNP","CMPP","CMRY","CNKO","CNMA","COAL","CPIN","CPRO","CRAB","CRSN","CSAP","CSIS","CSMI","CSRA","CTBN","CTRA","CYBR","DAAZ","DADA","DATA","DAYA","DCII","DEFI","DEPO","DEWA","DEWI","DGIK","DGNS","DGWG","DILD","DIVA","DKFT","DKHH","DMAS","DMMX","DMND","DOOH","DOSS","DRMA","DSFI","DSNG","DSSA","DUTI","DVLA","DWGL","DYAN","EAST","ECII","EDGE","EKAD","ELIT","ELPI","ELSA","ELTY","EMDE","ENAK","ENRG","EPAC","EPMT","ERAA","ERAL","ESIP","ESSA","ESTA","EXCL","FAST","FASW","FILM","FIRE","FISH","FITT","FMII","FOLK","FOOD","FORE","FPNI","FUTR","FWCT","GDST","GDYR","GEMA","GEMS","GGRP","GHON","GIAA","GJTL","GLVA","GMTD","GOLD","GOLF","GOOD","GPRA","GPSO","GRIA","GRPH","GTBO","GTRA","GTSI","GULA","GUNA","GWSA","GZCO","HADE","HAIS","HALO","HATM","HDIT","HEAL","HERO","HEXA","HGII","HITS","HOKI","HOMI","HOPE","HRME","HRUM","HUMI","HYGN","IATA","IBST","ICBP","ICON","IDPR","IFII","IFSH","IGAR","IIKP","IKAI","IKAN","IKBI","IKPM","IMPC","INCI","INCO","INDF","INDR","INDS","INDX","INDY","INET","INKP","INPP","INTD","INTP","IOTF","IPCC","IPCM","IPOL","IPTV","IRRA","IRSX","ISAT","ISSP","ITMA","ITMG","JAST","JATI","JAWA","JAYA","JECC","JGLE","JIHD","JKON","JMAS","JPFA","JRPT","JSMR","JSPT","JTPE","KAQI","KARW","KBAG","KBLI","KBLM","KDSI","KDTN","KEEN","KEJU","KETR","KIAS","KICI","KIJA","KINO","KIOS","KJEN","KKES","KKGI","KLAS","KLBF","KMDS","KOBX","KOCI","KOIN","KOKA","KONI","KOPI","KOTA","KPIG","KREN","KRYA","KSIX","KUAS","LABA","LABS","LAJU","LAND","LCKM","LION","LIVE","LMPI","LMSH","LPCK","LPIN","LPKR","LPLI","LPPF","LRNA","LSIP","LTLS","LUCK","MAHA","MAIN","MAPA","MAPB","MAPI","MARK","MAXI","MBAP","MBMA","MBTO","MCAS","MCOL","MDIY","MDKA","MDKI","MDLA","MEDC","MEDS","MERI","MERK","META","MFMI","MGNA","MHKI","MICE","MIDI","MIKA","MINA","MINE","MIRA","MITI","MKAP","MKPI","MKTR","MLIA","MLPL","MLPT","MMIX","MMLP","MNCN","MORA","MPIX","MPMX","MPOW","MPPA","MPRO","MRAT","MSIN","MSJA","MSKY","MSTI","MTDL","MTEL","MTFN","MTLA","MTMH","MTPS","MTSM","MUTU","MYOH","MYOR","NAIK","NASA","NASI","NCKL","NELY","NEST","NETV","NFCX","NICE","NICL","NIKL","NPGF","NRCA","NTBK","NZIA","OASA","OBAT","OBMD","OILS","OKAS","OMED","OMRE","PADA","PALM","PAMG","PANI","PANR","PART","PBID","PBSA","PCAR","PDES","PDPP","PEHA","PEVE","PGAS","PGEO","PGLI","PGUN","PICO","PIPA","PJAA","PJHB","PKPK","PLIN","PMJS","PMUI","PNBS","PNGO","PNSE","POLI","POLU","PORT","POWR","PPRE","PPRI","PPRO","PRAY","PRDA","PRIM","PSAB","PSAT","PSDN","PSGO","PSKT","PSSI","PTBA","PTIS","PTMP","PTMR","PTPP","PTPS","PTPW","PTSN","PTSP","PURA","PURI","PWON","PZZA","RAAM","RAFI","RAJA","RALS","RANC","RATU","RBMS","RDTX","RGAS","RIGS","RISE","RMKE","RMKO","ROCK","RODA","RONY","ROTI","RSGK","RUIS","SAFE","SAGE","SAME","SAMF","SAPX","SATU","SBMA","SCCO","SCNP","SCPI","SEMA","SGER","SGRO","SHID","SHIP","SICO","SIDO","SILO","SIMP","SIPD","SKBM","SKLT","SKRN","SLIS","SMAR","SMBR","SMCB","SMDM","SMDR","SMGA","SMGR","SMIL","SMKL","SMLE","SMMT","SMRA","SMSM","SNLK","SOCI","SOHO","SOLA","SONA","SOSS","SOTS","SPMA","SPTO","SRTG","SSIA","SSTM","STAA","STTP","SULI","SUNI","SUPR","SURI","SWID","TALF","TAMA","TAMU","TAPG","TARA","TAXI","TBMS","TCID","TCPI","TEBE","TFAS","TFCO","TGKA","TGUK","TINS","TIRA","TIRT","TKIM","TLDN","TLKM","TMAS","TMPO","TNCA","TOBA","TOOL","TOSK","TOTL","TOTO","TPIA","TPMA","TRIS","TRJA","TRON","TRST","TRUE","TRUK","TSPC","TYRE","UANG","UCID","UFOE","ULTJ","UNIC","UNIQ","UNTR","UNVR","UVCR","VAST","VERN","VICI","VISI","VKTR","VOKS","WAPO","WEGE","WEHA","WINR","WINS","WIRG","WMUU","WOOD","WOWS","WTON","YELO","YPAS","YUPI","ZATA","ZONE","ZYRX"];
+const STORAGE_KEY = 'issi_screener_v2';
 
-const PROXY = 'https://query1.finance.yahoo.com/v8/finance/chart/';
-const PROXY2 = 'https://query2.finance.yahoo.com/v8/finance/chart/';
-
+// =============================================
+// STATE
+// =============================================
 let allData = [];
-let filteredData = [];
-let currentFilter = 'all';
-let sortCol = 'signals';
+let displayData = [];
+let isFetching = false;
+let sigFilter = 'all';
+let maFilter = new Set();
+let sortCol = 'pct';
 let sortDir = -1;
-let selectedTicker = null;
-let isScreening = false;
 
-// ============================================================
+// =============================================
+// DARK MODE
+// =============================================
+(function initTheme(){
+  const saved = localStorage.getItem('issi_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  updateDarkBtn(saved);
+})();
+
+function toggleDark() {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('issi_theme', next);
+  updateDarkBtn(next);
+}
+function updateDarkBtn(t) {
+  document.getElementById('darkIcon').textContent = t === 'dark' ? '☀️' : '🌙';
+  document.getElementById('darkLabel').textContent = t === 'dark' ? 'Light' : 'Dark';
+}
+
+// =============================================
 // MATH HELPERS
-// ============================================================
-function calcEMA(prices, period) {
-  if (prices.length < period) return null;
-  const k = 2 / (period + 1);
-  let ema = prices.slice(0, period).reduce((a, b) => a + b, 0) / period;
-  for (let i = period; i < prices.length; i++) {
-    ema = prices[i] * k + ema * (1 - k);
+// =============================================
+function ema(arr, p) {
+  if (arr.length < p) return null;
+  const k = 2 / (p + 1);
+  let v = arr.slice(0, p).reduce((a, b) => a + b, 0) / p;
+  for (let i = p; i < arr.length; i++) v = arr[i] * k + v * (1 - k);
+  return v;
+}
+function sma(arr, p) {
+  if (arr.length < p) return null;
+  return arr.slice(-p).reduce((a, b) => a + b, 0) / p;
+}
+function rsi14(arr) {
+  const p = 14;
+  if (arr.length < p + 1) return null;
+  const s = arr.slice(-p - 1);
+  let g = 0, l = 0;
+  for (let i = 1; i < s.length; i++) {
+    const d = s[i] - s[i-1];
+    if (d > 0) g += d; else l -= d;
   }
-  return ema;
+  const ag = g / p, al = l / p;
+  if (al === 0) return 100;
+  return 100 - 100 / (1 + ag / al);
 }
-
-function calcSMA(prices, period) {
-  if (prices.length < period) return null;
-  return prices.slice(-period).reduce((a, b) => a + b, 0) / period;
-}
-
-function calcRSI(prices, period = 14) {
-  if (prices.length < period + 1) return null;
-  const recent = prices.slice(-period - 1);
-  let gains = 0, losses = 0;
-  for (let i = 1; i < recent.length; i++) {
-    const diff = recent[i] - recent[i - 1];
-    if (diff > 0) gains += diff; else losses -= diff;
+function stochRSI(arr, rp=14, sp=14) {
+  if (arr.length < rp + sp + 2) return null;
+  const rArr = [];
+  for (let i = rp; i < arr.length; i++) {
+    const r = rsi14(arr.slice(0, i + 1));
+    if (r !== null) rArr.push(r);
   }
-  const avgGain = gains / period;
-  const avgLoss = losses / period;
-  if (avgLoss === 0) return 100;
-  const rs = avgGain / avgLoss;
-  return 100 - (100 / (1 + rs));
+  if (rArr.length < sp) return null;
+  const recent = rArr.slice(-sp);
+  const mn = Math.min(...recent), mx = Math.max(...recent);
+  if (mx === mn) return 50;
+  return ((rArr[rArr.length-1] - mn) / (mx - mn)) * 100;
 }
-
-function calcStochRSI(prices, rsiPeriod = 14, stochPeriod = 14) {
-  if (prices.length < rsiPeriod + stochPeriod) return null;
-  const rsiVals = [];
-  for (let i = rsiPeriod; i <= prices.length - 1; i++) {
-    rsiVals.push(calcRSI(prices.slice(0, i + 1), rsiPeriod));
+function calcATR(highs, lows, closes, p=14) {
+  if (highs.length < p + 1) return null;
+  const trs = [];
+  for (let i = 1; i < highs.length; i++) {
+    const tr = Math.max(
+      highs[i] - lows[i],
+      Math.abs(highs[i] - closes[i-1]),
+      Math.abs(lows[i] - closes[i-1])
+    );
+    trs.push(tr);
   }
-  if (rsiVals.length < stochPeriod) return null;
-  const recentRSI = rsiVals.slice(-stochPeriod);
-  const minRSI = Math.min(...recentRSI);
-  const maxRSI = Math.max(...recentRSI);
-  if (maxRSI === minRSI) return 50;
-  return ((rsiVals[rsiVals.length - 1] - minRSI) / (maxRSI - minRSI)) * 100;
+  return sma(trs, p);
+}
+function calcADR(highs, lows, p=14) {
+  // Average Daily Range % = avg((H-L)/L) over p days
+  if (highs.length < p) return null;
+  const h = highs.slice(-p), l = lows.slice(-p);
+  let sum = 0;
+  for (let i = 0; i < p; i++) sum += (h[i] - l[i]) / l[i];
+  return (sum / p) * 100;
 }
 
-function calcMACD(prices) {
-  const ema12 = calcEMA(prices, 12);
-  const ema26 = calcEMA(prices, 26);
-  if (!ema12 || !ema26) return { macd: null, signal: null, hist: null };
-  const macd = ema12 - ema26;
-  // Signal line: 9-period EMA of MACD values
-  if (prices.length < 35) return { macd, signal: null, hist: null };
-  const macdSeries = [];
-  for (let i = 26; i <= prices.length; i++) {
-    const e12 = calcEMA(prices.slice(0, i), 12);
-    const e26 = calcEMA(prices.slice(0, i), 26);
-    if (e12 && e26) macdSeries.push(e12 - e26);
-  }
-  const signal = calcEMA(macdSeries, 9);
-  const hist = macdSeries[macdSeries.length - 1] - (signal || 0);
-  return { macd: macdSeries[macdSeries.length - 1], signal, hist };
-}
-
-function signal(val, compare) {
-  if (val === null || compare === null) return 'neutral';
-  return val > compare ? 'bull' : val < compare ? 'bear' : 'neutral';
-}
-
-// ============================================================
-// DATA FETCHING
-// ============================================================
-async function fetchTickerData(ticker) {
-  const symbol = ticker + '.JK';
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1y`;
-  const corsUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
-
+// =============================================
+// FETCH
+// =============================================
+async function fetchOne(ticker) {
+  const sym = ticker + '.JK';
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${sym}?interval=1d&range=1y`;
+  const proxy = `https://corsproxy.io/?${encodeURIComponent(url)}`;
   try {
-    const res = await fetch(corsUrl, { signal: AbortSignal.timeout(8000) });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const json = await res.json();
-    const result = json?.chart?.result?.[0];
-    if (!result) throw new Error('No result');
+    const res = await fetch(proxy, { signal: AbortSignal.timeout(9000) });
+    if (!res.ok) throw new Error(res.status);
+    const j = await res.json();
+    const r = j?.chart?.result?.[0];
+    if (!r) throw new Error('no result');
+    const meta = r.meta;
+    const q = r.indicators?.quote?.[0] || {};
+    const closes = (q.close || []).filter(x => x != null && !isNaN(x));
+    const highs  = (q.high  || []).filter(x => x != null && !isNaN(x));
+    const lows   = (q.low   || []).filter(x => x != null && !isNaN(x));
+    const vols   = (q.volume|| []).filter(x => x != null && !isNaN(x));
+    if (closes.length < 20) throw new Error('insufficient');
 
-    const meta = result.meta;
-    const timestamps = result.timestamp || [];
-    const quotes = result.indicators?.quote?.[0] || {};
-    const closes = quotes.close || [];
-    const volumes = quotes.volume || [];
-    const highs = quotes.high || [];
-    const lows = quotes.low || [];
+    const last = closes.at(-1);
+    const prev = closes.at(-2) ?? last;
+    const pct  = ((last - prev) / prev) * 100;
+    const e3   = ema(closes, 3);
+    const e5   = ema(closes, 5);
+    const e10  = ema(closes, 10);
+    const e20  = ema(closes, 20);
+    const s50  = sma(closes, 50);
+    const s100 = sma(closes, 100);
+    const s200 = sma(closes, 200);
+    const rsiVal  = rsi14(closes);
+    const stochVal = stochRSI(closes);
+    const atr  = calcATR(highs, lows, closes, 14);
+    const adr  = calcADR(highs, lows, 14);
 
-    // Filter valid closes
-    const validCloses = closes.filter(c => c !== null && c !== undefined && !isNaN(c));
-    if (validCloses.length < 20) throw new Error('Insufficient data');
+    const lastVol = vols.at(-1) ?? 0;
+    const lastValue = lastVol * last;
+    const avg20Vol  = vols.length >= 20 ? vols.slice(-20).reduce((a,b)=>a+b,0)/20 : lastVol;
+    const avg20Value = avg20Vol * last;
+    const pct1avg20 = avg20Value * 0.01;
 
-    const lastClose = validCloses[validCloses.length - 1];
-    const prevClose = validCloses.length > 1 ? validCloses[validCloses.length - 2] : lastClose;
-    const pctChange = ((lastClose - prevClose) / prevClose) * 100;
+    // MA above/below
+    const maStatus = {
+      ema3: last > e3, ema5: last > e5, ema10: last > e10, ema20: last > e20,
+      sma50: last > s50, sma100: last > s100, sma200: last > s200
+    };
 
-    // EMAs
-    const ema3 = calcEMA(validCloses, 3);
-    const ema5 = calcEMA(validCloses, 5);
-    const ema10 = calcEMA(validCloses, 10);
-    const ema20 = calcEMA(validCloses, 20);
-    const sma50 = calcSMA(validCloses, 50);
-    const sma100 = calcSMA(validCloses, 100);
-    const sma200 = calcSMA(validCloses, 200);
-
-    // Indicators
-    const rsi = calcRSI(validCloses, 14);
-    const stochRsi = calcStochRSI(validCloses);
-    const { macd, signal: macdSignal, hist: macdHist } = calcMACD(validCloses);
-
-    // Above EMA check
-    const aboveEma3 = lastClose > ema3;
-    const aboveEma5 = lastClose > ema5;
-    const aboveEma10 = lastClose > ema10;
-    const aboveEma20 = lastClose > ema20;
-    const aboveAll = aboveEma3 && aboveEma5 && aboveEma10 && aboveEma20;
-
-    // Volume / value
-    const validVols = volumes.filter(v => v !== null && !isNaN(v));
-    const lastVol = validVols[validVols.length - 1] || 0;
-    const lastValue = lastVol * lastClose;
-    const onePercentValue = lastValue * 0.01;
-
-    const avg3Vol = validVols.length >= 3 ? validVols.slice(-3).reduce((a, b) => a + b, 0) / 3 : lastVol;
-    const avg5Vol = validVols.length >= 5 ? validVols.slice(-5).reduce((a, b) => a + b, 0) / 5 : lastVol;
-    const avg20Vol = validVols.length >= 20 ? validVols.slice(-20).reduce((a, b) => a + b, 0) / 20 : lastVol;
-
-    const avg3Value = avg3Vol * lastClose;
-    const avg5Value = avg5Vol * lastClose;
-    const avg20Value = avg20Vol * lastClose;
-
-    // Signal count
-    let bullCount = 0, bearCount = 0, neuCount = 0;
-    const sigsList = [
-      signal(lastClose, ema3), signal(lastClose, ema5), signal(lastClose, ema10), signal(lastClose, ema20),
-      signal(lastClose, sma50), signal(lastClose, sma100), signal(lastClose, sma200),
-      rsi ? (rsi > 50 ? 'bull' : rsi < 50 ? 'bear' : 'neutral') : 'neutral',
-      stochRsi ? (stochRsi > 50 ? 'bull' : stochRsi < 50 ? 'bear' : 'neutral') : 'neutral',
-      macd && macdSignal ? (macd > macdSignal ? 'bull' : macd < macdSignal ? 'bear' : 'neutral') : 'neutral',
-    ];
-    sigsList.forEach(s => { if (s === 'bull') bullCount++; else if (s === 'bear') bearCount++; else neuCount++; });
-
-    const company = meta.longName || meta.shortName || ticker;
+    // Bull/Bear count (7 MA + RSI + StochRSI)
+    let bull = 0, bear = 0;
+    Object.values(maStatus).forEach(v => { if(v===true) bull++; else if(v===false) bear++; });
+    if (rsiVal !== null) { if(rsiVal>50) bull++; else bear++; }
+    if (stochVal !== null) { if(stochVal>50) bull++; else bear++; }
 
     return {
-      ticker, company, lastClose, prevClose, pctChange,
-      ema3, ema5, ema10, ema20, sma50, sma100, sma200,
-      aboveEma3, aboveEma5, aboveEma10, aboveEma20, aboveAll,
-      rsi, stochRsi, macd, macdSignal, macdHist,
-      lastVol, lastValue, onePercentValue,
-      avg3Value, avg5Value, avg20Value,
-      bullCount, bearCount, neuCount,
-      signals: bullCount - bearCount,
-      validCloses, timestamps
+      ticker,
+      company: meta.longName || meta.shortName || ticker,
+      price: last, pct,
+      e3, e5, e10, e20, s50, s100, s200,
+      maStatus, aboveAll4: maStatus.ema3 && maStatus.ema5 && maStatus.ema10 && maStatus.ema20,
+      rsi: rsiVal, stochRsi: stochVal, atr, adr,
+      lastValue, avg20Value, pct1avg20,
+      bull, bear
     };
-  } catch (e) {
-    return null;
-  }
+  } catch { return null; }
 }
 
-// ============================================================
-// BATCH PROCESSING
-// ============================================================
-async function startScreening() {
-  if (isScreening) return;
-  isScreening = true;
-  allData = [];
-  filteredData = [];
-
-  const btn = document.getElementById('refreshBtn');
+async function startFetch() {
+  if (isFetching) return;
+  isFetching = true;
+  const btn = document.getElementById('fetchBtn');
   btn.disabled = true;
-  btn.textContent = '⟳ Loading...';
-  document.getElementById('statusText').textContent = 'Mengambil data pasar...';
+  btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 0.7s linear infinite"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg> Mengambil...`;
 
-  setProgress(5);
-  renderTable([]);
+  const style = document.createElement('style');
+  style.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+  document.head.appendChild(style);
 
+  setProgress(3);
+  setDot('loading');
+  document.getElementById('fetchStatus').style.display = 'flex';
+  document.getElementById('statsRow').style.display = 'flex';
+
+  allData = [];
   const BATCH = 8;
-  const total = ISSI_TICKERS.length;
-  let processed = 0;
-  let failed = 0;
+  const total = TICKERS.length;
+  let done = 0;
 
-  for (let i = 0; i < ISSI_TICKERS.length; i += BATCH) {
-    const batch = ISSI_TICKERS.slice(i, i + BATCH);
-    const results = await Promise.allSettled(batch.map(t => fetchTickerData(t)));
-
-    results.forEach(r => {
-      if (r.status === 'fulfilled' && r.value !== null) {
-        allData.push(r.value);
-      } else {
-        failed++;
-      }
-      processed++;
-    });
-
-    const pct = 5 + Math.round((processed / total) * 90);
+  for (let i = 0; i < total; i += BATCH) {
+    const chunk = TICKERS.slice(i, i + BATCH);
+    const results = await Promise.allSettled(chunk.map(t => fetchOne(t)));
+    results.forEach(r => { if (r.status === 'fulfilled' && r.value) allData.push(r.value); done++; });
+    const pct = 3 + Math.round((done / total) * 94);
     setProgress(pct);
-    document.getElementById('statusText').textContent = `Memproses ${processed}/${total} saham...`;
-    document.getElementById('statProcessed').textContent = processed + '/' + total;
+    document.getElementById('fetchStatusText').innerHTML =
+      `Memproses <span class="highlight">${done}/${total}</span> saham ISSI... berhasil: <span class="highlight">${allData.length}</span>`;
     updateStats();
-    applyFilter();
-    renderTable(filteredData);
-    await new Promise(r => setTimeout(r, 50));
+    applyFilters();
+    renderTable();
+    await delay(40);
   }
+
+  // Persist
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: allData, ts: Date.now() }));
+  } catch(e) {}
 
   setProgress(100);
-  isScreening = false;
+  isFetching = false;
   btn.disabled = false;
-  btn.textContent = '↻ Refresh';
-  document.getElementById('statusText').textContent = `Selesai — ${allData.length} saham berhasil`;
-  document.getElementById('lastUpdate').textContent = 'Update: ' + new Date().toLocaleTimeString('id-ID');
-  updateStats();
-  applyFilter();
-  renderTable(filteredData);
-  setTimeout(() => setProgress(0), 1000);
+  btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg> Ambil Data Saham`;
+  setDot('done');
+  document.getElementById('fetchStatus').style.display = 'none';
+  document.getElementById('lastFetchWrap').style.display = 'flex';
+  document.getElementById('lastFetchTime').textContent = 'Diperbarui: ' + new Date().toLocaleString('id-ID');
+  document.getElementById('statusText').textContent = `${allData.length} saham berhasil dimuat`;
+  toast(`${allData.length} saham berhasil diproses`, 'success');
+  setTimeout(() => setProgress(0), 800);
 }
 
-function setProgress(pct) {
-  document.getElementById('progressBar').style.width = pct + '%';
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+function setProgress(p) { document.getElementById('progressFill').style.width = p + '%'; }
+function setDot(state) {
+  const d = document.getElementById('statusDot');
+  d.className = 'meta-dot';
+  if (state === 'loading') d.classList.add('loading');
+  if (state === 'idle') d.classList.add('idle');
 }
 
-// ============================================================
+// =============================================
+// LOAD FROM STORAGE
+// =============================================
+window.addEventListener('load', () => {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed.data && parsed.data.length > 0) {
+        allData = parsed.data;
+        const ago = timeAgo(parsed.ts);
+        document.getElementById('statusText').textContent = `${allData.length} saham (cache ${ago})`;
+        document.getElementById('lastFetchWrap').style.display = 'flex';
+        document.getElementById('lastFetchTime').textContent = 'Cache: ' + new Date(parsed.ts).toLocaleString('id-ID');
+        document.getElementById('statsRow').style.display = 'flex';
+        setDot('idle');
+        updateStats();
+        applyFilters();
+        renderTable();
+        toast(`Data cache dimuat: ${allData.length} saham`, 'info');
+        return;
+      }
+    }
+  } catch(e) {}
+  setDot('idle');
+  document.getElementById('statusText').textContent = 'Belum ada data — klik "Ambil Data Saham"';
+});
+
+function timeAgo(ts) {
+  const diff = Date.now() - ts;
+  const h = Math.floor(diff / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  if (h > 0) return `${h}j ${m}m lalu`;
+  return `${m}m lalu`;
+}
+
+// =============================================
 // FILTER & SORT
-// ============================================================
-function setFilter(f) {
-  currentFilter = f;
-  ['filterAll', 'filterAbove', 'filterBull', 'filterBear'].forEach(id => {
-    document.getElementById(id).classList.remove('active');
+// =============================================
+function setSig(f) {
+  sigFilter = f;
+  ['all','bull','bear','above4','rsi-ob','rsi-os'].forEach(s => {
+    document.getElementById('sig-'+s).classList.toggle('active', s === f);
   });
-  const map = { all: 'filterAll', above: 'filterAbove', bull: 'filterBull', bear: 'filterBear' };
-  document.getElementById(map[f]).classList.add('active');
-  applyFilter();
-  renderTable(filteredData);
+  applyFilters(); renderTable();
+}
+function toggleMA(key) {
+  if (maFilter.has(key)) maFilter.delete(key);
+  else maFilter.add(key);
+  document.getElementById('maf-'+key).classList.toggle('active', maFilter.has(key));
+  applyFilters(); renderTable();
+}
+function resetMAFilters() {
+  maFilter.clear();
+  ['ema3','ema5','ema10','ema20','sma50','sma100','sma200'].forEach(k =>
+    document.getElementById('maf-'+k).classList.remove('active')
+  );
+  applyFilters(); renderTable();
 }
 
-function applyFilter() {
-  const search = document.getElementById('searchBox').value.toUpperCase();
-  let data = [...allData];
-  if (search) data = data.filter(d => d.ticker.includes(search));
-  if (currentFilter === 'above') data = data.filter(d => d.aboveAll);
-  if (currentFilter === 'bull') data = data.filter(d => d.bullCount > d.bearCount);
-  if (currentFilter === 'bear') data = data.filter(d => d.bearCount > d.bullCount);
-
-  // Sort
-  data.sort((a, b) => {
-    let va = a[sortCol] ?? 0;
-    let vb = b[sortCol] ?? 0;
-    if (sortCol === 'ticker') { va = a.ticker; vb = b.ticker; }
-    if (typeof va === 'string') return va.localeCompare(vb) * sortDir;
+function applyFilters() {
+  const q = document.getElementById('searchInput').value.trim().toUpperCase();
+  let d = [...allData];
+  if (q) d = d.filter(x => x.ticker.includes(q) || (x.company||'').toUpperCase().includes(q));
+  if (sigFilter === 'bull') d = d.filter(x => x.bull > x.bear);
+  if (sigFilter === 'bear') d = d.filter(x => x.bear > x.bull);
+  if (sigFilter === 'above4') d = d.filter(x => x.aboveAll4);
+  if (sigFilter === 'rsi-ob') d = d.filter(x => x.rsi !== null && x.rsi > 70);
+  if (sigFilter === 'rsi-os') d = d.filter(x => x.rsi !== null && x.rsi < 30);
+  maFilter.forEach(key => { d = d.filter(x => x.maStatus && x.maStatus[key] === true); });
+  d.sort((a, b) => {
+    let va = a[sortCol] ?? 0, vb = b[sortCol] ?? 0;
+    if (sortCol === 'ticker' || sortCol === 'company') {
+      va = String(va); vb = String(vb);
+      return va.localeCompare(vb) * sortDir;
+    }
     return (va - vb) * sortDir;
   });
-  filteredData = data;
-  document.getElementById('countShown').textContent = data.length;
+  displayData = d;
+  document.getElementById('st-shown').textContent = d.length;
 }
 
-function sortTable(col) {
-  if (sortCol === col) sortDir *= -1;
-  else { sortCol = col; sortDir = -1; }
-  document.querySelectorAll('thead th').forEach(th => th.classList.remove('sort-asc', 'sort-desc'));
-  const colIdx = { ticker: 0, price: 1, pct: 2, signals: 7, value: 8, avgVol: 9 };
-  const th = document.querySelectorAll('thead th')[colIdx[col]];
-  if (th) th.classList.add(sortDir === 1 ? 'sort-asc' : 'sort-desc');
-  applyFilter();
-  renderTable(filteredData);
+function sortBy(col) {
+  if (sortCol === col) sortDir *= -1; else { sortCol = col; sortDir = -1; }
+  document.querySelectorAll('thead th').forEach(th => th.classList.remove('sort-asc','sort-desc'));
+  const thMap = { ticker:1, company:2, price:3, pct:4, rsi:6, stochRsi:7, atr:8, adr:9, lastValue:10, avg20Value:11, pct1avg20:12 };
+  const idx = thMap[col];
+  if (idx !== undefined) {
+    const ths = document.querySelectorAll('thead th');
+    ths[idx].classList.add(sortDir === 1 ? 'sort-asc' : 'sort-desc');
+  }
+  applyFilters(); renderTable();
 }
 
-// ============================================================
-// RENDER TABLE
-// ============================================================
-function fmtNum(n, dec = 0) {
-  if (n === null || n === undefined || isNaN(n)) return '—';
-  return n.toLocaleString('id-ID', { maximumFractionDigits: dec, minimumFractionDigits: dec });
-}
-function fmtBil(n) {
-  if (!n || isNaN(n)) return '—';
-  if (n >= 1e12) return 'Rp ' + (n / 1e12).toFixed(2) + 'T';
-  if (n >= 1e9) return 'Rp ' + (n / 1e9).toFixed(2) + 'M';
-  if (n >= 1e6) return 'Rp ' + (n / 1e6).toFixed(1) + 'Jt';
-  return 'Rp ' + fmtNum(n);
-}
-function badgeEma(above) {
-  return above
-    ? `<span class="badge-ema badge-bull">▲</span>`
-    : `<span class="badge-ema badge-bear">▼</span>`;
+function updateStats() {
+  document.getElementById('st-total').textContent = allData.length;
+  document.getElementById('st-bull').textContent = allData.filter(x => x.bull > x.bear).length;
+  document.getElementById('st-bear').textContent = allData.filter(x => x.bear > x.bull).length;
+  document.getElementById('st-above').textContent = allData.filter(x => x.aboveAll4).length;
 }
 
-function renderTable(data) {
+// =============================================
+// FORMAT HELPERS
+// =============================================
+function fN(v, d=0) {
+  if (v == null || isNaN(v)) return '—';
+  return v.toLocaleString('id-ID', { minimumFractionDigits: d, maximumFractionDigits: d });
+}
+function fB(v) {
+  if (v == null || isNaN(v) || v === 0) return '—';
+  if (v >= 1e12) return (v/1e12).toFixed(2) + ' T';
+  if (v >= 1e9)  return (v/1e9).toFixed(2) + ' M';
+  if (v >= 1e6)  return (v/1e6).toFixed(1) + ' Jt';
+  return fN(v);
+}
+function fPct(v) {
+  if (v == null || isNaN(v)) return '—';
+  const s = v >= 0 ? '+' : '';
+  return s + v.toFixed(2) + '%';
+}
+function rsiColor(v) {
+  if (v == null) return '#8a919e';
+  if (v > 70) return 'var(--red)';
+  if (v < 30) return 'var(--green)';
+  if (v > 55) return 'var(--green)';
+  if (v < 45) return 'var(--red)';
+  return 'var(--text2)';
+}
+
+// =============================================
+// RENDER
+// =============================================
+function renderTable() {
   const tbody = document.getElementById('tableBody');
-  if (data.length === 0) {
-    if (isScreening) {
-      tbody.innerHTML = `<tr><td colspan="10"><div class="table-msg"><div class="spinner"></div>Mengambil data saham syariah...</div></td></tr>`;
-    } else {
-      tbody.innerHTML = `<tr><td colspan="10"><div class="table-msg"><div class="icon">∅</div>Tidak ada saham yang memenuhi filter</div></td></tr>`;
-    }
+  if (displayData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="13"><div class="table-empty"><div class="icon">${isFetching ? '⟳' : '∅'}</div>${isFetching ? 'Mengambil data...' : 'Tidak ada data yang sesuai filter'}</div></td></tr>`;
     return;
   }
+  const MA_LABELS = ['E3','E5','E10','E20','S50','S100','S200'];
+  const MA_KEYS   = ['ema3','ema5','ema10','ema20','sma50','sma100','sma200'];
 
-  tbody.innerHTML = data.map(d => {
-    const pctCls = d.pctChange >= 0 ? 'val-up' : 'val-down';
-    const pctSign = d.pctChange >= 0 ? '+' : '';
-    const sigClass = d.bullCount > d.bearCount ? 'val-up' : d.bearCount > d.bullCount ? 'val-down' : 'val-neu';
-    const selected = selectedTicker === d.ticker ? 'selected' : '';
-    return `<tr class="${selected}" onclick="openPanel('${d.ticker}')">
-      <td class="ticker-cell">${d.ticker}</td>
-      <td class="price-cell">${fmtNum(d.lastClose, 0)}</td>
-      <td class="${pctCls}">${pctSign}${d.pctChange.toFixed(2)}%</td>
-      <td>${badgeEma(d.aboveEma3)}</td>
-      <td>${badgeEma(d.aboveEma5)}</td>
-      <td>${badgeEma(d.aboveEma10)}</td>
-      <td>${badgeEma(d.aboveEma20)}</td>
-      <td class="${sigClass}">${d.bullCount}B / ${d.bearCount}B / ${d.neuCount}N</td>
-      <td>${fmtBil(d.lastValue)}</td>
-      <td>${fmtBil(d.avg5Value)}</td>
+  tbody.innerHTML = displayData.map((d, i) => {
+    const pUp = d.pct >= 0;
+    const maPips = MA_KEYS.map((k, ki) => {
+      const v = d.maStatus?.[k];
+      if (v == null) return `<span class="ma-pip" style="background:var(--bg3);color:var(--text3)">—</span>`;
+      return `<span class="ma-pip ${v ? 'above' : 'below'}" title="${k.toUpperCase()}: harga ${v ? 'di atas' : 'di bawah'}">${MA_LABELS[ki]}</span>`;
+    }).join('');
+
+    const rsiPct = d.rsi != null ? Math.min(100, Math.max(0, d.rsi)) : 0;
+    const stochPct = d.stochRsi != null ? Math.min(100, Math.max(0, d.stochRsi)) : 0;
+    const rsiC = rsiColor(d.rsi);
+    const stochC = rsiColor(d.stochRsi);
+    const bullBear = d.bull > d.bear ? 'badge-bull' : d.bear > d.bull ? 'badge-bear' : 'badge-neu';
+
+    return `<tr>
+      <td class="td-no">${i+1}</td>
+      <td class="td-ticker">${d.ticker}</td>
+      <td class="td-company" title="${d.company||''}">${d.company||'—'}</td>
+      <td class="td-price">${fN(d.price,0)}</td>
+      <td class="td-pct ${pUp?'up':'down'}">${fPct(d.pct)}</td>
+      <td><div class="ma-cell">${maPips}</div></td>
+      <td>
+        <div class="rsi-wrap">
+          <div class="rsi-bar"><div class="rsi-fill" style="width:${rsiPct}%;background:${rsiC}"></div></div>
+          <span style="color:${rsiC};font-family:var(--mono);font-size:0.73rem">${d.rsi!=null?d.rsi.toFixed(1):'—'}</span>
+        </div>
+      </td>
+      <td>
+        <div class="rsi-wrap">
+          <div class="rsi-bar"><div class="rsi-fill" style="width:${stochPct}%;background:${stochC}"></div></div>
+          <span style="color:${stochC};font-family:var(--mono);font-size:0.73rem">${d.stochRsi!=null?d.stochRsi.toFixed(1):'—'}</span>
+        </div>
+      </td>
+      <td class="td-ind">${fN(d.atr,1)}</td>
+      <td class="td-ind ${d.adr!=null ? (d.adr>3?'up':d.adr<1?'down':'')  :''}">${d.adr!=null?d.adr.toFixed(2)+'%':'—'}</td>
+      <td class="td-val">${fB(d.lastValue)}</td>
+      <td class="td-val">${fB(d.avg20Value)}</td>
+      <td class="td-val" style="color:var(--accent)">${fB(d.pct1avg20)}</td>
     </tr>`;
   }).join('');
 }
 
-// ============================================================
-// STATS
-// ============================================================
-function updateStats() {
-  document.getElementById('statTotal').textContent = allData.length;
-  document.getElementById('statAboveAll').textContent = allData.filter(d => d.aboveAll).length;
-  document.getElementById('statBull').textContent = allData.filter(d => d.bullCount > d.bearCount).length;
-  document.getElementById('statBear').textContent = allData.filter(d => d.bearCount > d.bullCount).length;
-}
-
-// ============================================================
-// DETAIL PANEL
-// ============================================================
-function openPanel(ticker) {
-  const d = allData.find(x => x.ticker === ticker);
-  if (!d) return;
-  selectedTicker = ticker;
-
-  document.getElementById('detailPanel').classList.add('open');
-  document.getElementById('tableArea').classList.add('panel-open');
-  renderTable(filteredData);
-
-  document.getElementById('panelTicker').textContent = d.ticker;
-  document.getElementById('panelCompany').textContent = d.company || d.ticker;
-
-  const priceEl = document.getElementById('panelPrice');
-  priceEl.textContent = 'Rp ' + fmtNum(d.lastClose, 0);
-  priceEl.className = 'panel-price ' + (d.pctChange >= 0 ? 'val-up' : 'val-down');
-
-  const chgEl = document.getElementById('panelChange');
-  const pctSign = d.pctChange >= 0 ? '+' : '';
-  chgEl.textContent = `${pctSign}${d.pctChange.toFixed(2)}% hari ini`;
-  chgEl.className = 'panel-change ' + (d.pctChange >= 0 ? 'val-up' : 'val-down');
-
-  renderPanelBody(d);
-}
-
-function closePanel() {
-  document.getElementById('detailPanel').classList.remove('open');
-  document.getElementById('tableArea').classList.remove('panel-open');
-  selectedTicker = null;
-  renderTable(filteredData);
-}
-
-function renderPanelBody(d) {
-  const sig = (val, comp) => {
-    if (val === null || comp === null) return ['—', 'neutral'];
-    if (val > comp) return ['BULLISH ▲', 'bull'];
-    if (val < comp) return ['BEARISH ▼', 'bear'];
-    return ['NETRAL —', 'neutral'];
-  };
-
-  const rsiSig = d.rsi !== null
-    ? (d.rsi > 70 ? ['OVERBOUGHT', 'bear'] : d.rsi < 30 ? ['OVERSOLD', 'bull'] : d.rsi > 50 ? ['BULLISH ▲', 'bull'] : ['BEARISH ▼', 'bear'])
-    : ['—', 'neutral'];
-
-  const stochSig = d.stochRsi !== null
-    ? (d.stochRsi > 80 ? ['OVERBOUGHT', 'bear'] : d.stochRsi < 20 ? ['OVERSOLD', 'bull'] : d.stochRsi > 50 ? ['BULLISH ▲', 'bull'] : ['BEARISH ▼', 'bear'])
-    : ['—', 'neutral'];
-
-  const macdSig = d.macd !== null && d.macdSignal !== null
-    ? (d.macd > d.macdSignal ? ['BULLISH ▲', 'bull'] : ['BEARISH ▼', 'bear'])
-    : ['—', 'neutral'];
-
-  const indRows = [
-    { name: 'EMA 3', val: d.ema3, sig: sig(d.lastClose, d.ema3) },
-    { name: 'EMA 5', val: d.ema5, sig: sig(d.lastClose, d.ema5) },
-    { name: 'EMA 10', val: d.ema10, sig: sig(d.lastClose, d.ema10) },
-    { name: 'EMA 20', val: d.ema20, sig: sig(d.lastClose, d.ema20) },
-    { name: 'SMA 50', val: d.sma50, sig: sig(d.lastClose, d.sma50) },
-    { name: 'SMA 100', val: d.sma100, sig: sig(d.lastClose, d.sma100) },
-    { name: 'SMA 200', val: d.sma200, sig: sig(d.lastClose, d.sma200) },
-  ];
-
-  const totalSigs = d.bullCount + d.bearCount + d.neuCount;
-
-  document.getElementById('panelBody').innerHTML = `
-    <!-- SIGNAL OVERVIEW -->
-    <div class="section-title">Ringkasan Sinyal (${totalSigs} Indikator)</div>
-    <div class="signal-summary">
-      <div class="sig-seg bull-seg"><span class="num">${d.bullCount}</span>BULLISH</div>
-      <div class="sig-seg neu-seg"><span class="num">${d.neuCount}</span>NETRAL</div>
-      <div class="sig-seg bear-seg"><span class="num">${d.bearCount}</span>BEARISH</div>
-    </div>
-
-    <!-- MOVING AVERAGES -->
-    <div class="section-title">Moving Averages</div>
-    <div class="ind-grid">
-      ${indRows.map(r => `
-        <div class="ind-item">
-          <div>
-            <div class="ind-name">${r.name}</div>
-            <div class="ind-value">${r.val !== null ? fmtNum(r.val, 0) : '—'}</div>
-          </div>
-          <div class="ind-signal sig-${r.sig[1]}">${r.sig[0]}</div>
-        </div>
-      `).join('')}
-    </div>
-
-    <!-- OSCILLATORS -->
-    <div class="section-title">Oscillators</div>
-    <div class="gauge-row">
-      <div class="gauge-top">
-        <span>RSI(14)</span>
-        <span class="sig-${rsiSig[1]}">${d.rsi !== null ? d.rsi.toFixed(1) : '—'} — ${rsiSig[0]}</span>
-      </div>
-      <div class="gauge-bar">
-        <div class="gauge-fill rsi-fill" style="width:${d.rsi || 0}%"></div>
-      </div>
-    </div>
-    <div class="gauge-row">
-      <div class="gauge-top">
-        <span>Stoch RSI</span>
-        <span class="sig-${stochSig[1]}">${d.stochRsi !== null ? d.stochRsi.toFixed(1) : '—'} — ${stochSig[0]}</span>
-      </div>
-      <div class="gauge-bar">
-        <div class="gauge-fill stoch-fill" style="width:${d.stochRsi || 0}%"></div>
-      </div>
-    </div>
-
-    <!-- MACD -->
-    <div class="section-title">MACD</div>
-    <div class="ind-grid">
-      <div class="ind-item">
-        <div><div class="ind-name">MACD Line</div><div class="ind-value">${d.macd !== null ? d.macd.toFixed(2) : '—'}</div></div>
-        <div class="ind-signal sig-${macdSig[1]}">${macdSig[0]}</div>
-      </div>
-      <div class="ind-item">
-        <div><div class="ind-name">Signal Line</div><div class="ind-value">${d.macdSignal !== null ? d.macdSignal.toFixed(2) : '—'}</div></div>
-        <div class="ind-signal sig-${d.macdHist > 0 ? 'bull' : 'bear'}">${d.macdHist !== null ? (d.macdHist > 0 ? 'HIST ▲' : 'HIST ▼') : '—'}</div>
-      </div>
-    </div>
-
-    <!-- NILAI TRANSAKSI -->
-    <div class="section-title">Nilai Transaksi</div>
-    <table class="val-table">
-      <tr><td>Nilai Transaksi Hari Ini</td><td class="${d.pctChange >= 0 ? 'val-up' : 'val-down'}">${fmtBil(d.lastValue)}</td></tr>
-      <tr><td>1% Nilai Transaksi Hari Ini</td><td>${fmtBil(d.onePercentValue)}</td></tr>
-      <tr><td>Rata-rata 3 Hari</td><td>${fmtBil(d.avg3Value)}</td></tr>
-      <tr><td>Rata-rata 5 Hari</td><td>${fmtBil(d.avg5Value)}</td></tr>
-      <tr><td>Rata-rata 20 Hari</td><td>${fmtBil(d.avg20Value)}</td></tr>
-      <tr><td>Volume Hari Ini</td><td>${fmtNum(d.lastVol)} lot</td></tr>
-    </table>
-
-    <div style="margin-top:1rem; padding: 0.75rem; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; font-size: 0.62rem; color: var(--text3); line-height: 1.6;">
-      ⚠ Data dari Yahoo Finance. Bukan rekomendasi beli/jual.<br>
-      Selalu lakukan analisis mandiri sebelum berinvestasi.
-    </div>
-  `;
-}
-
-// ============================================================
-// SEARCH
-// ============================================================
-document.getElementById('searchBox').addEventListener('input', () => {
-  applyFilter();
-  renderTable(filteredData);
-});
-
-// ============================================================
+// =============================================
 // TOAST
-// ============================================================
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+// =============================================
+function toast(msg, type='info') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  document.getElementById('toastWrap').appendChild(el);
+  requestAnimationFrame(() => { requestAnimationFrame(() => el.classList.add('show')); });
+  setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 400); }, 3000);
 }
-
-// ============================================================
-// AUTO-START
-// ============================================================
-window.addEventListener('load', () => {
-  startScreening();
-});
 </script>
 </body>
 </html>
