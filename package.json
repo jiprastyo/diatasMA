@@ -1,7 +1,7 @@
 {
-  "name": "issi-screener",
+  "name": "screenersaham",
   "version": "1.0.0",
-  "description": "ISSI Syariah Stock Screener",
+  "description": "Screener Saham Indonesia",
   "type": "module",
   "scripts": {
     "fetch": "node fetch_data.js"
