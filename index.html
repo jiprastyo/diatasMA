@@ -1,261 +1,530 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="light">
+<html lang="id" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Screener Saham Indonesia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+/* ═══════════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════════ */
 :root{
-  --bg:#f5f6f8;--surface:#fff;--surface2:#f8f9fa;
-  --border:#e8eaed;--border-cell:#edf0f2;
-  --text:#1a1d23;--text2:#5a6070;--text3:#9ba3b0;
-  --accent:#2563eb;--accent-bg:#eff6ff;
-  --green:#16a34a;--green-bg:#f0fdf4;--green-dim:#dcfce7;
-  --red:#dc2626;--red-bg:#fff5f5;--red-dim:#fee2e2;
-  --amber:#b45309;--amber-bg:#fffbeb;
-  --blue:#2563eb;--blue-bg:#eff6ff;--blue-dim:#dbeafe;
-  --purple:#6d28d9;--purple-bg:#f5f3ff;--purple-dim:#ede9fe;
-  --teal:#0d9488;--teal-bg:#f0fdfa;--teal-dim:#ccfbf1;
-  --font:Arial,Helvetica,sans-serif;
-  --mono:'Courier New',Courier,monospace;
-  --r:8px;--rs:5px;
-  --shadow:0 1px 2px rgba(0,0,0,.05);
-  --shadow-sm:0 1px 3px rgba(0,0,0,.08);
+  /* Dark theme (default) */
+  --bg:        #07080d;
+  --bg2:       #0c0f18;
+  --surface:   #111520;
+  --surface2:  #161b28;
+  --surface3:  #1c2133;
+  --border:    #1e2436;
+  --border2:   #252d42;
+  --text:      #edf0f7;
+  --text2:     #7b8ba8;
+  --text3:     #3a4560;
+  --text4:     #252d42;
+
+  --gold:      #f5a623;
+  --gold-bg:   rgba(245,166,35,.1);
+  --gold-dim:  rgba(245,166,35,.18);
+  --gold-h:    #e8940d;
+
+  --green:     #22c55e;
+  --green-bg:  rgba(34,197,94,.08);
+  --green-dim: rgba(34,197,94,.18);
+
+  --red:       #f25e5e;
+  --red-bg:    rgba(242,94,94,.08);
+  --red-dim:   rgba(242,94,94,.18);
+
+  --blue:      #60a5fa;
+  --blue-bg:   rgba(96,165,250,.08);
+  --blue-dim:  rgba(96,165,250,.18);
+
+  --teal:      #2dd4bf;
+  --teal-bg:   rgba(45,212,191,.08);
+  --teal-dim:  rgba(45,212,191,.18);
+
+  --amber:     #f59e0b;
+  --amber-bg:  rgba(245,158,11,.09);
+  --amber-dim: rgba(245,158,11,.2);
+
+  --purple:    #a78bfa;
+  --purple-bg: rgba(167,139,250,.08);
+  --purple-dim:rgba(167,139,250,.18);
+
+  --font: 'Instrument Sans', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', 'Courier New', monospace;
+  --r: 10px; --rs: 6px; --rx: 20px;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.4);
+  --shadow:    0 2px 8px rgba(0,0,0,.5);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,.6);
+
+  /* Score colors */
+  --score-hi:   #22c55e;
+  --score-hi-bg:rgba(34,197,94,.12);
+  --score-md:   #2dd4bf;
+  --score-md-bg:rgba(45,212,191,.1);
+  --score-lo:   #f59e0b;
+  --score-lo-bg:rgba(245,158,11,.1);
+  --score-vlo:  #4b5563;
+  --score-vlo-bg:rgba(75,85,99,.15);
 }
-[data-theme="dark"]{
-  --bg:#0e1015;--surface:#161a22;--surface2:#1c2029;
-  --border:#272d3a;--border-cell:#222733;
-  --text:#e8ecf3;--text2:#8a94a8;--text3:#404a5e;
-  --accent:#3b82f6;--accent-bg:#162040;
-  --green:#22c55e;--green-bg:#0a1f12;--green-dim:#166534;
-  --red:#f87171;--red-bg:#1c0a0a;--red-dim:#7f1d1d;
-  --amber:#fbbf24;--amber-bg:#1c1404;
-  --blue:#60a5fa;--blue-bg:#172035;--blue-dim:#1e3a5f;
-  --purple:#a78bfa;--purple-bg:#1d1535;--purple-dim:#3b0764;
-  --teal:#2dd4bf;--teal-bg:#042f2e;--teal-dim:#134e4a;
-  --shadow:0 1px 2px rgba(0,0,0,.2);--shadow-sm:0 1px 3px rgba(0,0,0,.3);
+[data-theme="light"]{
+  --bg:#f1f3f8; --bg2:#e8ebf2; --surface:#fff; --surface2:#f5f7fb; --surface3:#edf0f6;
+  --border:#e0e4ee; --border2:#cdd2df;
+  --text:#0f1423; --text2:#4a5570; --text3:#9aa3b8; --text4:#d5dae8;
+  --gold:#d4861a; --gold-bg:rgba(212,134,26,.08); --gold-dim:rgba(212,134,26,.15); --gold-h:#b8720d;
+  --green:#16a34a; --green-bg:rgba(22,163,74,.06); --green-dim:rgba(22,163,74,.15);
+  --red:#dc2626; --red-bg:rgba(220,38,38,.06); --red-dim:rgba(220,38,38,.15);
+  --blue:#2563eb; --blue-bg:rgba(37,99,235,.07); --blue-dim:rgba(37,99,235,.15);
+  --teal:#0d9488; --teal-bg:rgba(13,148,136,.07); --teal-dim:rgba(13,148,136,.15);
+  --amber:#b45309; --amber-bg:rgba(180,83,9,.07); --amber-dim:rgba(180,83,9,.18);
+  --purple:#6d28d9; --purple-bg:rgba(109,40,217,.07); --purple-dim:rgba(109,40,217,.15);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.06); --shadow:0 2px 8px rgba(0,0,0,.08); --shadow-lg:0 8px 24px rgba(0,0,0,.1);
+  --score-hi:#16a34a; --score-hi-bg:rgba(22,163,74,.1);
+  --score-md:#0d9488; --score-md-bg:rgba(13,148,136,.08);
+  --score-lo:#b45309; --score-lo-bg:rgba(180,83,9,.08);
+  --score-vlo:#9ca3af; --score-vlo-bg:rgba(156,163,175,.12);
 }
+
+/* ═══════════════════════════════════════════════
+   BASE
+═══════════════════════════════════════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{font-size:14px;-webkit-text-size-adjust:100%}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;transition:background .2s,color .2s}
+a{color:inherit;text-decoration:none}
 
-/* TOPBAR */
-.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1rem;display:flex;align-items:center;height:50px;gap:.5rem;position:sticky;top:0;z-index:300;box-shadow:var(--shadow)}
-.brand{display:flex;align-items:center;gap:.4rem;font-weight:700;font-size:.9rem;flex-shrink:0}
-.brand-ico{width:26px;height:26px;background:var(--accent);border-radius:5px;display:grid;place-items:center;font-size:.6rem;font-weight:700;color:#fff;letter-spacing:.04em;flex-shrink:0}
-.topbar-meta{display:flex;align-items:center;gap:.75rem;font-size:.72rem;color:var(--text3);flex:1;min-width:0;overflow:hidden;padding-left:.25rem}
-.meta-item{display:flex;align-items:center;gap:.22rem;white-space:nowrap}
-.dot{width:5px;height:5px;border-radius:50%;background:var(--text3);flex-shrink:0}
-.dot.ok{background:var(--green)}.dot.spin{background:var(--accent);animation:pulse 1s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
-.topbar-right{display:flex;align-items:center;gap:.35rem;margin-left:auto;flex-shrink:0}
-.btn-sm{display:inline-flex;align-items:center;gap:.22rem;padding:.28rem .55rem;border-radius:var(--rs);border:1px solid var(--border);background:var(--surface);color:var(--text2);font-family:var(--font);font-size:.7rem;cursor:pointer;font-weight:500;white-space:nowrap;line-height:1;transition:all .12s}
-.btn-sm:hover{background:var(--surface2);color:var(--text);border-color:#c5cad5}
+/* ═══════════════════════════════════════════════
+   TOPBAR
+═══════════════════════════════════════════════ */
+.topbar{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:0 1.1rem;display:flex;align-items:center;
+  height:52px;gap:.5rem;position:sticky;top:0;z-index:300;
+  box-shadow:var(--shadow);
+}
+.brand{display:flex;align-items:center;gap:.5rem;flex-shrink:0}
+.brand-logo{
+  width:30px;height:30px;background:var(--gold);border-radius:7px;
+  display:grid;place-items:center;font-family:var(--mono);font-size:.58rem;
+  font-weight:600;color:#000;letter-spacing:.04em;flex-shrink:0;
+  box-shadow:0 2px 8px rgba(245,166,35,.35);
+}
+.brand-text{font-weight:700;font-size:.92rem;letter-spacing:-.02em;line-height:1}
+.brand-sub{font-size:.65rem;color:var(--text3);font-weight:400;margin-top:1px}
 
-/* LAYOUT */
-.page{max-width:1600px;margin:0 auto;padding:.75rem}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:.6rem;overflow:hidden}
-.card-inner{padding:.65rem .85rem}
+.topbar-meta{
+  display:flex;align-items:center;gap:.8rem;font-size:.7rem;
+  color:var(--text3);flex:1;min-width:0;overflow:hidden;padding-left:.4rem;
+}
+.meta-pill{
+  display:flex;align-items:center;gap:.25rem;white-space:nowrap;
+  background:var(--surface2);border:1px solid var(--border);
+  padding:.18rem .5rem;border-radius:20px;font-size:.65rem;
+}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--text4);flex-shrink:0;transition:background .3s}
+.dot.ok{background:var(--green)}.dot.spin{background:var(--gold);animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* SEARCH */
+.topbar-r{display:flex;align-items:center;gap:.35rem;margin-left:auto;flex-shrink:0}
+.tbtn{
+  display:inline-flex;align-items:center;gap:.22rem;
+  padding:.3rem .6rem;border-radius:var(--rs);border:1px solid var(--border);
+  background:transparent;color:var(--text2);font-family:var(--font);
+  font-size:.7rem;cursor:pointer;font-weight:500;white-space:nowrap;
+  line-height:1;transition:all .12s;
+}
+.tbtn:hover{background:var(--surface2);color:var(--text);border-color:var(--border2)}
+.tbtn.active{background:var(--gold-bg);border-color:var(--gold);color:var(--gold)}
+
+/* ═══════════════════════════════════════════════
+   PROGRESS BAR
+═══════════════════════════════════════════════ */
+.pbar{height:2px;background:var(--border);position:sticky;top:52px;z-index:299}
+.pbar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--green));width:0;transition:width .25s}
+
+/* ═══════════════════════════════════════════════
+   PAGE LAYOUT
+═══════════════════════════════════════════════ */
+.page{max-width:1680px;margin:0 auto;padding:.85rem .85rem 2rem}
+
+/* ═══════════════════════════════════════════════
+   CARDS
+═══════════════════════════════════════════════ */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow-sm);margin-bottom:.6rem;overflow:hidden}
+.card-pad{padding:.7rem .9rem}
+
+/* ═══════════════════════════════════════════════
+   SEARCH
+═══════════════════════════════════════════════ */
 .search-wrap{position:relative}
-.s-ico{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none}
-.s-inp{width:100%;padding:.5rem .7rem .5rem 2rem;border:1px solid var(--border);border-radius:var(--rs);background:var(--surface);color:var(--text);font-family:var(--font);font-size:.84rem;outline:none;transition:border-color .12s,box-shadow .12s}
+.s-ico{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;flex-shrink:0}
+.s-inp{
+  width:100%;padding:.55rem .75rem .55rem 2.15rem;
+  border:1px solid var(--border);border-radius:var(--rs);
+  background:var(--surface2);color:var(--text);
+  font-family:var(--font);font-size:.85rem;outline:none;
+  transition:border-color .15s,box-shadow .15s;
+}
 .s-inp::placeholder{color:var(--text3)}
-.s-inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
-.s-clear{position:absolute;right:.5rem;top:50%;transform:translateY(-50%);width:18px;height:18px;border-radius:50%;border:none;background:var(--surface2);color:var(--text3);cursor:pointer;display:none;align-items:center;justify-content:center;font-size:.75rem;transition:all .12s;padding:0;line-height:1}
-.s-clear:hover{background:var(--border);color:var(--text)}
-.s-clear.show{display:flex}
+.s-inp:focus{border-color:var(--gold);background:var(--surface);box-shadow:0 0 0 3px var(--gold-bg)}
+.s-clr{
+  position:absolute;right:.55rem;top:50%;transform:translateY(-50%);
+  width:20px;height:20px;border-radius:50%;border:none;
+  background:var(--surface3);color:var(--text3);cursor:pointer;
+  display:none;align-items:center;justify-content:center;
+  font-size:.72rem;transition:all .12s;padding:0;line-height:1;
+}
+.s-clr:hover{background:var(--border2);color:var(--text)}
+.s-clr.show{display:flex}
 
-/* FILTER PANEL */
-.filter-rows{display:flex;flex-direction:column}
-.f-row{display:flex;align-items:flex-start;gap:.5rem;padding:.5rem .85rem;border-bottom:1px solid var(--border)}
-.f-row:last-child{border-bottom:none}
-.f-label{font-size:.6rem;font-weight:700;letter-spacing:.08em;color:var(--text3);text-transform:uppercase;white-space:nowrap;padding-top:.23rem;min-width:76px;display:flex;align-items:center;gap:.28rem;flex-shrink:0}
-.f-label::before{content:'';display:inline-block;width:2px;height:11px;border-radius:2px;flex-shrink:0}
-.f-label.ma::before{background:var(--green)}
-.f-label.vol::before{background:var(--blue)}
-.f-label.osc::before{background:var(--purple)}
-.f-label.idx::before{background:var(--teal)}
-.f-label.papan::before{background:var(--amber)}
-.chips{display:flex;flex-wrap:wrap;gap:.28rem;flex:1}
-.chip{padding:.2rem .52rem;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-family:var(--font);font-size:.7rem;font-weight:500;cursor:pointer;transition:all .12s;user-select:none;line-height:1.35;white-space:nowrap}
+/* ═══════════════════════════════════════════════
+   FILTER PANEL
+═══════════════════════════════════════════════ */
+.frows{display:flex;flex-direction:column}
+.frow{display:flex;align-items:flex-start;gap:.55rem;padding:.55rem .9rem;border-bottom:1px solid var(--border)}
+.frow:last-child{border-bottom:none}
+.flabel{
+  font-size:.6rem;font-weight:700;letter-spacing:.1em;color:var(--text3);
+  text-transform:uppercase;white-space:nowrap;padding-top:.25rem;
+  min-width:72px;display:flex;align-items:flex-start;gap:.28rem;flex-shrink:0;
+}
+.flabel::before{content:'';display:inline-block;width:2px;height:12px;margin-top:.05rem;border-radius:2px;flex-shrink:0}
+.flabel.preset::before{background:var(--gold)}
+.flabel.idx::before{background:var(--teal)}
+.flabel.papan::before{background:var(--amber)}
+.flabel.ma::before{background:var(--green)}
+.flabel.vol::before{background:var(--blue)}
+.flabel.osc::before{background:var(--purple)}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:.3rem;flex:1}
+.chip{
+  padding:.22rem .55rem;border-radius:var(--rx);border:1px solid var(--border);
+  background:var(--surface);color:var(--text2);font-family:var(--font);
+  font-size:.7rem;font-weight:500;cursor:pointer;transition:all .12s;
+  user-select:none;line-height:1.35;white-space:nowrap;
+}
 .chip:hover{background:var(--surface2)}
+.chip.idx:hover,.chip.idx.on{border-color:var(--teal);color:var(--teal);background:var(--teal-bg)}
+.chip.papan:hover,.chip.papan.on{border-color:var(--amber);color:var(--amber);background:var(--amber-bg)}
 .chip.ma:hover,.chip.ma.on{border-color:var(--green);color:var(--green);background:var(--green-bg)}
 .chip.vol:hover,.chip.vol.on{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
 .chip.osc:hover,.chip.osc.on{border-color:var(--purple);color:var(--purple);background:var(--purple-bg)}
-.chip.idx:hover,.chip.idx.on{border-color:var(--teal);color:var(--teal);background:var(--teal-bg)}
-.chip.papan:hover,.chip.papan.on{border-color:var(--amber);color:var(--amber);background:var(--amber-bg)}
-.chip-reset{padding:.2rem .6rem;border-radius:20px;border:1.5px solid var(--border2,#d1d5db);background:var(--surface);color:var(--text3);font-family:var(--font);font-size:.68rem;font-weight:700;cursor:pointer;transition:all .12s;user-select:none;line-height:1.35;white-space:nowrap}
-.chip-reset:hover{background:var(--red-bg);border-color:var(--red);color:var(--red)}
 
-/* STATS BAR */
-.stats-bar{display:flex;align-items:center;gap:.85rem;flex-wrap:wrap;padding:.4rem .85rem;border-bottom:1px solid var(--border);font-size:.7rem}
-.stat{display:flex;align-items:center;gap:.2rem;color:var(--text3)}
-.stat strong{color:var(--text);font-weight:700}
-.stat.g strong{color:var(--green)}.stat.r strong{color:var(--red)}.stat.b strong{color:var(--accent)}
-.src-badge{margin-left:auto;padding:.15rem .5rem;border-radius:20px;font-size:.65rem;font-weight:700;border:1px solid var(--border);color:var(--text3);background:var(--surface2)}
-.src-badge.gh{background:var(--green-dim);color:var(--green);border-color:rgba(22,163,74,.25)}
-.src-badge.cache{background:var(--blue-dim);color:var(--blue);border-color:rgba(37,99,235,.25)}
+/* PRESET chips — larger, bolder, most important */
+.preset-chips{display:flex;flex-wrap:wrap;gap:.35rem;flex:1}
+.pchip{
+  display:inline-flex;align-items:center;gap:.3rem;
+  padding:.3rem .7rem;border-radius:var(--rx);border:1.5px solid var(--border);
+  background:var(--surface);color:var(--text2);font-family:var(--font);
+  font-size:.75rem;font-weight:600;cursor:pointer;transition:all .15s;
+  user-select:none;line-height:1.35;white-space:nowrap;letter-spacing:.01em;
+}
+.pchip:hover{background:var(--surface2);border-color:var(--border2)}
+.pchip .pico{font-size:.8rem;line-height:1}
+.pchip.p0:hover,.pchip.p0.on{border-color:var(--green);color:var(--green);background:var(--green-bg);box-shadow:0 0 0 1px var(--green-bg)}
+.pchip.p1:hover,.pchip.p1.on{border-color:var(--gold);color:var(--gold);background:var(--gold-bg);box-shadow:0 0 0 1px var(--gold-bg)}
+.pchip.p2:hover,.pchip.p2.on{border-color:var(--teal);color:var(--teal);background:var(--teal-bg);box-shadow:0 0 0 1px var(--teal-bg)}
+.pchip.p3:hover,.pchip.p3.on{border-color:var(--blue);color:var(--blue);background:var(--blue-bg);box-shadow:0 0 0 1px var(--blue-bg)}
+.pchip.p4:hover,.pchip.p4.on{border-color:var(--purple);color:var(--purple);background:var(--purple-bg);box-shadow:0 0 0 1px var(--purple-bg)}
 
-/* TABLE */
-.t-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;position:relative}
-table{width:100%;border-collapse:collapse;font-size:.74rem}
-.col-sticky{position:sticky;left:0;z-index:10;background:var(--surface)}
-tbody tr:hover .col-sticky{background:var(--surface2)}
-.t-wrap.scrolled .col-sticky::after{content:'';position:absolute;top:0;right:-8px;bottom:0;width:8px;background:linear-gradient(to right,rgba(0,0,0,.07),transparent);pointer-events:none}
-[data-theme="dark"] .t-wrap.scrolled .col-sticky::after{background:linear-gradient(to right,rgba(0,0,0,.25),transparent)}
+/* reset button */
+.creset{
+  padding:.22rem .6rem;border-radius:var(--rx);border:1.5px dashed var(--border2);
+  background:transparent;color:var(--text3);font-family:var(--font);
+  font-size:.68rem;font-weight:600;cursor:pointer;transition:all .12s;
+  user-select:none;line-height:1.35;white-space:nowrap;letter-spacing:.02em;
+}
+.creset:hover{border-color:var(--red);color:var(--red);background:var(--red-bg)}
 
-tr.grp-row th{padding:.2rem .52rem;font-size:.58rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);background:var(--surface2);white-space:nowrap;cursor:default;border-bottom:1px solid var(--border);text-align:center}
-tr.grp-row th:first-child{text-align:left;padding-left:.85rem}
-.gh-price{border-left:1px solid var(--border-cell);color:var(--accent)!important}
-.gh-ma{border-left:1px solid var(--border-cell);color:var(--green)!important}
-.gh-osc{border-left:1px solid var(--border-cell);color:var(--purple)!important}
+/* ═══════════════════════════════════════════════
+   STATS BAR
+═══════════════════════════════════════════════ */
+.stats{
+  display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;
+  padding:.4rem .9rem;border-bottom:1px solid var(--border);font-size:.7rem;
+}
+.st{display:flex;align-items:center;gap:.2rem;color:var(--text3)}
+.st b{color:var(--text);font-weight:700}
+.st.g b{color:var(--green)}.st.r b{color:var(--red)}.st.a b{color:var(--gold)}
+.src-pill{
+  margin-left:auto;display:inline-flex;align-items:center;gap:.25rem;
+  padding:.18rem .55rem;border-radius:20px;font-size:.65rem;font-weight:600;
+  border:1px solid var(--border);color:var(--text3);background:var(--surface2);
+}
+.src-pill.gh{background:var(--green-bg);color:var(--green);border-color:rgba(34,197,94,.25)}
+.src-pill.cache{background:var(--blue-bg);color:var(--blue);border-color:rgba(96,165,250,.25)}
 
-tr.col-row th{padding:.38rem .52rem;font-size:.65rem;font-weight:700;color:var(--text2);background:var(--surface2);white-space:nowrap;cursor:pointer;user-select:none;border-bottom:2px solid var(--border);text-align:right;transition:color .12s}
-tr.col-row th:first-child{text-align:left;padding-left:.85rem}
-tr.col-row th.nc{cursor:default}
-tr.col-row th:hover:not(.nc){color:var(--text)}
-tr.col-row th.sa::after{content:' ↑';color:var(--accent);font-size:.58rem}
-tr.col-row th.sd::after{content:' ↓';color:var(--accent);font-size:.58rem}
-.ch-price{border-left:1px solid var(--border-cell)}
-.ch-ma{border-left:1px solid var(--border-cell)}
-.ch-osc{border-left:1px solid var(--border-cell)}
+/* ═══════════════════════════════════════════════
+   TABLE
+═══════════════════════════════════════════════ */
+.twrap{overflow-x:auto;-webkit-overflow-scrolling:touch;position:relative}
+table{width:100%;border-collapse:collapse;font-size:.73rem}
 
-tbody tr{border-bottom:1px solid var(--border-cell);transition:background .08s}
+/* Sticky ticker column */
+.csticky{position:sticky;left:0;z-index:10;background:var(--surface)}
+tbody tr:hover .csticky{background:var(--surface2)}
+.twrap.scrolled .csticky::after{
+  content:'';position:absolute;top:0;right:-10px;bottom:0;width:10px;
+  background:linear-gradient(to right,rgba(0,0,0,.25),transparent);
+  pointer-events:none;
+}
+[data-theme="light"] .twrap.scrolled .csticky::after{
+  background:linear-gradient(to right,rgba(0,0,0,.08),transparent);
+}
+
+/* Group header row */
+tr.grow th{
+  padding:.22rem .55rem;font-size:.57rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--text3);background:var(--bg2);
+  white-space:nowrap;cursor:default;border-bottom:1px solid var(--border);
+  text-align:center;
+}
+tr.grow th:first-child{text-align:left;padding-left:.9rem}
+.gh-score{border-left:2px solid var(--gold);color:var(--gold)!important}
+.gh-price{border-left:1px solid var(--border);color:var(--blue)!important}
+.gh-trend{border-left:1px solid var(--border);color:var(--green)!important}
+.gh-osc{border-left:1px solid var(--border);color:var(--purple)!important}
+
+/* Column header row */
+tr.crow th{
+  padding:.4rem .55rem;font-size:.65rem;font-weight:600;color:var(--text2);
+  background:var(--bg2);white-space:nowrap;cursor:pointer;user-select:none;
+  border-bottom:2px solid var(--border);text-align:right;transition:color .12s;
+}
+tr.crow th:first-child{text-align:left;padding-left:.9rem}
+tr.crow th.nc{cursor:default}
+tr.crow th:hover:not(.nc){color:var(--text)}
+tr.crow th.sa::after{content:' ↑';color:var(--gold);font-size:.57rem}
+tr.crow th.sd::after{content:' ↓';color:var(--gold);font-size:.57rem}
+.ch-score{border-left:2px solid var(--gold)}
+.ch-price{border-left:1px solid var(--border)}
+.ch-trend{border-left:1px solid var(--border)}
+.ch-osc{border-left:1px solid var(--border)}
+
+/* Body */
+tbody tr{border-bottom:1px solid var(--border);transition:background .07s}
 tbody tr:hover{background:var(--surface2)}
 tbody tr:last-child{border-bottom:none}
-tbody td{padding:.4rem .52rem;white-space:nowrap;vertical-align:middle;text-align:right}
-tbody td:first-child{padding-left:.85rem;text-align:left}
-.bd-price{border-left:1px solid var(--border-cell)}
-.bd-ma{border-left:1px solid var(--border-cell)}
-.bd-osc{border-left:1px solid var(--border-cell)}
+tbody td{padding:.42rem .55rem;white-space:nowrap;vertical-align:middle;text-align:right}
+tbody td:first-child{padding-left:.9rem;text-align:left}
+.bd-score{border-left:2px solid var(--gold)}
+.bd-price{border-left:1px solid var(--border)}
+.bd-trend{border-left:1px solid var(--border)}
+.bd-osc{border-left:1px solid var(--border)}
 
-/* TICKER CELL */
-.c-tk{font-family:var(--mono);font-weight:700;font-size:.78rem;line-height:1.2}
-.c-tk a{color:var(--accent);text-decoration:none}
-.c-tk a:hover{text-decoration:underline}
-.c-co{font-size:.67rem;color:var(--text3);max-width:135px;overflow:hidden;text-overflow:ellipsis;line-height:1.25;margin-top:1px}
-.c-meta{display:flex;flex-wrap:wrap;gap:.2rem;margin-top:2px}
-.badge-papan{display:inline-block;font-size:.57rem;font-weight:700;padding:.04rem .3rem;border-radius:3px;color:var(--amber);background:var(--amber-bg);letter-spacing:.02em;line-height:1.4}
-.badge-idx{display:inline-block;font-size:.57rem;font-weight:700;padding:.04rem .3rem;border-radius:3px;color:var(--teal);background:var(--teal-dim);letter-spacing:.02em;line-height:1.4}
+/* ── TICKER CELL ───────────────────────────── */
+.ctk{font-family:var(--mono);font-weight:600;font-size:.8rem;line-height:1.2}
+.ctk a{color:var(--gold);transition:color .1s}
+.ctk a:hover{color:var(--gold-h)}
+.cco{font-size:.67rem;color:var(--text3);max-width:145px;overflow:hidden;text-overflow:ellipsis;line-height:1.3;margin-top:1px}
+.cmeta{display:flex;flex-wrap:wrap;gap:.18rem;margin-top:3px}
+.bpapan{display:inline-block;font-size:.57rem;font-weight:600;padding:.04rem .28rem;border-radius:3px;color:var(--amber);background:var(--amber-bg);letter-spacing:.02em;line-height:1.45}
+.bidx{display:inline-block;font-size:.57rem;font-weight:600;padding:.04rem .28rem;border-radius:3px;color:var(--teal);background:var(--teal-bg);letter-spacing:.02em;line-height:1.45}
 
-/* NUM CELLS */
-.c-num{font-family:var(--mono);font-weight:500}
-.c-num.lg{font-weight:700;font-size:.78rem}
+/* ── SCORE CELL ────────────────────────────── */
+.score-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:2.6rem;height:1.7rem;border-radius:var(--rs);
+  font-family:var(--mono);font-size:.75rem;font-weight:700;letter-spacing:-.01em;
+}
+.score-badge.sh{background:var(--score-hi-bg);color:var(--score-hi);border:1px solid rgba(34,197,94,.2)}
+.score-badge.sm{background:var(--score-md-bg);color:var(--score-md);border:1px solid rgba(45,212,191,.2)}
+.score-badge.sl{background:var(--score-lo-bg);color:var(--score-lo);border:1px solid rgba(245,158,11,.2)}
+.score-badge.sv{background:var(--score-vlo-bg);color:var(--score-vlo);border:1px solid rgba(75,85,99,.2)}
+.score-lbl{font-size:.58rem;font-weight:600;margin-top:1px;letter-spacing:.03em;text-align:center;opacity:.85}
+.score-cell{display:flex;flex-direction:column;align-items:center;gap:1px}
+
+/* ── PRICE CELL ────────────────────────────── */
+.cnum{font-family:var(--mono);font-weight:500}
+.cnum.lg{font-weight:700;font-size:.8rem}
 .up{color:var(--green)}.dn{color:var(--red)}.nu{color:var(--text3)}
+.price-cell{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
+.pct-badge{
+  display:inline-flex;align-items:center;font-family:var(--mono);
+  font-size:.64rem;font-weight:600;padding:.06rem .32rem;border-radius:3px;
+}
+.pct-badge.up{background:var(--green-bg);color:var(--green)}
+.pct-badge.dn{background:var(--red-bg);color:var(--red)}
+.pct-badge.nu{background:var(--surface3);color:var(--text3)}
 
-/* PIPS */
-.pips{display:flex;gap:2px;justify-content:flex-end}
-.pip{width:19px;height:17px;border-radius:3px;font-size:.52rem;font-weight:700;display:grid;place-items:center;font-family:var(--mono);cursor:default}
-.pip.on-g{background:var(--green-dim);color:var(--green)}
-.pip.off-r{background:var(--red-dim);color:var(--red)}
-.pip.on-b{background:var(--blue-dim);color:var(--blue)}
-.pip.na{background:var(--surface2);color:var(--text3)}
+/* ── TREND CELL (MA dots) ──────────────────── */
+.ma-dots{display:flex;gap:2px;justify-content:flex-end;align-items:center}
+.ma-dot{
+  width:9px;height:9px;border-radius:50%;flex-shrink:0;
+  transition:background .15s;
+}
+.ma-dot.on{background:var(--green)}
+.ma-dot.off{background:var(--border2)}
+.ma-dot.na{background:var(--border);opacity:.4}
+.trend-score{font-family:var(--mono);font-size:.62rem;color:var(--text3);margin-right:.25rem;flex-shrink:0}
 
-/* GAUGE */
-.gauge{display:flex;align-items:center;gap:.28rem;justify-content:flex-end}
-.g-track{width:32px;height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;flex-shrink:0;border:1px solid var(--border-cell)}
-.g-fill{height:100%;border-radius:2px}
-.g-val{font-family:var(--mono);font-size:.68rem;font-weight:500;min-width:2.7rem;text-align:right}
+/* ── VOLUME CELL ───────────────────────────── */
+.vol-bar-wrap{display:flex;align-items:center;gap:.3rem;justify-content:flex-end}
+.vol-bar-track{width:36px;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;flex-shrink:0}
+.vol-bar-fill{height:100%;border-radius:2px;transition:width .3s}
+.vol-lbl{font-family:var(--mono);font-size:.65rem;min-width:2rem;text-align:right}
 
-/* MACD BADGE */
-.macd-badge{display:inline-flex;align-items:center;padding:.15rem .4rem;border-radius:20px;font-size:.63rem;font-weight:700;font-family:var(--mono)}
+/* ── RSI CELL ──────────────────────────────── */
+.rsi-wrap{display:flex;align-items:center;gap:.3rem;justify-content:flex-end}
+.rsi-track{width:32px;height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;flex-shrink:0}
+.rsi-fill{height:100%;border-radius:2px}
+.rsi-val{font-family:var(--mono);font-size:.69rem;font-weight:500;min-width:2.4rem;text-align:right}
+/* RSI zones shading */
+.rsi-zone-label{font-size:.57rem;color:var(--text3);min-width:3.5rem;text-align:right;letter-spacing:.02em}
+
+/* ── MACD CELL ─────────────────────────────── */
+.macd-b{
+  display:inline-flex;align-items:center;padding:.17rem .45rem;
+  border-radius:var(--rx);font-size:.63rem;font-weight:700;font-family:var(--mono);
+  white-space:nowrap;letter-spacing:.01em;
+}
 .macd-bull{background:var(--green-dim);color:var(--green)}
 .macd-bear{background:var(--red-dim);color:var(--red)}
-.macd-neu{background:var(--surface2);color:var(--text3)}
+.macd-neu{background:var(--surface3);color:var(--text3)}
 
-/* ADR */
+/* ── ADR CELL ──────────────────────────────── */
 .adr-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
-.adr-pct{font-family:var(--mono);font-size:.7rem;font-weight:700}
-.adr-nom{font-family:var(--mono);font-size:.61rem;color:var(--text3)}
+.adr-pct{font-family:var(--mono);font-size:.71rem;font-weight:600}
+.adr-label{font-size:.58rem;color:var(--text3)}
 
-/* EMPTY / DEBUG / TOAST */
-.t-empty{padding:3rem 1rem;text-align:center;color:var(--text3)}
-.t-empty-ico{font-size:1.8rem;margin-bottom:.35rem;opacity:.35}
-.debug-bar{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:.5rem .75rem;margin-bottom:.6rem;font-family:var(--mono);font-size:.63rem;color:var(--text2);max-height:100px;overflow-y:auto;display:none}
-.debug-bar.show{display:block}
+/* ─── EMPTY STATE ─────────────────────────── */
+.tempty{padding:3.5rem 1rem;text-align:center;color:var(--text3)}
+.tempty-ico{font-size:2rem;margin-bottom:.5rem;opacity:.3}
+.tempty-txt{font-size:.82rem;margin-bottom:.25rem;color:var(--text2);font-weight:500}
+.tempty-sub{font-size:.7rem}
+
+/* ─── DEBUG ───────────────────────────────── */
+.dbpanel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:.5rem .75rem;margin-bottom:.6rem;font-family:var(--mono);font-size:.62rem;color:var(--text2);max-height:110px;overflow-y:auto;display:none}
+.dbpanel.show{display:block}
 .dl{padding:1px 0}.dl.ok{color:var(--green)}.dl.err{color:var(--red)}.dl.warn{color:var(--amber)}
-.prog-bar{height:2px;background:var(--border);position:sticky;top:50px;z-index:299}
-.prog-fill{height:100%;background:var(--accent);width:0;transition:width .2s}
-.toasts{position:fixed;bottom:1rem;right:1rem;display:flex;flex-direction:column;gap:.3rem;z-index:999;pointer-events:none}
-.toast{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:.45rem .75rem;font-size:.73rem;color:var(--text);box-shadow:var(--shadow-sm);transform:translateX(130%);transition:transform .25s;max-width:240px;pointer-events:auto}
-.toast.show{transform:translateX(0)}
-.toast.ok{border-left:3px solid var(--green)}.toast.er{border-left:3px solid var(--red)}.toast.in{border-left:3px solid var(--accent)}
 
-@media(max-width:700px){
-  .topbar-meta{display:none}
-  .page{padding:.5rem}
-  .f-row{flex-direction:column;gap:.3rem;padding:.5rem .65rem}
-  .f-label{min-width:unset;padding-top:0}
+/* ─── TOASTS ──────────────────────────────── */
+.toasts{position:fixed;bottom:1rem;right:1rem;display:flex;flex-direction:column;gap:.3rem;z-index:999;pointer-events:none}
+.toast{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:.45rem .8rem;font-size:.73rem;color:var(--text);box-shadow:var(--shadow);transform:translateX(140%);transition:transform .22s;max-width:240px;pointer-events:auto}
+.toast.show{transform:translateX(0)}
+.toast.ok{border-left:3px solid var(--green)}
+.toast.er{border-left:3px solid var(--red)}
+.toast.in{border-left:3px solid var(--gold)}
+
+/* ─── FOOTER ──────────────────────────────── */
+.footer{font-size:.62rem;color:var(--text3);text-align:center;padding-bottom:1.5rem;line-height:1.7}
+
+/* ─── RESPONSIVE ──────────────────────────── */
+@media(max-width:720px){
+  .topbar-meta .meta-pill:not(:first-child){display:none}
+  .page{padding:.5rem .5rem 2rem}
+  .frow{flex-direction:column;gap:.3rem;padding:.5rem .65rem}
+  .flabel{min-width:unset;padding-top:0}
   html{font-size:13px}
 }
 @media(max-width:480px){
-  .brand span{display:none}
-  .btn-sm .lbl{display:none}
+  .brand-sub{display:none}
+  .tbtn .tlbl{display:none}
 }
 </style>
 </head>
 <body>
 
+<!-- TOPBAR -->
 <header class="topbar">
   <div class="brand">
-    <div class="brand-ico">IDX</div>
-    <span>Screener Saham</span>
+    <div class="brand-logo">SCR</div>
+    <div>
+      <div class="brand-text">Screener Saham</div>
+      <div class="brand-sub">Indonesia</div>
+    </div>
   </div>
   <div class="topbar-meta">
-    <div class="meta-item"><span class="dot" id="sDot"></span><span id="sText">Memuat…</span></div>
-    <div class="meta-item" id="tsWrap" style="display:none">🕐 <span id="tsText">—</span></div>
-    <div class="meta-item" id="srcWrap" style="display:none"><span id="srcBadge"></span></div>
+    <div class="meta-pill"><span class="dot" id="sDot"></span><span id="sText">Memuat…</span></div>
+    <div class="meta-pill" id="tsPill" style="display:none">🕐 <span id="tsText"></span></div>
   </div>
-  <div class="topbar-right">
-    <button class="btn-sm" id="dbBtn" onclick="toggleDebug()">
+  <div class="topbar-r">
+    <button class="tbtn" id="dbBtn" onclick="toggleDebug()">
       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-      <span class="lbl">Debug</span>
+      <span class="tlbl">Log</span>
     </button>
-    <button class="btn-sm" onclick="toggleDark()"><span id="dkIco">🌙</span> <span class="lbl" id="dkLbl">Dark</span></button>
+    <button class="tbtn" onclick="toggleTheme()" id="themeBtn">
+      <span id="themeIco">☀️</span>
+      <span class="tlbl" id="themeLbl">Light</span>
+    </button>
   </div>
 </header>
-<div class="prog-bar"><div class="prog-fill" id="prog"></div></div>
+<div class="pbar"><div class="pbar-fill" id="prog"></div></div>
 
 <div class="page">
-  <div class="debug-bar" id="dbPanel"><div id="dbLog"></div></div>
+  <div class="dbpanel" id="dbPanel"><div id="dbLog"></div></div>
 
-  <div class="card"><div class="card-inner">
+  <!-- SEARCH -->
+  <div class="card"><div class="card-pad">
     <div class="search-wrap">
-      <svg class="s-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <svg class="s-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
       <input class="s-inp" id="sInp" placeholder="Cari ticker atau nama perusahaan…" autocomplete="off" spellcheck="false">
-      <button class="s-clear" id="sClear" onclick="clearSearch()" title="Hapus">✕</button>
+      <button class="s-clr" id="sClr" onclick="clearSearch()" title="Hapus">✕</button>
     </div>
   </div></div>
 
-  <div class="card"><div class="filter-rows">
+  <!-- FILTERS -->
+  <div class="card"><div class="frows">
 
-    <div class="f-row">
-      <span class="f-label idx">Indeks</span>
+    <!-- ROW 1: PRESET SETUPS — most important, top of filter -->
+    <div class="frow">
+      <span class="flabel preset">Setup</span>
+      <div class="preset-chips">
+        <button class="pchip p0" id="ps-breakout" onclick="togglePreset('breakout')">
+          <span class="pico">🚀</span> Siap Breakout
+        </button>
+        <button class="pchip p1" id="ps-uptrend" onclick="togglePreset('uptrend')">
+          <span class="pico">📈</span> Uptrend Kuat
+        </button>
+        <button class="pchip p2" id="ps-momentum" onclick="togglePreset('momentum')">
+          <span class="pico">⚡</span> Momentum Naik
+        </button>
+        <button class="pchip p3" id="ps-volspike" onclick="togglePreset('volspike')">
+          <span class="pico">🔊</span> Volume Spike
+        </button>
+        <button class="pchip p4" id="ps-oversold" onclick="togglePreset('oversold')">
+          <span class="pico">🔍</span> Jenuh Jual
+        </button>
+        <button class="creset" onclick="resetAll()">↺ Reset Semua</button>
+      </div>
+    </div>
+
+    <!-- ROW 2: INDEX FILTER -->
+    <div class="frow">
+      <span class="flabel idx">Indeks</span>
       <div class="chips">
         <span class="chip idx" id="if-issi"      onclick="toggleIF('issi')">ISSI</span>
         <span class="chip idx" id="if-lq45"      onclick="toggleIF('lq45')">LQ45</span>
-        <span class="chip idx" id="if-kompas100" onclick="toggleIF('kompas100')">KOMPAS100</span>
+        <span class="chip idx" id="if-k100"      onclick="toggleIF('k100')">KOMPAS100</span>
         <span class="chip idx" id="if-bumn"      onclick="toggleIF('bumn')">BUMN</span>
-        <button class="chip-reset" onclick="resetIF()">↺ Reset</button>
+        <button class="creset" onclick="resetIF()">↺</button>
       </div>
     </div>
 
-    <div class="f-row">
-      <span class="f-label papan">Papan</span>
+    <!-- ROW 3: PAPAN FILTER -->
+    <div class="frow">
+      <span class="flabel papan">Papan</span>
       <div class="chips">
-        <span class="chip papan" id="pf-utama"         onclick="togglePF('utama')">Utama</span>
-        <span class="chip papan" id="pf-pengembangan"  onclick="togglePF('pengembangan')">Pengembangan</span>
-        <span class="chip papan" id="pf-akselerasi"    onclick="togglePF('akselerasi')">Akselerasi</span>
-        <span class="chip papan" id="pf-ekonomibaru"   onclick="togglePF('ekonomibaru')">Ekonomi Baru</span>
-        <span class="chip papan" id="pf-pkm"           onclick="togglePF('pkm')">Pemantauan Khusus</span>
-        <button class="chip-reset" onclick="resetPF()">↺ Reset</button>
+        <span class="chip papan" id="pf-utama"  onclick="togglePF('utama')">Utama</span>
+        <span class="chip papan" id="pf-dev"    onclick="togglePF('dev')">Pengembangan</span>
+        <span class="chip papan" id="pf-aksel"  onclick="togglePF('aksel')">Akselerasi</span>
+        <span class="chip papan" id="pf-enb"    onclick="togglePF('enb')">Ekonomi Baru</span>
+        <span class="chip papan" id="pf-pkm"    onclick="togglePF('pkm')">Pmnt. Khusus</span>
+        <button class="creset" onclick="resetPF()">↺</button>
       </div>
     </div>
 
-    <div class="f-row">
-      <span class="f-label ma">MA</span>
+    <!-- ROW 4: MA FILTER (power user) -->
+    <div class="frow">
+      <span class="flabel ma">MA</span>
       <div class="chips">
         <span class="chip ma" id="mf-ema3"   onclick="toggleMF('ema3')">EMA 3</span>
         <span class="chip ma" id="mf-ema5"   onclick="toggleMF('ema5')">EMA 5</span>
@@ -264,84 +533,76 @@ tbody td:first-child{padding-left:.85rem;text-align:left}
         <span class="chip ma" id="mf-sma50"  onclick="toggleMF('sma50')">SMA 50</span>
         <span class="chip ma" id="mf-sma100" onclick="toggleMF('sma100')">SMA 100</span>
         <span class="chip ma" id="mf-sma200" onclick="toggleMF('sma200')">SMA 200</span>
-        <button class="chip-reset" onclick="resetMF()">↺ Reset</button>
+        <button class="creset" onclick="resetMF()">↺</button>
       </div>
     </div>
 
-    <div class="f-row">
-      <span class="f-label vol">Volume</span>
+    <!-- ROW 5: OSCILLATOR FILTER (power user) -->
+    <div class="frow" style="border-bottom:none">
+      <span class="flabel osc">Osilator</span>
       <div class="chips">
-        <span class="chip vol" id="vf-vma3"  onclick="toggleVF('vma3')">Vol &gt; VMA 3</span>
-        <span class="chip vol" id="vf-vma5"  onclick="toggleVF('vma5')">Vol &gt; VMA 5</span>
-        <span class="chip vol" id="vf-vma20" onclick="toggleVF('vma20')">Vol &gt; VMA 20</span>
-        <span class="chip vol" id="vf-vma50" onclick="toggleVF('vma50')">Vol &gt; VMA 50</span>
-        <button class="chip-reset" onclick="resetVF()">↺ Reset</button>
-      </div>
-    </div>
-
-    <div class="f-row" style="border-bottom:none">
-      <span class="f-label osc">Osilator</span>
-      <div class="chips">
-        <span class="chip osc" id="of-rsi-ob"    onclick="toggleOF('rsi-ob')"    title="RSI di atas 70, zona jenuh beli">RSI Jenuh Beli (&gt;70)</span>
-        <span class="chip osc" id="of-rsi-os"    onclick="toggleOF('rsi-os')"    title="RSI di bawah 30, zona jenuh jual">RSI Jenuh Jual (&lt;30)</span>
-        <span class="chip osc" id="of-rsi-bull"  onclick="toggleOF('rsi-bull')"  title="RSI di atas 50, momentum positif">RSI Bullish (&gt;50)</span>
-        <span class="chip osc" id="of-srsi-ob"   onclick="toggleOF('srsi-ob')"   title="StochRSI di atas 80, jenuh beli">StochRSI Jenuh Beli (&gt;80)</span>
-        <span class="chip osc" id="of-srsi-os"   onclick="toggleOF('srsi-os')"   title="StochRSI di bawah 20, jenuh jual">StochRSI Jenuh Jual (&lt;20)</span>
-        <span class="chip osc" id="of-macd-bull" onclick="toggleOF('macd-bull')" title="Histogram MACD positif">MACD Bullish</span>
-        <span class="chip osc" id="of-macd-bear" onclick="toggleOF('macd-bear')" title="Histogram MACD negatif">MACD Bearish</span>
-        <button class="chip-reset" onclick="resetOF()">↺ Reset</button>
+        <span class="chip osc" id="of-rsi-sweet"  onclick="toggleOF('rsi-sweet')"  title="RSI 50–70: zona sweet spot untuk entry long">RSI Sweet Spot (50–70)</span>
+        <span class="chip osc" id="of-rsi-os"     onclick="toggleOF('rsi-os')"     title="RSI di bawah 35: potensi rebound dari jenuh jual">RSI Jenuh Jual (&lt;35)</span>
+        <span class="chip osc" id="of-rsi-bull"   onclick="toggleOF('rsi-bull')"   title="RSI di atas 50: momentum bullish aktif">RSI Bullish (&gt;50)</span>
+        <span class="chip osc" id="of-macd-bull"  onclick="toggleOF('macd-bull')"  title="Histogram MACD positif: momentum naik">MACD Bullish</span>
+        <span class="chip osc" id="of-macd-cross" onclick="toggleOF('macd-cross')" title="MACD baru saja crossing ke atas sinyal">MACD Baru Bullish</span>
+        <button class="creset" onclick="resetOF()">↺</button>
       </div>
     </div>
 
   </div></div>
 
+  <!-- TABLE CARD -->
   <div class="card">
-    <div class="stats-bar" id="statsBar" style="display:none">
-      <span class="stat">Tampil: <strong id="s-sho">0</strong></span>
-      <span class="stat">Total: <strong id="s-tot">0</strong></span>
-      <span class="stat g">Bullish MA: <strong id="s-bul">0</strong></span>
-      <span class="stat r">Bearish MA: <strong id="s-bea">0</strong></span>
-      <span class="stat b">↑ EMA4: <strong id="s-abo">0</strong></span>
-      <span class="src-badge" id="s-src" style="display:none"></span>
+    <div class="stats" id="statsBar" style="display:none">
+      <span class="st">Tampil: <b id="s-sho">0</b></span>
+      <span class="st">Total: <b id="s-tot">0</b></span>
+      <span class="st g">Skor ≥8: <b id="s-hi">0</b></span>
+      <span class="st a">Uptrend: <b id="s-up">0</b></span>
+      <span class="st r">Bearish: <b id="s-dn">0</b></span>
+      <span class="src-pill" id="srcPill" style="display:none"></span>
     </div>
-    <div class="t-wrap" id="tWrap">
+
+    <div class="twrap" id="tWrap">
       <table>
         <thead>
-          <tr class="grp-row">
-            <th class="col-sticky" style="min-width:130px">TICKER</th>
-            <th colspan="3" class="gh-price">HARGA</th>
-            <th colspan="2" class="gh-ma">MOVING AVERAGE</th>
-            <th colspan="5" class="gh-osc">OSCILLATOR</th>
+          <tr class="grow">
+            <th class="csticky" style="min-width:145px">SAHAM</th>
+            <th class="gh-score" colspan="1">SKOR SETUP</th>
+            <th class="gh-price" colspan="2">HARGA</th>
+            <th class="gh-trend" colspan="2">TREND & VOLUME</th>
+            <th class="gh-osc" colspan="3">OSCILLATOR</th>
           </tr>
-          <tr class="col-row">
-            <th class="nc col-sticky" style="min-width:130px">TICKER / NAMA</th>
+          <tr class="crow">
+            <th class="nc csticky" style="min-width:145px">TICKER / NAMA</th>
+            <th onclick="sortBy('score')" class="ch-score" title="Skor setup 0–10 berdasarkan MA alignment, RSI, MACD, volume">SKOR</th>
             <th onclick="sortBy('price')" class="ch-price">HARGA</th>
             <th onclick="sortBy('pct')" class="ch-price">% CHG</th>
-            <th onclick="sortBy('pct1today')" class="ch-price">1% TRX</th>
-            <th class="nc ch-ma" title="EMA3 EMA5 EMA10 EMA20 SMA50 SMA100 SMA200">MA (7)</th>
-            <th class="nc ch-ma" title="Volume vs VMA3 VMA5 VMA20 VMA50">VMA (4)</th>
-            <th onclick="sortBy('rsi')" class="ch-osc">RSI</th>
-            <th onclick="sortBy('stochRsi')" class="ch-osc">StochRSI</th>
+            <th class="nc ch-trend" title="Berapa dari 7 MA yang harganya di atas (EMA3/5/10/20 + SMA50/100/200)">MA (7)</th>
+            <th class="nc ch-trend" title="Volume hari ini vs rata-rata VMA (0–4)">VOLUME</th>
+            <th onclick="sortBy('rsi')" class="ch-osc" title="RSI(14): &lt;35 jenuh jual, 50–70 sweet spot, &gt;80 jenuh beli">RSI</th>
             <th onclick="sortBy('macdHist')" class="ch-osc">MACD</th>
-            <th onclick="sortBy('atrV')" class="ch-osc">ATR</th>
-            <th onclick="sortBy('adrPct')" class="ch-osc">ADR</th>
+            <th onclick="sortBy('adrPct')" class="ch-osc" title="Average Daily Range %: volatilitas harian rata-rata">GERAK/H</th>
           </tr>
         </thead>
         <tbody id="tBody">
-          <tr><td colspan="11"><div class="t-empty"><div class="t-empty-ico">📊</div>Memuat data…</div></td></tr>
+          <tr><td colspan="9"><div class="tempty"><div class="tempty-ico">📊</div><div class="tempty-txt">Memuat data…</div></div></td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <p style="font-size:.62rem;color:var(--text3);text-align:center;padding-bottom:1.5rem">
-    Data dari Yahoo Finance via GitHub Actions · Bukan rekomendasi investasi
-  </p>
+  <div class="footer">
+    Data dari Yahoo Finance via GitHub Actions · <strong>Bukan rekomendasi investasi</strong><br>
+    Preset: 🚀 Siap Breakout = EMA20✓ + RSI 50–70 + MACD Bull + Vol aktif &nbsp;·&nbsp;
+    📈 Uptrend Kuat = 5/7 MA✓ + MACD Bull &nbsp;·&nbsp;
+    🔍 Jenuh Jual = RSI &lt;35
+  </div>
 </div>
 <div class="toasts" id="toasts"></div>
 
 <script>
-// 956 tickers from CLEANED_DATA.csv
+// 956 tickers
 const TK=["AADI", "AALI", "ABBA", "ABDA", "ABMM", "ACES", "ACRO", "ACST", "ADCP", "ADES", "ADHI", "ADMF", "ADMG", "ADMR", "ADRO", "AEGS", "AGAR", "AGII", "AGRO", "AGRS", "AHAP", "AIMS", "AISA", "AKKU", "AKPI", "AKRA", "AKSI", "ALDO", "ALII", "ALKA", "ALMI", "ALTO", "AMAG", "AMAN", "AMAR", "AMFG", "AMIN", "AMMN", "AMMS", "AMOR", "AMRT", "ANDI", "ANJT", "ANTM", "APEX", "APIC", "APII", "APLI", "APLN", "ARCI", "AREA", "ARGO", "ARII", "ARKA", "ARKO", "ARMY", "ARNA", "ARTA", "ARTI", "ARTO", "ASBI", "ASDM", "ASGR", "ASHA", "ASII", "ASJT", "ASLC", "ASLI", "ASMI", "ASPI", "ASPR", "ASRI", "ASRM", "ASSA", "ATAP", "ATIC", "ATLA", "AUTO", "AVIA", "AWAN", "AXIO", "AYAM", "AYLS", "BABP", "BABY", "BACA", "BAIK", "BAJA", "BALI", "BANK", "BAPA", "BAPI", "BATA", "BATR", "BAUT", "BAYU", "BBCA", "BBHI", "BBKP", "BBLD", "BBMD", "BBNI", "BBRI", "BBRM", "BBSI", "BBSS", "BBTN", "BBYB", "BCAP", "BCIC", "BCIP", "BDKR", "BDMN", "BEBS", "BEEF", "BEER", "BEKS", "BELI", "BELL", "BESS", "BEST", "BFIN", "BGTG", "BHAT", "BHIT", "BIKA", "BIKE", "BIMA", "BINA", "BINO", "BIPI", "BIPP", "BIRD", "BISI", "BJBR", "BJTM", "BKDP", "BKSL", "BKSW", "BLES", "BLOG", "BLTA", "BLTZ", "BLUE", "BMAS", "BMBL", "BMHS", "BMRI", "BMSR", "BMTR", "BNBA", "BNBR", "BNGA", "BNII", "BNLI", "BOAT", "BOBA", "BOGA", "BOLA", "BOLT", "BOSS", "BPFI", "BPII", "BPTR", "BRAM", "BREN", "BRIS", "BRMS", "BRNA", "BRPT", "BRRC", "BSBK", "BSDE", "BSIM", "BSML", "BSSR", "BSWD", "BTEK", "BTEL", "BTON", "BTPN", "BTPS", "BUAH", "BUDI", "BUKA", "BUKK", "BULL", "BUMI", "BUVA", "BVIC", "BWPT", "BYAN", "CAKK", "CAMP", "CANI", "CARE", "CARS", "CASA", "CASH", "CASS", "CBDK", "CBMF", "CBPE", "CBRE", "CBUT", "CCSI", "CDIA", "CEKA", "CENT", "CFIN", "CGAS", "CHEK", "CHEM", "CHIP", "CINT", "CITA", "CITY", "CLAY", "CLEO", "CLPI", "CMNP", "CMNT", "CMPP", "CMRY", "CNKO", "CNMA", "CNTX", "COAL", "COCO", "COIN", "COWL", "CPIN", "CPRI", "CPRO", "CRAB", "CRSN", "CSAP", "CSIS", "CSMI", "CSRA", "CTBN", "CTRA", "CTTH", "CUAN", "CYBR", "DAAZ", "DADA", "DART", "DATA", "DAYA", "DCII", "DEAL", "DEFI", "DEPO", "DEWA", "DEWI", "DFAM", "DGIK", "DGNS", "DGWG", "DIGI", "DILD", "DIVA", "DKFT", "DKHH", "DLTA", "DMAS", "DMMX", "DMND", "DNAR", "DNET", "DOID", "DOOH", "DOSS", "DPNS", "DPUM", "DRMA", "DSFI", "DSNG", "DSSA", "DUCK", "DUTI", "DVLA", "DWGL", "DYAN", "EAST", "ECII", "EDGE", "EKAD", "ELIT", "ELPI", "ELSA", "ELTY", "EMAS", "EMDE", "EMTK", "ENAK", "ENRG", "ENVY", "ENZO", "EPAC", "EPMT", "ERAA", "ERAL", "ERTX", "ESIP", "ESSA", "ESTA", "ESTI", "ETWA", "EURO", "EXCL", "FAPA", "FAST", "FASW", "FILM", "FIMP", "FIRE", "FISH", "FITT", "FLMC", "FMII", "FOLK", "FOOD", "FORE", "FORU", "FPNI", "FUJI", "FUTR", "FWCT", "GAMA", "GDST", "GDYR", "GEMA", "GEMS", "GGRM", "GGRP", "GHON", "GIAA", "GJTL", "GLOB", "GLVA", "GMFI", "GMTD", "GOLD", "GOLF", "GOLL", "GOOD", "GOTO", "GPRA", "GPSO", "GRIA", "GRPH", "GRPM", "GSMF", "GTBO", "GTRA", "GTSI", "GULA", "GUNA", "GWSA", "GZCO", "HADE", "HAIS", "HAJJ", "HALO", "HATM", "HBAT", "HDFA", "HDIT", "HEAL", "HELI", "HERO", "HEXA", "HGII", "HILL", "HITS", "HKMU", "HMSP", "HOKI", "HOME", "HOMI", "HOPE", "HOTL", "HRME", "HRTA", "HRUM", "HUMI", "HYGN", "IATA", "IBFN", "IBOS", "IBST", "ICBP", "ICON", "IDEA", "IDPR", "IFII", "IFSH", "IGAR", "IIKP", "IKAI", "IKAN", "IKBI", "IKPM", "IMAS", "IMJS", "IMPC", "INAF", "INAI", "INCF", "INCI", "INCO", "INDF", "INDO", "INDR", "INDS", "INDX", "INDY", "INET", "INKP", "INOV", "INPC", "INPP", "INPS", "INRU", "INTA", "INTD", "INTP", "IOTF", "IPAC", "IPCC", "IPCM", "IPOL", "IPPE", "IPTV", "IRRA", "IRSX", "ISAP", "ISAT", "ISEA", "ISSP", "ITIC", "ITMA", "ITMG", "JARR", "JAST", "JATI", "JAWA", "JAYA", "JECC", "JGLE", "JIHD", "JKON", "JMAS", "JPFA", "JRPT", "JSKY", "JSMR", "JSPT", "JTPE", "KAEF", "KAQI", "KARW", "KAYU", "KBAG", "KBLI", "KBLM", "KBLV", "KBRI", "KDSI", "KDTN", "KEEN", "KEJU", "KETR", "KIAS", "KICI", "KIJA", "KING", "KINO", "KIOS", "KJEN", "KKES", "KKGI", "KLAS", "KLBF", "KLIN", "KMDS", "KMTR", "KOBX", "KOCI", "KOIN", "KOKA", "KONI", "KOPI", "KOTA", "KPIG", "KRAS", "KREN", "KRYA", "KSIX", "KUAS", "LABA", "LABS", "LAJU", "LAND", "LAPD", "LCGP", "LCKM", "LEAD", "LFLO", "LIFE", "LINK", "LION", "LIVE", "LMAS", "LMAX", "LMPI", "LMSH", "LOPI", "LPCK", "LPGI", "LPIN", "LPKR", "LPLI", "LPPF", "LPPS", "LRNA", "LSIP", "LTLS", "LUCK", "LUCY", "MABA", "MAGP", "MAHA", "MAIN", "MANG", "MAPA", "MAPB", "MAPI", "MARI", "MARK", "MASB", "MAXI", "MAYA", "MBAP", "MBMA", "MBSS", "MBTO", "MCAS", "MCOL", "MCOR", "MDIA", "MDIY", "MDKA", "MDKI", "MDLA", "MDLN", "MDRN", "MEDC", "MEDS", "MEGA", "MEJA", "MENN", "MERI", "MERK", "META", "MFMI", "MGLV", "MGNA", "MGRO", "MHKI", "MICE", "MIDI", "MIKA", "MINA", "MINE", "MIRA", "MITI", "MKAP", "MKNT", "MKPI", "MKTR", "MLBI", "MLIA", "MLPL", "MLPT", "MMIX", "MMLP", "MNCN", "MOLI", "MORA", "MPIX", "MPMX", "MPOW", "MPPA", "MPRO", "MPXL", "MRAT", "MREI", "MSIE", "MSIN", "MSJA", "MSKY", "MSTI", "MTDL", "MTEL", "MTFN", "MTLA", "MTMH", "MTPS", "MTRA", "MTSM", "MTWI", "MUTU", "MYOH", "MYOR", "MYTX", "NAIK", "NANO", "NASA", "NASI", "NATO", "NAYZ", "NCKL", "NELY", "NEST", "NETV", "NFCX", "NICE", "NICK", "NICL", "NIKL", "NINE", "NIRO", "NISP", "NOBU", "NPGF", "NRCA", "NSSS", "NTBK", "NUSA", "NZIA", "OASA", "OBAT", "OBMD", "OCAP", "OILS", "OKAS", "OLIV", "OMED", "OMRE", "OPMS", "PACK", "PADA", "PADI", "PALM", "PAMG", "PANI", "PANR", "PANS", "PART", "PBID", "PBRX", "PBSA", "PCAR", "PDES", "PDPP", "PEGE", "PEHA", "PEVE", "PGAS", "PGEO", "PGJO", "PGLI", "PGUN", "PICO", "PIPA", "PJAA", "PJHB", "PKPK", "PLAN", "PLAS", "PLIN", "PMJS", "PMMP", "PMUI", "PNBN", "PNBS", "PNGO", "PNIN", "PNLF", "PNSE", "POLA", "POLI", "POLL", "POLU", "POLY", "POOL", "PORT", "POSA", "POWR", "PPGL", "PPRE", "PPRI", "PPRO", "PRAY", "PRDA", "PRIM", "PSAB", "PSAT", "PSDN", "PSGO", "PSKT", "PSSI", "PTBA", "PTDU", "PTIS", "PTMP", "PTMR", "PTPP", "PTPS", "PTPW", "PTRO", "PTSN", "PTSP", "PUDP", "PURA", "PURE", "PURI", "PWON", "PYFA", "PZZA", "RAAM", "RAFI", "RAJA", "RALS", "RANC", "RATU", "RBMS", "RCCC", "RDTX", "REAL", "RELF", "RELI", "RGAS", "RICY", "RIGS", "RIMO", "RISE", "RLCO", "RMKE", "RMKO", "ROCK", "RODA", "RONY", "ROTI", "RSCH", "RSGK", "RUIS", "RUNS", "SAFE", "SAGE", "SAME", "SAMF", "SAPX", "SATU", "SBAT", "SBMA", "SCCO", "SCMA", "SCNP", "SCPI", "SDMU", "SDPC", "SDRA", "SEMA", "SFAN", "SGER", "SGRO", "SHID", "SHIP", "SICO", "SIDO", "SILO", "SIMA", "SIMP", "SINI", "SIPD", "SKBM", "SKLT", "SKRN", "SKYB", "SLIS", "SMAR", "SMBR", "SMCB", "SMDM", "SMDR", "SMGA", "SMGR", "SMIL", "SMKL", "SMKM", "SMLE", "SMMA", "SMMT", "SMRA", "SMRU", "SMSM", "SNLK", "SOCI", "SOFA", "SOHO", "SOLA", "SONA", "SOSS", "SOTS", "SOUL", "SPMA", "SPRE", "SPTO", "SQMI", "SRAJ", "SRIL", "SRSN", "SRTG", "SSIA", "SSMS", "SSTM", "STAA", "STAR", "STRK", "STTP", "SUGI", "SULI", "SUNI", "SUPA", "SUPR", "SURE", "SURI", "SWAT", "SWID", "TALF", "TAMA", "TAMU", "TAPG", "TARA", "TAXI", "TAYS", "TBIG", "TBLA", "TBMS", "TCID", "TCPI", "TDPM", "TEBE", "TECH", "TELE", "TFAS", "TFCO", "TGKA", "TGRA", "TGUK", "TIFA", "TINS", "TIRA", "TIRT", "TKIM", "TLDN", "TLKM", "TMAS", "TMPO", "TNCA", "TOBA", "TOOL", "TOPS", "TOSK", "TOTL", "TOTO", "TOWR", "TOYS", "TPIA", "TPMA", "TRAM", "TRGU", "TRIL", "TRIM", "TRIN", "TRIO", "TRIS", "TRJA", "TRON", "TRST", "TRUE", "TRUK", "TRUS", "TSPC", "TUGU", "TYRE", "UANG", "UCID", "UDNG", "UFOE", "ULTJ", "UNIC", "UNIQ", "UNIT", "UNSP", "UNTD", "UNTR", "UNVR", "URBN", "UVCR", "VAST", "VERN", "VICI", "VICO", "VINS", "VISI", "VIVA", "VKTR", "VOKS", "VRNA", "VTNY", "WAPO", "WEGE", "WEHA", "WGSH", "WICO", "WIDI", "WIFI", "WIIM", "WIKA", "WINE", "WINR", "WINS", "WIRG", "WMPP", "WMUU", "WOMF", "WOOD", "WOWS", "WSBP", "WSKT", "WTON", "YELO", "YOII", "YPAS", "YULE", "YUPI", "ZATA", "ZBRA", "ZINC", "ZONE", "ZYRX"];
 
 const TM={
@@ -1304,64 +1565,142 @@ const TM={
 };
 
 
-/* ── CONFIG ─────────────────────────────────── */
-const DATA_URL='data/issi_data.json';
-const SK='scr_v1',SKT='scr_v1_ts';
+/* ══════════════════════════════════════════════
+   CONFIG & STATE
+══════════════════════════════════════════════ */
+const DATA_URL = 'data/issi_data.json';
+const SK = 'scr2_v1', SKT = 'scr2_v1_ts';
 
-/* ── STATE ──────────────────────────────────── */
-let AD=[],DD=[];
-let maF=new Set(),volF=new Set(),oscF=new Set(),idxF=new Set(),papanF=new Set();
-let sCol='pct',sDir=-1,dbOn=false;
+let AD=[], DD=[];
+let activePreset=null;
+let idxF=new Set(), papanF=new Set(), maF=new Set(), oscF=new Set();
+let sCol='score', sDir=-1, dbOn=false;
 
-/* ── DARK MODE ──────────────────────────────── */
-(function(){const t=localStorage.getItem('scr_theme')||'light';document.documentElement.setAttribute('data-theme',t);_dk(t)})();
-function toggleDark(){const n=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('scr_theme',n);_dk(n)}
-function _dk(t){document.getElementById('dkIco').textContent=t==='dark'?'☀️':'🌙';document.getElementById('dkLbl').textContent=t==='dark'?'Light':'Dark'}
+/* ══════════════════════════════════════════════
+   THEME
+══════════════════════════════════════════════ */
+(function(){
+  const t=localStorage.getItem('scr2_theme')||'dark';
+  document.documentElement.setAttribute('data-theme',t);
+  _updTheme(t);
+})();
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme');
+  const n=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',n);
+  localStorage.setItem('scr2_theme',n);
+  _updTheme(n);
+}
+function _updTheme(t){
+  document.getElementById('themeIco').textContent=t==='dark'?'☀️':'🌙';
+  document.getElementById('themeLbl').textContent=t==='dark'?'Light':'Dark';
+}
 
-/* ── DEBUG ──────────────────────────────────── */
-let _db=[];
-function dLog(m,t=''){_db.push({m,t});if(_db.length>60)_db.shift();if(!dbOn)return;const el=document.getElementById('dbLog');el.innerHTML=_db.slice(-25).map(l=>`<div class="dl ${l.t}">${l.m}</div>`).join('');el.scrollTop=el.scrollHeight}
-function toggleDebug(){dbOn=!dbOn;document.getElementById('dbPanel').classList.toggle('show',dbOn);if(dbOn){const el=document.getElementById('dbLog');el.innerHTML=_db.slice(-25).map(l=>`<div class="dl ${l.t}">${l.m}</div>`).join('');el.scrollTop=el.scrollHeight}}
+/* ══════════════════════════════════════════════
+   DEBUG
+══════════════════════════════════════════════ */
+let _dbl=[];
+function dLog(m,t=''){
+  _dbl.push({m,t});if(_dbl.length>80)_dbl.shift();
+  if(!dbOn)return;
+  _renderDbLog();
+}
+function _renderDbLog(){
+  const el=document.getElementById('dbLog');
+  el.innerHTML=_dbl.slice(-30).map(l=>`<div class="dl ${l.t}">${l.m}</div>`).join('');
+  el.scrollTop=el.scrollHeight;
+}
+function toggleDebug(){
+  dbOn=!dbOn;
+  document.getElementById('dbPanel').classList.toggle('show',dbOn);
+  document.getElementById('dbBtn').classList.toggle('active',dbOn);
+  if(dbOn)_renderDbLog();
+}
 
-/* ── MATH ───────────────────────────────────── */
+/* ══════════════════════════════════════════════
+   MATH
+══════════════════════════════════════════════ */
 function _ema(a,p){if(!a||a.length<p)return null;const k=2/(p+1);let v=a.slice(0,p).reduce((x,y)=>x+y,0)/p;for(let i=p;i<a.length;i++)v=a[i]*k+v*(1-k);return v}
 function _sma(a,p){if(!a||a.length<p)return null;return a.slice(-p).reduce((x,y)=>x+y,0)/p}
 function _rsi(a){if(!a||a.length<15)return null;const s=a.slice(-15);let g=0,l=0;for(let i=1;i<s.length;i++){const d=s[i]-s[i-1];if(d>0)g+=d;else l-=d}const ag=g/14,al=l/14;return al===0?100:100-100/(1+ag/al)}
 function _stochRSI(a){if(!a||a.length<33)return null;const ra=[];for(let i=15;i<=a.length;i++){const s=a.slice(0,i).slice(-15);let g=0,l=0;for(let j=1;j<s.length;j++){const d=s[j]-s[j-1];if(d>0)g+=d;else l-=d}const ag=g/14,al=l/14;ra.push(al===0?100:100-100/(1+ag/al))}if(ra.length<14)return null;const rec=ra.slice(-14),mn=Math.min(...rec),mx=Math.max(...rec);return mx===mn?50:((ra[ra.length-1]-mn)/(mx-mn))*100}
-function _macd(a){if(!a||a.length<35)return null;const lines=[];for(let i=26;i<=a.length;i++){const sl=a.slice(0,i),m12=_ema(sl,12),m26=_ema(sl,26);if(m12!==null&&m26!==null)lines.push(m12-m26)}if(lines.length<9)return null;const sig=_ema(lines,9);if(sig===null)return null;const line=lines.at(-1),hist=line-sig;let prevHist=null;if(lines.length>=2){const pl=lines.slice(0,-1),ps=_ema(pl,9);if(ps!==null)prevHist=pl.at(-1)-ps}return{line,signal:sig,hist,bull:hist>0,cross:prevHist!==null&&Math.sign(hist)!==Math.sign(prevHist)}}
+function _macd(a){if(!a||a.length<35)return null;const lines=[];for(let i=26;i<=a.length;i++){const sl=a.slice(0,i),m12=_ema(sl,12),m26=_ema(sl,26);if(m12!==null&&m26!==null)lines.push(m12-m26)}if(lines.length<9)return null;const sig=_ema(lines,9);if(sig===null)return null;const line=lines.at(-1),hist=line-sig;let ph=null;if(lines.length>=2){const pl=lines.slice(0,-1),ps=_ema(pl,9);if(ps!==null)ph=pl.at(-1)-ps}return{line,signal:sig,hist,bull:hist>0,cross:ph!==null&&Math.sign(hist)!==Math.sign(ph)}}
 function _atr(rows){if(!rows||rows.length<15)return null;const trs=[];for(let i=1;i<rows.length;i++)trs.push(Math.max(rows[i].h-rows[i].l,Math.abs(rows[i].h-rows[i-1].c),Math.abs(rows[i].l-rows[i-1].c)));return trs.length>=14?trs.slice(-14).reduce((a,b)=>a+b,0)/14:null}
 function _adr(rows){if(!rows||rows.length<14)return null;const r=rows.slice(-14);return{nom:r.reduce((a,b)=>a+(b.h-b.l),0)/14,pct:r.reduce((a,b)=>a+(b.h-b.l)/b.l,0)/14*100}}
 
-/* ── PROCESS YAHOO DATA ─────────────────────── */
-function processYahoo(ticker,res){
-  const meta=res.meta||{};const raw=res.indicators?.quote?.[0]||{};const ts=res.timestamp||[];
-  const rows=[];
-  for(let i=0;i<ts.length;i++){const c=raw.close?.[i],h=raw.high?.[i],l=raw.low?.[i],v=raw.volume?.[i];if(c!=null&&h!=null&&l!=null&&v!=null&&!isNaN(c)&&c>0&&h>0&&l>0)rows.push({c,h,l,v})}
-  if(rows.length<30)return null;
-  const closes=rows.map(x=>x.c),vols=rows.map(x=>x.v);
-  const last=closes.at(-1),prev=closes.at(-2)??last,pct=((last-prev)/prev)*100;
-  const e3=_ema(closes,3),e5=_ema(closes,5),e10=_ema(closes,10),e20=_ema(closes,20);
-  const s50=_sma(closes,50),s100=_sma(closes,100),s200=_sma(closes,200);
-  const rsiV=_rsi(closes),srsiV=_stochRSI(closes),macdV=_macd(closes),atrV=_atr(rows),adrV=_adr(rows);
-  const lastVol=vols.at(-1)??0,lastValue=lastVol*last,pct1today=lastValue*0.01;
-  const vm3=_sma(vols,3),vm5=_sma(vols,5),vm20=_sma(vols,20),vm50=_sma(vols,50);
-  const ms={ema3:e3!==null&&last>e3,ema5:e5!==null&&last>e5,ema10:e10!==null&&last>e10,ema20:e20!==null&&last>e20,sma50:s50!==null&&last>s50,sma100:s100!==null&&last>s100,sma200:s200!==null&&last>s200,vma3:vm3!==null&&lastVol>vm3,vma5:vm5!==null&&lastVol>vm5,vma20:vm20!==null&&lastVol>vm20,vma50:vm50!==null&&lastVol>vm50};
-  const above4=ms.ema3&&ms.ema5&&ms.ema10&&ms.ema20;
-  let bull=0,bear=0;['ema3','ema5','ema10','ema20','sma50','sma100','sma200'].forEach(k=>{if(ms[k])bull++;else bear++});
-  if(rsiV!==null){if(rsiV>50)bull++;else bear++}
-  if(srsiV!==null){if(srsiV>50)bull++;else bear++}
-  if(macdV){if(macdV.bull)bull++;else bear++}
-  const company=(meta.longName||meta.shortName||'').replace(/\s*\([^)]*\)\s*/g,'').trim()||ticker;
-  const tm=TM[ticker]||{};
-  return{ticker,company,price:last,pct,maStatus:ms,above4,bull,bear,rsi:rsiV,stochRsi:srsiV,macdBull:macdV?.bull??null,macdHist:macdV?.hist??null,macdCross:macdV?.cross??false,atrV,adrPct:adrV?.pct??null,adrNom:adrV?.nom??null,lastVol,lastValue,pct1today,papan:tm.p||'',indeks:tm.i||[]}
+/* ══════════════════════════════════════════════
+   SETUP SCORE (0–10)
+   MA alignment: 7 pts | RSI zone: 1.5 pts
+   MACD bull: 1 pt     | Volume active: 0.5 pt
+══════════════════════════════════════════════ */
+function calcScore(d){
+  let s=0;
+  const ms=d.maStatus||{};
+  // MA alignment — 7 points total
+  ['ema3','ema5','ema10','ema20','sma50','sma100','sma200'].forEach(k=>{if(ms[k])s+=1});
+  // RSI sweet spot — max 1.5
+  if(d.rsi!=null){
+    if(d.rsi>=50&&d.rsi<=70) s+=1.5;       // sweet spot ✓
+    else if(d.rsi>70&&d.rsi<=80) s+=0.5;   // slightly overbought
+    else if(d.rsi>=40&&d.rsi<50) s+=0.5;   // building momentum
+  }
+  // MACD histogram positive — 1 point
+  if(d.macdBull===true) s+=1;
+  // Volume above VMA20 — 0.5 point
+  if(ms.vma20) s+=0.5;
+  return Math.min(10, Math.round(s*10)/10);
 }
 
-/* ── DATA LOADING ───────────────────────────── */
-function _enrich(data){return data.map(d=>{const tm=TM[d.ticker]||{};return{...d,papan:tm.p||d.papan||'',indeks:tm.i||d.indeks||[]}})}
+function scoreLabel(s){
+  if(s>=8)return{lbl:'KUAT',cls:'sh'};
+  if(s>=6)return{lbl:'BAGUS',cls:'sm'};
+  if(s>=4)return{lbl:'PANTAU',cls:'sl'};
+  return{lbl:'LEMAH',cls:'sv'};
+}
 
+/* ══════════════════════════════════════════════
+   PRESET DEFINITIONS
+══════════════════════════════════════════════ */
+const PRESETS={
+  breakout: d=>{
+    const ms=d.maStatus||{};
+    return ms.ema20&&ms.ema5&&d.rsi!=null&&d.rsi>=50&&d.rsi<=70&&d.macdBull===true&&ms.vma20;
+  },
+  uptrend: d=>{
+    const ms=d.maStatus||{};
+    const maCnt=['ema3','ema5','ema10','ema20','sma50','sma100','sma200'].filter(k=>ms[k]).length;
+    return maCnt>=5&&d.macdBull===true&&ms.ema20;
+  },
+  momentum: d=>{
+    const ms=d.maStatus||{};
+    return d.rsi!=null&&d.rsi>=55&&d.rsi<=75&&d.macdBull===true&&ms.ema20;
+  },
+  volspike: d=>{
+    const ms=d.maStatus||{};
+    return ms.vma3&&ms.vma5&&ms.vma20&&ms.ema20;
+  },
+  oversold: d=>{
+    return d.rsi!=null&&d.rsi<35;
+  }
+};
+
+/* ══════════════════════════════════════════════
+   DATA ENRICHMENT
+══════════════════════════════════════════════ */
+function _enrich(data){
+  return data.map(d=>{
+    const tm=TM[d.ticker]||{};
+    const score=calcScore(d);
+    return{...d,papan:tm.p||d.papan||'',indeks:tm.i||d.indeks||[],score};
+  });
+}
+
+/* ══════════════════════════════════════════════
+   DATA LOADING
+══════════════════════════════════════════════ */
 window.addEventListener('load',async()=>{
   try{
-    dLog('Loading…');
+    dLog('Loading issi_data.json…');
     const res=await fetch(DATA_URL+'?_='+Date.now());
     if(res.ok){
       const j=await res.json();
@@ -1369,145 +1708,307 @@ window.addEventListener('load',async()=>{
         const enriched=_enrich(j.data);
         try{localStorage.setItem(SK,JSON.stringify(enriched));localStorage.setItem(SKT,j.fetchedAt||Date.now())}catch(_){}
         _load(enriched,new Date(j.fetchedAt||Date.now()).getTime(),'gh',j.fetchedAtWIB||'—');
-        dLog(`GitHub OK: ${enriched.length} saham`,'ok');return;
+        dLog(`GitHub OK: ${enriched.length} saham`,'ok');
+        return;
       }
     }
-  }catch(e){dLog('GitHub gagal: '+e.message,'warn')}
+    dLog('GitHub response empty','warn');
+  }catch(e){dLog('GitHub fail: '+e.message,'warn')}
   try{
     const raw=localStorage.getItem(SK),ts=localStorage.getItem(SKT);
-    if(raw){const data=JSON.parse(raw);if(data?.length>0){const e=_enrich(data);_load(e,ts?parseInt(ts):Date.now(),'cache');dLog(`Cache: ${e.length} saham`,'ok');return}}
+    if(raw){
+      const data=JSON.parse(raw);
+      if(data?.length>0){
+        const enriched=_enrich(data);
+        _load(enriched,ts?parseInt(ts):Date.now(),'cache');
+        dLog(`Cache: ${enriched.length} saham`,'ok');
+        return;
+      }
+    }
   }catch(e){dLog('Cache error: '+e.message,'err')}
-  setDot('');document.getElementById('sText').textContent='Data belum tersedia';
+  setDot('');
+  document.getElementById('sText').textContent='Data belum tersedia — jalankan GitHub Action terlebih dahulu';
+  toast('Data tidak tersedia. Jalankan workflow GitHub Actions.','er');
 });
 
 function _load(data,ts,src,ghLabel){
   AD=data;
-  const lbl={gh:'📦 GitHub',cache:'💾 Cache'};
-  const badge=`<span class="src-badge ${src}">${lbl[src]||src}</span>`;
+  const srcMap={gh:'📦 GitHub',cache:'💾 Cache'};
   document.getElementById('sText').textContent=`${AD.length} saham`;
-  document.getElementById('tsWrap').style.display='flex';
-  document.getElementById('tsText').textContent=src==='gh'?ghLabel:`Cache: ${_ago(ts)}`;
-  document.getElementById('srcWrap').style.display='flex';
-  document.getElementById('srcBadge').innerHTML=badge;
+  document.getElementById('tsPill').style.display='flex';
+  document.getElementById('tsText').textContent=src==='gh'?ghLabel:`Cache · ${_ago(ts)}`;
   document.getElementById('statsBar').style.display='flex';
-  document.getElementById('s-src').style.display='inline-flex';
-  document.getElementById('s-src').innerHTML=badge;
-  setDot('ok');_stats();applyF();renderT();
+  document.getElementById('srcPill').style.display='inline-flex';
+  document.getElementById('srcPill').className=`src-pill ${src}`;
+  document.getElementById('srcPill').textContent=srcMap[src]||src;
+  setDot('ok');
+  _updateStats();
+  applyF();
+  renderT();
   toast(`${AD.length} saham dimuat`,'in');
 }
 
-/* ── SEARCH ─────────────────────────────────── */
+/* ══════════════════════════════════════════════
+   SEARCH
+══════════════════════════════════════════════ */
 document.getElementById('sInp').addEventListener('input',function(){
-  document.getElementById('sClear').classList.toggle('show',this.value.length>0);
+  document.getElementById('sClr').classList.toggle('show',this.value.length>0);
   applyF();renderT();
 });
-function clearSearch(){document.getElementById('sInp').value='';document.getElementById('sClear').classList.remove('show');applyF();renderT();document.getElementById('sInp').focus()}
+function clearSearch(){
+  document.getElementById('sInp').value='';
+  document.getElementById('sClr').classList.remove('show');
+  applyF();renderT();
+  document.getElementById('sInp').focus();
+}
 
-/* ── SCROLL SHADOW ──────────────────────────── */
-document.getElementById('tWrap').addEventListener('scroll',function(){this.classList.toggle('scrolled',this.scrollLeft>4)});
+/* ══════════════════════════════════════════════
+   SCROLL SHADOW
+══════════════════════════════════════════════ */
+document.getElementById('tWrap').addEventListener('scroll',function(){
+  this.classList.toggle('scrolled',this.scrollLeft>4);
+});
 
-/* ── FILTER MAPS ────────────────────────────── */
-const IDX_MAP={issi:'ISSI',lq45:'LQ45',kompas100:'KOMPAS100',bumn:'BUMN'};
-const PAPAN_MAP={utama:'Utama',pengembangan:'Pengembangan',akselerasi:'Akselerasi',ekonomibaru:'Ekonomi Baru',pkm:'Pemantauan Khusus'};
+/* ══════════════════════════════════════════════
+   FILTER MAPS
+══════════════════════════════════════════════ */
+const IDX_MAP ={issi:'ISSI',lq45:'LQ45',k100:'KOMPAS100',bumn:'BUMN'};
+const PAPAN_MAP={utama:'Utama',dev:'Pengembangan',aksel:'Akselerasi',enb:'Ekonomi Baru',pkm:'Pemantauan Khusus'};
 
-function toggleMF(k){maF.has(k)?maF.delete(k):maF.add(k);document.getElementById('mf-'+k).classList.toggle('on',maF.has(k));applyF();renderT()}
-function resetMF(){maF.clear();['ema3','ema5','ema10','ema20','sma50','sma100','sma200'].forEach(k=>document.getElementById('mf-'+k).classList.remove('on'));applyF();renderT()}
-function toggleVF(k){volF.has(k)?volF.delete(k):volF.add(k);document.getElementById('vf-'+k).classList.toggle('on',volF.has(k));applyF();renderT()}
-function resetVF(){volF.clear();['vma3','vma5','vma20','vma50'].forEach(k=>document.getElementById('vf-'+k).classList.remove('on'));applyF();renderT()}
-function toggleOF(k){oscF.has(k)?oscF.delete(k):oscF.add(k);document.getElementById('of-'+k).classList.toggle('on',oscF.has(k));applyF();renderT()}
-function resetOF(){oscF.clear();['rsi-ob','rsi-os','rsi-bull','srsi-ob','srsi-os','macd-bull','macd-bear'].forEach(k=>document.getElementById('of-'+k).classList.remove('on'));applyF();renderT()}
+/* ══════════════════════════════════════════════
+   PRESET TOGGLES
+══════════════════════════════════════════════ */
+function togglePreset(key){
+  if(activePreset===key){
+    activePreset=null;
+    document.getElementById('ps-'+key).classList.remove('on');
+  }else{
+    if(activePreset)document.getElementById('ps-'+activePreset).classList.remove('on');
+    activePreset=key;
+    document.getElementById('ps-'+key).classList.add('on');
+  }
+  applyF();renderT();
+}
+
+/* ══════════════════════════════════════════════
+   FILTER TOGGLES
+══════════════════════════════════════════════ */
 function toggleIF(k){idxF.has(k)?idxF.delete(k):idxF.add(k);document.getElementById('if-'+k).classList.toggle('on',idxF.has(k));applyF();renderT()}
-function resetIF(){idxF.clear();Object.keys(IDX_MAP).forEach(k=>document.getElementById('if-'+k).classList.remove('on'));applyF();renderT()}
 function togglePF(k){papanF.has(k)?papanF.delete(k):papanF.add(k);document.getElementById('pf-'+k).classList.toggle('on',papanF.has(k));applyF();renderT()}
-function resetPF(){papanF.clear();Object.keys(PAPAN_MAP).forEach(k=>document.getElementById('pf-'+k).classList.remove('on'));applyF();renderT()}
+function toggleMF(k){maF.has(k)?maF.delete(k):maF.add(k);document.getElementById('mf-'+k).classList.toggle('on',maF.has(k));applyF();renderT()}
+function toggleOF(k){oscF.has(k)?oscF.delete(k):oscF.add(k);document.getElementById('of-'+k).classList.toggle('on',oscF.has(k));applyF();renderT()}
 
-/* ── APPLY FILTERS ──────────────────────────── */
+function resetIF(){idxF.clear();Object.keys(IDX_MAP).forEach(k=>document.getElementById('if-'+k).classList.remove('on'));applyF();renderT()}
+function resetPF(){papanF.clear();Object.keys(PAPAN_MAP).forEach(k=>document.getElementById('pf-'+k).classList.remove('on'));applyF();renderT()}
+function resetMF(){maF.clear();['ema3','ema5','ema10','ema20','sma50','sma100','sma200'].forEach(k=>document.getElementById('mf-'+k).classList.remove('on'));applyF();renderT()}
+function resetOF(){oscF.clear();['rsi-sweet','rsi-os','rsi-bull','macd-bull','macd-cross'].forEach(k=>document.getElementById('of-'+k).classList.remove('on'));applyF();renderT()}
+
+function resetAll(){
+  if(activePreset){document.getElementById('ps-'+activePreset).classList.remove('on');activePreset=null;}
+  resetIF();resetPF();resetMF();resetOF();
+  clearSearch();
+}
+
+/* ══════════════════════════════════════════════
+   APPLY FILTERS
+══════════════════════════════════════════════ */
 function applyF(){
   const q=document.getElementById('sInp').value.trim().toUpperCase();
   let d=[...AD];
+
+  // Search
   if(q)d=d.filter(x=>x.ticker.includes(q)||(x.company||'').toUpperCase().includes(q));
+
+  // Preset (exclusive, OR over individual filters when active)
+  if(activePreset&&PRESETS[activePreset]){
+    d=d.filter(PRESETS[activePreset]);
+  }
+
+  // Indeks (OR)
   if(idxF.size>0)d=d.filter(x=>[...idxF].some(k=>(x.indeks||[]).includes(IDX_MAP[k])));
+
+  // Papan (OR)
   if(papanF.size>0)d=d.filter(x=>[...papanF].some(k=>x.papan===PAPAN_MAP[k]));
+
+  // MA (AND)
   maF.forEach(k=>{d=d.filter(x=>x.maStatus?.[k]===true)});
-  volF.forEach(k=>{d=d.filter(x=>x.maStatus?.[k]===true)});
-  if(oscF.has('rsi-ob'))   d=d.filter(x=>x.rsi!=null&&x.rsi>70);
-  if(oscF.has('rsi-os'))   d=d.filter(x=>x.rsi!=null&&x.rsi<30);
-  if(oscF.has('rsi-bull')) d=d.filter(x=>x.rsi!=null&&x.rsi>50);
-  if(oscF.has('srsi-ob'))  d=d.filter(x=>x.stochRsi!=null&&x.stochRsi>80);
-  if(oscF.has('srsi-os'))  d=d.filter(x=>x.stochRsi!=null&&x.stochRsi<20);
-  if(oscF.has('macd-bull'))d=d.filter(x=>x.macdBull===true);
-  if(oscF.has('macd-bear'))d=d.filter(x=>x.macdBull===false);
+
+  // Oscillator
+  if(oscF.has('rsi-sweet')) d=d.filter(x=>x.rsi!=null&&x.rsi>=50&&x.rsi<=70);
+  if(oscF.has('rsi-os'))    d=d.filter(x=>x.rsi!=null&&x.rsi<35);
+  if(oscF.has('rsi-bull'))  d=d.filter(x=>x.rsi!=null&&x.rsi>50);
+  if(oscF.has('macd-bull')) d=d.filter(x=>x.macdBull===true);
+  if(oscF.has('macd-cross'))d=d.filter(x=>x.macdCross===true);
+
+  // Sort
   d.sort((a,b)=>{
-    let va=a[sCol]??-Infinity,vb=b[sCol]??-Infinity;
+    let va=a[sCol]??-Infinity, vb=b[sCol]??-Infinity;
     if(sCol==='ticker'){va=a.ticker||'';vb=b.ticker||'';return va.localeCompare(vb)*sDir}
     return(va-vb)*sDir;
   });
-  DD=d;document.getElementById('s-sho').textContent=d.length;
+
+  DD=d;
+  document.getElementById('s-sho').textContent=d.length;
 }
+
 function sortBy(c){
   const th=event.currentTarget;
   if(sCol===c)sDir*=-1;else{sCol=c;sDir=-1}
-  document.querySelectorAll('tr.col-row th').forEach(t=>t.classList.remove('sa','sd'));
+  document.querySelectorAll('tr.crow th').forEach(t=>t.classList.remove('sa','sd'));
   th.classList.add(sDir===1?'sa':'sd');
   applyF();renderT();
 }
-function _stats(){
+
+function _updateStats(){
   document.getElementById('s-tot').textContent=AD.length;
-  document.getElementById('s-bul').textContent=AD.filter(x=>x.bull>x.bear).length;
-  document.getElementById('s-bea').textContent=AD.filter(x=>x.bear>x.bull).length;
-  document.getElementById('s-abo').textContent=AD.filter(x=>x.above4).length;
+  document.getElementById('s-hi').textContent=AD.filter(x=>x.score>=8).length;
+  const ms=x=>x.maStatus||{};
+  document.getElementById('s-up').textContent=AD.filter(x=>ms(x).ema20&&ms(x).sma50).length;
+  document.getElementById('s-dn').textContent=AD.filter(x=>!ms(x).ema20&&!ms(x).sma50).length;
 }
 
-/* ── FORMAT ─────────────────────────────────── */
-function _fmt(n){if(n==null||isNaN(n)||n===0)return'—';const a=Math.abs(n);if(a>=1e12)return(n/1e12).toFixed(2)+' T';if(a>=1e9)return(n/1e9).toFixed(2)+' M';if(a>=1e6)return(n/1e6).toFixed(1)+' Jt';if(a>=1e3)return(n/1e3).toFixed(1)+' Rb';return n.toFixed(0)}
+/* ══════════════════════════════════════════════
+   FORMAT HELPERS
+══════════════════════════════════════════════ */
 function _price(n){if(n==null||isNaN(n))return'—';if(n>=1000)return Math.round(n).toLocaleString('id-ID');return n.toFixed(n>=10?0:2)}
 function _pct(n){if(n==null||isNaN(n))return'—';return(n>=0?'+':'')+n.toFixed(2)+'%'}
 function _dec(n,d=1){if(n==null||isNaN(n))return'—';return n.toFixed(d)}
-function _rsiC(v){if(v==null)return'var(--text3)';if(v>70)return'var(--red)';if(v<30)return'var(--green)';if(v>55)return'var(--green)';if(v<45)return'var(--red)';return'var(--text2)'}
+function _rsiColor(v){if(v==null)return'var(--text3)';if(v>80||v<20)return'var(--red)';if(v>=50&&v<=70)return'var(--green)';if(v>70)return'var(--amber)';if(v<35)return'var(--teal)';return'var(--text2)'}
+function _rsiZoneLabel(v){if(v==null)return'';if(v>80)return'JB';if(v>70)return'OB';if(v>=50&&v<=70)return'OK';if(v>=35)return'–';return'JS'}
 
-const MAK=['ema3','ema5','ema10','ema20','sma50','sma100','sma200'];
-const MAL=['E3','E5','E10','E20','S50','S1','S2'];
-const VK=['vma3','vma5','vma20','vma50'];
-const VL=['V3','V5','V20','V50'];
+const MA_KEYS=['ema3','ema5','ema10','ema20','sma50','sma100','sma200'];
+const MA_TIPS=['EMA 3','EMA 5','EMA 10','EMA 20','SMA 50','SMA 100','SMA 200'];
+const VOL_KEYS=['vma3','vma5','vma20','vma50'];
 
-/* ── RENDER ─────────────────────────────────── */
+/* ══════════════════════════════════════════════
+   RENDER TABLE
+══════════════════════════════════════════════ */
 function renderT(){
   const tb=document.getElementById('tBody');
-  if(!DD.length){tb.innerHTML=`<tr><td colspan="11"><div class="t-empty"><div class="t-empty-ico">∅</div>Tidak ada data sesuai filter</div></td></tr>`;return}
+  if(!DD.length){
+    tb.innerHTML=`<tr><td colspan="9"><div class="tempty">
+      <div class="tempty-ico">🔍</div>
+      <div class="tempty-txt">Tidak ada saham yang cocok</div>
+      <div class="tempty-sub">Coba longgarkan filter atau ganti preset</div>
+    </div></td></tr>`;
+    return;
+  }
+
   tb.innerHTML=DD.map(d=>{
     const tvUrl=`https://www.tradingview.com/chart/?symbol=IDX%3A${d.ticker}`;
-    const maPips=MAK.map((k,i)=>{const v=d.maStatus?.[k];return`<span class="pip ${v===true?'on-g':v===false?'off-r':'na'}" title="${k.toUpperCase()}">${MAL[i]}</span>`}).join('');
-    const vPips=VK.map((k,i)=>{const v=d.maStatus?.[k];return`<span class="pip ${v===true?'on-b':v===false?'off-r':'na'}" title="Vol vs ${k.toUpperCase()}">${VL[i]}</span>`}).join('');
-    const rCv=_rsiC(d.rsi),sCv=_rsiC(d.stochRsi);
+    const ms=d.maStatus||{};
+
+    // Score
+    const sc=d.score;
+    const {lbl:slbl,cls:scls}=scoreLabel(sc);
+
+    // Badges
+    const bPapan=d.papan?`<span class="bpapan">${d.papan}</span>`:'';
+    const bIdx=(d.indeks||[]).filter(x=>x!=='ISSI').map(x=>`<span class="bidx">${x}</span>`).join('');
+    const metaRow=(bPapan||bIdx)?`<div class="cmeta">${bPapan}${bIdx}</div>`:'';
+
+    // MA dots (7)
+    const maDotCount=MA_KEYS.filter(k=>ms[k]).length;
+    const maDots=MA_KEYS.map((k,i)=>{
+      const v=ms[k];
+      return`<span class="ma-dot ${v===true?'on':'off'}" title="${MA_TIPS[i]}"></span>`;
+    }).join('');
+
+    // Volume bar (out of 4 VMAs beaten)
+    const volCount=VOL_KEYS.filter(k=>ms[k]).length;
+    const volPct=volCount/4*100;
+    let volColor='var(--border2)';
+    if(volCount>=3)volColor='var(--blue)';
+    else if(volCount>=2)volColor='var(--teal)';
+    else if(volCount>=1)volColor='var(--text3)';
+    const volLbl=['Rendah','Rendah','Cukup','Tinggi','Sangat Tinggi'][volCount];
+
+    // RSI
+    const rCv=_rsiColor(d.rsi);
     const rP=d.rsi!=null?Math.min(100,Math.max(0,d.rsi)):0;
-    const sP=d.stochRsi!=null?Math.min(100,Math.max(0,d.stochRsi)):0;
-    let macdHtml='<span class="macd-badge macd-neu">N/A</span>';
-    if(d.macdBull!==null){const cls=d.macdBull?'macd-bull':'macd-bear';const lbl=d.macdBull?'▲ Bull':'▼ Bear';const cross=d.macdCross?'✦ ':'';macdHtml=`<span class="macd-badge ${cls}" title="Hist: ${d.macdHist!=null?d.macdHist.toFixed(2):'—'}">${cross}${lbl}</span>`}
-    const papanBadge=d.papan?`<span class="badge-papan">${d.papan}</span>`:'';
-    const idxBadges=(d.indeks||[]).filter(x=>x!=='ISSI').map(x=>`<span class="badge-idx">${x}</span>`).join('');
-    const metaRow=(papanBadge||idxBadges)?`<div class="c-meta">${papanBadge}${idxBadges}</div>`:'';
-    const adrCls=d.adrPct!=null?(d.adrPct>4?'up':d.adrPct<1.5?'nu':''):'';
+    const rZone=_rsiZoneLabel(d.rsi);
+
+    // MACD badge
+    let macdHtml='<span class="macd-b macd-neu">—</span>';
+    if(d.macdBull!==null){
+      const cross=d.macdCross?'✦':'';
+      macdHtml=d.macdBull
+        ?`<span class="macd-b macd-bull" title="Histogram: ${_dec(d.macdHist,2)}">${cross}▲ Bull</span>`
+        :`<span class="macd-b macd-bear" title="Histogram: ${_dec(d.macdHist,2)}">${cross}▼ Bear</span>`;
+    }
+
+    // ADR (daily range%)
+    const adrPct=d.adrPct;
+    let adrColor='var(--text2)';
+    let adrLbl='';
+    if(adrPct!=null){
+      if(adrPct>=5){adrColor='var(--green)';adrLbl='Aktif'}
+      else if(adrPct>=2.5){adrColor='var(--teal)';adrLbl='Normal'}
+      else if(adrPct<1.5){adrColor='var(--text3)';adrLbl='Lesu'}
+    }
     const pU=d.pct>=0;
+
     return`<tr>
-<td class="col-sticky"><div class="c-tk"><a href="${tvUrl}" target="_blank" rel="noopener">${d.ticker}</a></div><div class="c-co" title="${d.company||''}">${d.company||'—'}</div>${metaRow}</td>
-<td class="bd-price c-num lg">${_price(d.price)}</td>
-<td class="bd-price c-num ${pU?'up':'dn'}">${_pct(d.pct)}</td>
-<td class="bd-price c-num" style="color:var(--accent)">${_fmt(d.pct1today)}</td>
-<td class="bd-ma"><div class="pips">${maPips}</div></td>
-<td class="bd-ma"><div class="pips">${vPips}</div></td>
-<td class="bd-osc"><div class="gauge"><div class="g-track"><div class="g-fill" style="width:${rP}%;background:${rCv}"></div></div><span class="g-val" style="color:${rCv}">${_dec(d.rsi)}</span></div></td>
-<td class="bd-osc"><div class="gauge"><div class="g-track"><div class="g-fill" style="width:${sP}%;background:${sCv}"></div></div><span class="g-val" style="color:${sCv}">${_dec(d.stochRsi)}</span></div></td>
+<td class="csticky">
+  <div class="ctk"><a href="${tvUrl}" target="_blank" rel="noopener">${d.ticker}</a></div>
+  <div class="cco" title="${d.company||''}">${d.company||'—'}</div>
+  ${metaRow}
+</td>
+<td class="bd-score">
+  <div class="score-cell">
+    <div class="score-badge ${scls}">${sc.toFixed(1)}</div>
+    <div class="score-lbl" style="color:var(--score-${scls==='sh'?'hi':scls==='sm'?'md':scls==='sl'?'lo':'vlo'})">${slbl}</div>
+  </div>
+</td>
+<td class="bd-price">
+  <div class="price-cell">
+    <div class="cnum lg">${_price(d.price)}</div>
+  </div>
+</td>
+<td class="bd-price">
+  <span class="pct-badge ${pU?'up':d.pct===0?'nu':'dn'}">${_pct(d.pct)}</span>
+</td>
+<td class="bd-trend">
+  <div class="ma-dots">
+    <span class="trend-score">${maDotCount}/7</span>
+    ${maDots}
+  </div>
+</td>
+<td class="bd-trend">
+  <div class="vol-bar-wrap">
+    <div class="vol-bar-track"><div class="vol-bar-fill" style="width:${volPct}%;background:${volColor}"></div></div>
+    <span class="vol-lbl" style="color:${volColor}">${volLbl}</span>
+  </div>
+</td>
+<td class="bd-osc">
+  <div class="rsi-wrap">
+    <div class="rsi-track"><div class="rsi-fill" style="width:${rP}%;background:${rCv}"></div></div>
+    <span class="rsi-val" style="color:${rCv}">${_dec(d.rsi)}</span>
+    <span class="rsi-zone-label" style="color:${rCv}">${rZone}</span>
+  </div>
+</td>
 <td class="bd-osc">${macdHtml}</td>
-<td class="bd-osc c-num">${_dec(d.atrV,1)}</td>
-<td class="bd-osc"><div class="adr-wrap"><div class="adr-pct ${adrCls}">${_dec(d.adrPct,2)}%</div><div class="adr-nom">${_fmt(d.adrNom)}</div></div></td>
+<td class="bd-osc">
+  <div class="adr-wrap">
+    <span class="adr-pct" style="color:${adrColor}">${_dec(adrPct,2)}%</span>
+    <span class="adr-label">${adrLbl}</span>
+  </div>
+</td>
 </tr>`;
   }).join('');
 }
 
-/* ── UTILS ──────────────────────────────────── */
+/* ══════════════════════════════════════════════
+   UTILS
+══════════════════════════════════════════════ */
 function setDot(s){const d=document.getElementById('sDot');d.className='dot';if(s==='ok')d.classList.add('ok');if(s==='spin')d.classList.add('spin')}
 function _ago(ts){const d=Date.now()-ts,h=Math.floor(d/3600000),m=Math.floor((d%3600000)/60000);if(h>=24)return Math.floor(h/24)+'h lalu';if(h>0)return h+'j '+m+'m lalu';return m+'m lalu'}
-function toast(m,t='in'){const el=document.createElement('div');el.className=`toast ${t}`;el.textContent=m;document.getElementById('toasts').appendChild(el);requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),300)},3000)}
+function toast(m,t='in'){
+  const el=document.createElement('div');el.className=`toast ${t}`;el.textContent=m;
+  document.getElementById('toasts').appendChild(el);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));
+  setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),300)},3000);
+}
 </script>
 </body>
 </html>
