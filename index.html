@@ -3,36 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ISSI Screener</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Screener Saham Indonesia</title>
 <style>
-/* ─── TOKENS ─────────────────────────────────── */
 :root{
-  --bg:#f5f6f8;
-  --surface:#fff;
-  --surface2:#f8f9fa;
-  --border:#e8eaed;
-  --border-cell:#edf0f2;
-  --text:#1a1d23;
-  --text2:#5a6070;
-  --text3:#9ba3b0;
-  --accent:#2563eb;
-  --accent-bg:#eff6ff;
+  --bg:#f5f6f8;--surface:#fff;--surface2:#f8f9fa;
+  --border:#e8eaed;--border-cell:#edf0f2;
+  --text:#1a1d23;--text2:#5a6070;--text3:#9ba3b0;
+  --accent:#2563eb;--accent-bg:#eff6ff;
   --green:#16a34a;--green-bg:#f0fdf4;--green-dim:#dcfce7;
   --red:#dc2626;--red-bg:#fff5f5;--red-dim:#fee2e2;
   --amber:#b45309;--amber-bg:#fffbeb;
   --blue:#2563eb;--blue-bg:#eff6ff;--blue-dim:#dbeafe;
   --purple:#6d28d9;--purple-bg:#f5f3ff;--purple-dim:#ede9fe;
   --teal:#0d9488;--teal-bg:#f0fdfa;--teal-dim:#ccfbf1;
-  --font:'Plus Jakarta Sans',system-ui,sans-serif;
-  --mono:'JetBrains Mono',monospace;
-  --r:10px;--rs:6px;
+  --font:Arial,Helvetica,sans-serif;
+  --mono:'Courier New',Courier,monospace;
+  --r:8px;--rs:5px;
   --shadow:0 1px 2px rgba(0,0,0,.05);
   --shadow-sm:0 1px 3px rgba(0,0,0,.08);
 }
 [data-theme="dark"]{
-  --bg:#0e1015;--surface:#161a22;--surface2:#1c2029;--border:#272d3a;--border-cell:#222733;
+  --bg:#0e1015;--surface:#161a22;--surface2:#1c2029;
+  --border:#272d3a;--border-cell:#222733;
   --text:#e8ecf3;--text2:#8a94a8;--text3:#404a5e;
   --accent:#3b82f6;--accent-bg:#162040;
   --green:#22c55e;--green-bg:#0a1f12;--green-dim:#166534;
@@ -43,177 +35,84 @@
   --teal:#2dd4bf;--teal-bg:#042f2e;--teal-dim:#134e4a;
   --shadow:0 1px 2px rgba(0,0,0,.2);--shadow-sm:0 1px 3px rgba(0,0,0,.3);
 }
-
-/* ─── BASE ────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{font-size:14px;-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+html{font-size:14px;-webkit-text-size-adjust:100%}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
 
-/* ─── TOPBAR ──────────────────────────────────── */
-.topbar{
-  background:var(--surface);border-bottom:1px solid var(--border);
-  padding:0 1rem;display:flex;align-items:center;height:50px;gap:.5rem;
-  position:sticky;top:0;z-index:300;box-shadow:var(--shadow);
-}
-.brand{display:flex;align-items:center;gap:.4rem;font-weight:700;font-size:.9rem;flex-shrink:0;letter-spacing:-.02em}
-.brand-ico{
-  width:26px;height:26px;background:var(--accent);border-radius:6px;
-  display:grid;place-items:center;font-size:.55rem;font-weight:700;
-  color:#fff;letter-spacing:.05em;flex-shrink:0;
-}
-.topbar-meta{display:flex;align-items:center;gap:.75rem;font-size:.72rem;color:var(--text3);flex:1;min-width:0;overflow:hidden;padding-left:.2rem}
+/* TOPBAR */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1rem;display:flex;align-items:center;height:50px;gap:.5rem;position:sticky;top:0;z-index:300;box-shadow:var(--shadow)}
+.brand{display:flex;align-items:center;gap:.4rem;font-weight:700;font-size:.9rem;flex-shrink:0}
+.brand-ico{width:26px;height:26px;background:var(--accent);border-radius:5px;display:grid;place-items:center;font-size:.6rem;font-weight:700;color:#fff;letter-spacing:.04em;flex-shrink:0}
+.topbar-meta{display:flex;align-items:center;gap:.75rem;font-size:.72rem;color:var(--text3);flex:1;min-width:0;overflow:hidden;padding-left:.25rem}
 .meta-item{display:flex;align-items:center;gap:.22rem;white-space:nowrap}
-.dot{width:5px;height:5px;border-radius:50%;background:var(--text3)}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--text3);flex-shrink:0}
 .dot.ok{background:var(--green)}.dot.spin{background:var(--accent);animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
 .topbar-right{display:flex;align-items:center;gap:.35rem;margin-left:auto;flex-shrink:0}
-.btn-sm{
-  display:inline-flex;align-items:center;gap:.22rem;
-  padding:.28rem .55rem;border-radius:var(--rs);
-  border:1px solid var(--border);background:var(--surface);
-  color:var(--text2);font-family:var(--font);font-size:.7rem;
-  cursor:pointer;font-weight:500;white-space:nowrap;line-height:1;transition:all .12s;
-}
+.btn-sm{display:inline-flex;align-items:center;gap:.22rem;padding:.28rem .55rem;border-radius:var(--rs);border:1px solid var(--border);background:var(--surface);color:var(--text2);font-family:var(--font);font-size:.7rem;cursor:pointer;font-weight:500;white-space:nowrap;line-height:1;transition:all .12s}
 .btn-sm:hover{background:var(--surface2);color:var(--text);border-color:#c5cad5}
 
-/* ─── LAYOUT ──────────────────────────────────── */
-.page{max-width:1600px;margin:0 auto;padding:.75rem .75rem .75rem}
-
-/* ─── CARD ────────────────────────────────────── */
+/* LAYOUT */
+.page{max-width:1600px;margin:0 auto;padding:.75rem}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:.6rem;overflow:hidden}
 .card-inner{padding:.65rem .85rem}
 
-/* ─── SEARCH ──────────────────────────────────── */
+/* SEARCH */
 .search-wrap{position:relative}
 .s-ico{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none}
-.s-inp{
-  width:100%;padding:.5rem .7rem .5rem 2rem;
-  border:1px solid var(--border);border-radius:var(--rs);
-  background:var(--surface);color:var(--text);
-  font-family:var(--font);font-size:.84rem;outline:none;
-  transition:border-color .12s,box-shadow .12s;
-}
+.s-inp{width:100%;padding:.5rem .7rem .5rem 2rem;border:1px solid var(--border);border-radius:var(--rs);background:var(--surface);color:var(--text);font-family:var(--font);font-size:.84rem;outline:none;transition:border-color .12s,box-shadow .12s}
 .s-inp::placeholder{color:var(--text3)}
-.s-inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 10%,transparent)}
-.s-clear{
-  position:absolute;right:.5rem;top:50%;transform:translateY(-50%);
-  width:18px;height:18px;border-radius:50%;border:none;
-  background:var(--surface2);color:var(--text3);cursor:pointer;
-  display:none;align-items:center;justify-content:center;
-  font-size:.75rem;transition:all .12s;padding:0;line-height:1;
-}
+.s-inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.s-clear{position:absolute;right:.5rem;top:50%;transform:translateY(-50%);width:18px;height:18px;border-radius:50%;border:none;background:var(--surface2);color:var(--text3);cursor:pointer;display:none;align-items:center;justify-content:center;font-size:.75rem;transition:all .12s;padding:0;line-height:1}
 .s-clear:hover{background:var(--border);color:var(--text)}
 .s-clear.show{display:flex}
 
-/* ─── FILTER PANEL ────────────────────────────── */
-.filter-rows{display:flex;flex-direction:column;gap:0}
-.f-row{
-  display:flex;align-items:flex-start;gap:.5rem;
-  padding:.55rem .85rem;border-bottom:1px solid var(--border);
-}
+/* FILTER PANEL */
+.filter-rows{display:flex;flex-direction:column}
+.f-row{display:flex;align-items:flex-start;gap:.5rem;padding:.5rem .85rem;border-bottom:1px solid var(--border)}
 .f-row:last-child{border-bottom:none}
-.f-label{
-  font-size:.62rem;font-weight:700;letter-spacing:.08em;color:var(--text3);
-  text-transform:uppercase;white-space:nowrap;padding-top:.22rem;min-width:80px;
-  display:flex;align-items:center;gap:.3rem;flex-shrink:0;
-}
-.f-label::before{
-  content:'';display:inline-block;width:2px;height:12px;border-radius:2px;flex-shrink:0;
-}
+.f-label{font-size:.6rem;font-weight:700;letter-spacing:.08em;color:var(--text3);text-transform:uppercase;white-space:nowrap;padding-top:.23rem;min-width:76px;display:flex;align-items:center;gap:.28rem;flex-shrink:0}
+.f-label::before{content:'';display:inline-block;width:2px;height:11px;border-radius:2px;flex-shrink:0}
 .f-label.ma::before{background:var(--green)}
 .f-label.vol::before{background:var(--blue)}
 .f-label.osc::before{background:var(--purple)}
 .f-label.idx::before{background:var(--teal)}
 .f-label.papan::before{background:var(--amber)}
 .chips{display:flex;flex-wrap:wrap;gap:.28rem;flex:1}
-
-/* Chip base */
-.chip{
-  padding:.22rem .55rem;border-radius:20px;border:1px solid var(--border);
-  background:var(--surface);color:var(--text2);
-  font-family:var(--font);font-size:.7rem;font-weight:500;
-  cursor:pointer;transition:all .12s;user-select:none;line-height:1.35;
-  white-space:nowrap;
-}
+.chip{padding:.2rem .52rem;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-family:var(--font);font-size:.7rem;font-weight:500;cursor:pointer;transition:all .12s;user-select:none;line-height:1.35;white-space:nowrap}
 .chip:hover{background:var(--surface2)}
-
-/* Colored chip states */
 .chip.ma:hover,.chip.ma.on{border-color:var(--green);color:var(--green);background:var(--green-bg)}
 .chip.vol:hover,.chip.vol.on{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
 .chip.osc:hover,.chip.osc.on{border-color:var(--purple);color:var(--purple);background:var(--purple-bg)}
 .chip.idx:hover,.chip.idx.on{border-color:var(--teal);color:var(--teal);background:var(--teal-bg)}
 .chip.papan:hover,.chip.papan.on{border-color:var(--amber);color:var(--amber);background:var(--amber-bg)}
-
-/* Reset chip — distinct, never looks like a filter */
-.chip-reset{
-  padding:.22rem .65rem;border-radius:20px;
-  border:1.5px solid var(--border);
-  background:var(--surface);color:var(--text3);
-  font-family:var(--font);font-size:.7rem;font-weight:700;
-  cursor:pointer;transition:all .12s;user-select:none;line-height:1.35;
-  white-space:nowrap;letter-spacing:.03em;
-}
+.chip-reset{padding:.2rem .6rem;border-radius:20px;border:1.5px solid var(--border2,#d1d5db);background:var(--surface);color:var(--text3);font-family:var(--font);font-size:.68rem;font-weight:700;cursor:pointer;transition:all .12s;user-select:none;line-height:1.35;white-space:nowrap}
 .chip-reset:hover{background:var(--red-bg);border-color:var(--red);color:var(--red)}
 
-/* ─── STATS BAR ───────────────────────────────── */
-.stats-bar{
-  display:flex;align-items:center;gap:.85rem;flex-wrap:wrap;
-  padding:.4rem .85rem;border-bottom:1px solid var(--border);font-size:.71rem;
-}
-.stat{display:flex;align-items:center;gap:.22rem;color:var(--text3)}
-.stat strong{color:var(--text);font-weight:600}
-.stat.g strong{color:var(--green)}
-.stat.r strong{color:var(--red)}
-.stat.b strong{color:var(--accent)}
-.src-badge{margin-left:auto;padding:.15rem .5rem;border-radius:20px;font-size:.65rem;font-weight:600;border:1px solid var(--border);color:var(--text3);background:var(--surface2)}
-.src-badge.gh{background:var(--green-dim);color:var(--green);border-color:color-mix(in srgb,var(--green) 30%,transparent)}
-.src-badge.cache{background:var(--blue-dim);color:var(--blue);border-color:color-mix(in srgb,var(--blue) 30%,transparent)}
+/* STATS BAR */
+.stats-bar{display:flex;align-items:center;gap:.85rem;flex-wrap:wrap;padding:.4rem .85rem;border-bottom:1px solid var(--border);font-size:.7rem}
+.stat{display:flex;align-items:center;gap:.2rem;color:var(--text3)}
+.stat strong{color:var(--text);font-weight:700}
+.stat.g strong{color:var(--green)}.stat.r strong{color:var(--red)}.stat.b strong{color:var(--accent)}
+.src-badge{margin-left:auto;padding:.15rem .5rem;border-radius:20px;font-size:.65rem;font-weight:700;border:1px solid var(--border);color:var(--text3);background:var(--surface2)}
+.src-badge.gh{background:var(--green-dim);color:var(--green);border-color:rgba(22,163,74,.25)}
+.src-badge.cache{background:var(--blue-dim);color:var(--blue);border-color:rgba(37,99,235,.25)}
 
-/* ─── TABLE WRAPPER ───────────────────────────── */
-.t-wrap{
-  overflow-x:auto;
-  -webkit-overflow-scrolling:touch;
-  position:relative;
-}
-table{width:100%;border-collapse:collapse;font-size:.75rem}
-
-/* Sticky first column (ticker) */
-.col-sticky{
-  position:sticky;left:0;z-index:10;
-  background:var(--surface);
-}
+/* TABLE */
+.t-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;position:relative}
+table{width:100%;border-collapse:collapse;font-size:.74rem}
+.col-sticky{position:sticky;left:0;z-index:10;background:var(--surface)}
 tbody tr:hover .col-sticky{background:var(--surface2)}
-/* shadow indicator when scrolled */
-.t-wrap.scrolled .col-sticky::after{
-  content:'';position:absolute;top:0;right:-8px;bottom:0;width:8px;
-  background:linear-gradient(to right,rgba(0,0,0,.07),transparent);
-  pointer-events:none;
-}
-[data-theme="dark"] .t-wrap.scrolled .col-sticky::after{
-  background:linear-gradient(to right,rgba(0,0,0,.25),transparent);
-}
+.t-wrap.scrolled .col-sticky::after{content:'';position:absolute;top:0;right:-8px;bottom:0;width:8px;background:linear-gradient(to right,rgba(0,0,0,.07),transparent);pointer-events:none}
+[data-theme="dark"] .t-wrap.scrolled .col-sticky::after{background:linear-gradient(to right,rgba(0,0,0,.25),transparent)}
 
-/* Group header */
-tr.grp-row th{
-  padding:.2rem .55rem;font-size:.58rem;font-weight:700;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--text3);background:var(--surface2);
-  white-space:nowrap;cursor:default;border-bottom:1px solid var(--border);
-  text-align:center;
-}
+tr.grp-row th{padding:.2rem .52rem;font-size:.58rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);background:var(--surface2);white-space:nowrap;cursor:default;border-bottom:1px solid var(--border);text-align:center}
 tr.grp-row th:first-child{text-align:left;padding-left:.85rem}
 .gh-price{border-left:1px solid var(--border-cell);color:var(--accent)!important}
 .gh-ma{border-left:1px solid var(--border-cell);color:var(--green)!important}
-.gh-vol{border-left:1px solid var(--border-cell);color:var(--blue)!important}
 .gh-osc{border-left:1px solid var(--border-cell);color:var(--purple)!important}
 
-/* Column header */
-tr.col-row th{
-  padding:.38rem .55rem;font-size:.66rem;font-weight:600;
-  color:var(--text2);background:var(--surface2);
-  white-space:nowrap;cursor:pointer;user-select:none;
-  border-bottom:2px solid var(--border);text-align:right;
-  transition:color .12s;
-}
+tr.col-row th{padding:.38rem .52rem;font-size:.65rem;font-weight:700;color:var(--text2);background:var(--surface2);white-space:nowrap;cursor:pointer;user-select:none;border-bottom:2px solid var(--border);text-align:right;transition:color .12s}
 tr.col-row th:first-child{text-align:left;padding-left:.85rem}
 tr.col-row th.nc{cursor:default}
 tr.col-row th:hover:not(.nc){color:var(--text)}
@@ -221,95 +120,69 @@ tr.col-row th.sa::after{content:' ↑';color:var(--accent);font-size:.58rem}
 tr.col-row th.sd::after{content:' ↓';color:var(--accent);font-size:.58rem}
 .ch-price{border-left:1px solid var(--border-cell)}
 .ch-ma{border-left:1px solid var(--border-cell)}
-.ch-vol{border-left:1px solid var(--border-cell)}
 .ch-osc{border-left:1px solid var(--border-cell)}
 
-/* Body */
 tbody tr{border-bottom:1px solid var(--border-cell);transition:background .08s}
 tbody tr:hover{background:var(--surface2)}
 tbody tr:last-child{border-bottom:none}
-tbody td{
-  padding:.42rem .55rem;white-space:nowrap;
-  vertical-align:middle;text-align:right;
-}
+tbody td{padding:.4rem .52rem;white-space:nowrap;vertical-align:middle;text-align:right}
 tbody td:first-child{padding-left:.85rem;text-align:left}
 .bd-price{border-left:1px solid var(--border-cell)}
 .bd-ma{border-left:1px solid var(--border-cell)}
-.bd-vol{border-left:1px solid var(--border-cell)}
 .bd-osc{border-left:1px solid var(--border-cell)}
 
-/* Ticker cell */
-.c-tk{font-family:var(--mono);font-weight:600;font-size:.77rem;line-height:1.2}
-.c-tk a{color:var(--accent);text-decoration:none;transition:color .1s}
+/* TICKER CELL */
+.c-tk{font-family:var(--mono);font-weight:700;font-size:.78rem;line-height:1.2}
+.c-tk a{color:var(--accent);text-decoration:none}
 .c-tk a:hover{text-decoration:underline}
-.c-co{font-size:.67rem;color:var(--text3);max-width:130px;overflow:hidden;text-overflow:ellipsis;line-height:1.25;margin-top:1px}
+.c-co{font-size:.67rem;color:var(--text3);max-width:135px;overflow:hidden;text-overflow:ellipsis;line-height:1.25;margin-top:1px}
 .c-meta{display:flex;flex-wrap:wrap;gap:.2rem;margin-top:2px}
-.badge-papan{
-  display:inline-block;font-size:.58rem;font-weight:600;
-  padding:.05rem .32rem;border-radius:3px;
-  color:var(--amber);background:var(--amber-bg);
-  letter-spacing:.02em;line-height:1.4;
-}
-.badge-idx{
-  display:inline-block;font-size:.58rem;font-weight:600;
-  padding:.05rem .32rem;border-radius:3px;
-  color:var(--teal);background:var(--teal-dim);
-  letter-spacing:.02em;line-height:1.4;
-}
+.badge-papan{display:inline-block;font-size:.57rem;font-weight:700;padding:.04rem .3rem;border-radius:3px;color:var(--amber);background:var(--amber-bg);letter-spacing:.02em;line-height:1.4}
+.badge-idx{display:inline-block;font-size:.57rem;font-weight:700;padding:.04rem .3rem;border-radius:3px;color:var(--teal);background:var(--teal-dim);letter-spacing:.02em;line-height:1.4}
 
-/* Number cells */
+/* NUM CELLS */
 .c-num{font-family:var(--mono);font-weight:500}
-.c-num.lg{font-weight:600;font-size:.79rem}
+.c-num.lg{font-weight:700;font-size:.78rem}
 .up{color:var(--green)}.dn{color:var(--red)}.nu{color:var(--text3)}
 
-/* Pips */
+/* PIPS */
 .pips{display:flex;gap:2px;justify-content:flex-end}
-.pip{
-  width:19px;height:17px;border-radius:3px;font-size:.52rem;font-weight:700;
-  display:grid;place-items:center;font-family:var(--mono);cursor:default;
-}
+.pip{width:19px;height:17px;border-radius:3px;font-size:.52rem;font-weight:700;display:grid;place-items:center;font-family:var(--mono);cursor:default}
 .pip.on-g{background:var(--green-dim);color:var(--green)}
 .pip.off-r{background:var(--red-dim);color:var(--red)}
 .pip.on-b{background:var(--blue-dim);color:var(--blue)}
 .pip.na{background:var(--surface2);color:var(--text3)}
 
-/* Gauge */
+/* GAUGE */
 .gauge{display:flex;align-items:center;gap:.28rem;justify-content:flex-end}
 .g-track{width:32px;height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;flex-shrink:0;border:1px solid var(--border-cell)}
 .g-fill{height:100%;border-radius:2px}
 .g-val{font-family:var(--mono);font-size:.68rem;font-weight:500;min-width:2.7rem;text-align:right}
 
-/* MACD badge */
-.macd-badge{display:inline-flex;align-items:center;padding:.15rem .42rem;border-radius:20px;font-size:.63rem;font-weight:700;font-family:var(--mono)}
+/* MACD BADGE */
+.macd-badge{display:inline-flex;align-items:center;padding:.15rem .4rem;border-radius:20px;font-size:.63rem;font-weight:700;font-family:var(--mono)}
 .macd-bull{background:var(--green-dim);color:var(--green)}
 .macd-bear{background:var(--red-dim);color:var(--red)}
 .macd-neu{background:var(--surface2);color:var(--text3)}
 
 /* ADR */
 .adr-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
-.adr-pct{font-family:var(--mono);font-size:.71rem;font-weight:600}
-.adr-nom{font-family:var(--mono);font-size:.62rem;color:var(--text3)}
+.adr-pct{font-family:var(--mono);font-size:.7rem;font-weight:700}
+.adr-nom{font-family:var(--mono);font-size:.61rem;color:var(--text3)}
 
-/* Empty */
+/* EMPTY / DEBUG / TOAST */
 .t-empty{padding:3rem 1rem;text-align:center;color:var(--text3)}
-.t-empty-ico{font-size:1.8rem;margin-bottom:.4rem;opacity:.4}
-
-/* Toast */
+.t-empty-ico{font-size:1.8rem;margin-bottom:.35rem;opacity:.35}
+.debug-bar{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:.5rem .75rem;margin-bottom:.6rem;font-family:var(--mono);font-size:.63rem;color:var(--text2);max-height:100px;overflow-y:auto;display:none}
+.debug-bar.show{display:block}
+.dl{padding:1px 0}.dl.ok{color:var(--green)}.dl.err{color:var(--red)}.dl.warn{color:var(--amber)}
+.prog-bar{height:2px;background:var(--border);position:sticky;top:50px;z-index:299}
+.prog-fill{height:100%;background:var(--accent);width:0;transition:width .2s}
 .toasts{position:fixed;bottom:1rem;right:1rem;display:flex;flex-direction:column;gap:.3rem;z-index:999;pointer-events:none}
 .toast{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:.45rem .75rem;font-size:.73rem;color:var(--text);box-shadow:var(--shadow-sm);transform:translateX(130%);transition:transform .25s;max-width:240px;pointer-events:auto}
 .toast.show{transform:translateX(0)}
 .toast.ok{border-left:3px solid var(--green)}.toast.er{border-left:3px solid var(--red)}.toast.in{border-left:3px solid var(--accent)}
 
-/* Debug */
-.debug-bar{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:.5rem .75rem;margin-bottom:.6rem;font-family:var(--mono);font-size:.63rem;color:var(--text2);max-height:100px;overflow-y:auto;display:none}
-.debug-bar.show{display:block}
-.dl{padding:1px 0}.dl.ok{color:var(--green)}.dl.err{color:var(--red)}.dl.warn{color:var(--amber)}
-
-/* Progress */
-.prog-bar{height:2px;background:var(--border);position:sticky;top:50px;z-index:299}
-.prog-fill{height:100%;background:var(--accent);width:0;transition:width .2s}
-
-/* ─── RESPONSIVE ──────────────────────────────── */
 @media(max-width:700px){
   .topbar-meta{display:none}
   .page{padding:.5rem}
@@ -325,11 +198,10 @@ tbody td:first-child{padding-left:.85rem;text-align:left}
 </head>
 <body>
 
-<!-- TOPBAR -->
 <header class="topbar">
   <div class="brand">
     <div class="brand-ico">IDX</div>
-    <span>ISSI Screener</span>
+    <span>Screener Saham</span>
   </div>
   <div class="topbar-meta">
     <div class="meta-item"><span class="dot" id="sDot"></span><span id="sText">Memuat…</span></div>
@@ -337,7 +209,10 @@ tbody td:first-child{padding-left:.85rem;text-align:left}
     <div class="meta-item" id="srcWrap" style="display:none"><span id="srcBadge"></span></div>
   </div>
   <div class="topbar-right">
-    <button class="btn-sm" id="dbBtn" onclick="toggleDebug()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> <span class="lbl">Debug</span></button>
+    <button class="btn-sm" id="dbBtn" onclick="toggleDebug()">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+      <span class="lbl">Debug</span>
+    </button>
     <button class="btn-sm" onclick="toggleDark()"><span id="dkIco">🌙</span> <span class="lbl" id="dkLbl">Dark</span></button>
   </div>
 </header>
@@ -346,7 +221,6 @@ tbody td:first-child{padding-left:.85rem;text-align:left}
 <div class="page">
   <div class="debug-bar" id="dbPanel"><div id="dbLog"></div></div>
 
-  <!-- Search -->
   <div class="card"><div class="card-inner">
     <div class="search-wrap">
       <svg class="s-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -355,34 +229,31 @@ tbody td:first-child{padding-left:.85rem;text-align:left}
     </div>
   </div></div>
 
-  <!-- Filters -->
   <div class="card"><div class="filter-rows">
 
-    <!-- Indeks -->
     <div class="f-row">
       <span class="f-label idx">Indeks</span>
       <div class="chips">
-        <span class="chip idx" id="if-issi"     onclick="toggleIF('issi')">ISSI</span>
-        <span class="chip idx" id="if-lq45"     onclick="toggleIF('lq45')">LQ45</span>
+        <span class="chip idx" id="if-issi"      onclick="toggleIF('issi')">ISSI</span>
+        <span class="chip idx" id="if-lq45"      onclick="toggleIF('lq45')">LQ45</span>
         <span class="chip idx" id="if-kompas100" onclick="toggleIF('kompas100')">KOMPAS100</span>
-        <span class="chip idx" id="if-bumn"     onclick="toggleIF('bumn')">BUMN</span>
+        <span class="chip idx" id="if-bumn"      onclick="toggleIF('bumn')">BUMN</span>
         <button class="chip-reset" onclick="resetIF()">↺ Reset</button>
       </div>
     </div>
 
-    <!-- Papan -->
     <div class="f-row">
       <span class="f-label papan">Papan</span>
       <div class="chips">
-        <span class="chip papan" id="pf-utama"     onclick="togglePF('utama')">Utama</span>
-        <span class="chip papan" id="pf-pengembangan" onclick="togglePF('pengembangan')">Pengembangan</span>
-        <span class="chip papan" id="pf-akselerasi" onclick="togglePF('akselerasi')">Akselerasi</span>
-        <span class="chip papan" id="pf-ekonomibaru" onclick="togglePF('ekonomibaru')">Ekonomi Baru</span>
+        <span class="chip papan" id="pf-utama"         onclick="togglePF('utama')">Utama</span>
+        <span class="chip papan" id="pf-pengembangan"  onclick="togglePF('pengembangan')">Pengembangan</span>
+        <span class="chip papan" id="pf-akselerasi"    onclick="togglePF('akselerasi')">Akselerasi</span>
+        <span class="chip papan" id="pf-ekonomibaru"   onclick="togglePF('ekonomibaru')">Ekonomi Baru</span>
+        <span class="chip papan" id="pf-pkm"           onclick="togglePF('pkm')">Pemantauan Khusus</span>
         <button class="chip-reset" onclick="resetPF()">↺ Reset</button>
       </div>
     </div>
 
-    <!-- MA -->
     <div class="f-row">
       <span class="f-label ma">MA</span>
       <div class="chips">
@@ -397,7 +268,6 @@ tbody td:first-child{padding-left:.85rem;text-align:left}
       </div>
     </div>
 
-    <!-- Volume MA -->
     <div class="f-row">
       <span class="f-label vol">Volume</span>
       <div class="chips">
@@ -409,24 +279,22 @@ tbody td:first-child{padding-left:.85rem;text-align:left}
       </div>
     </div>
 
-    <!-- Oscillator -->
     <div class="f-row" style="border-bottom:none">
       <span class="f-label osc">Osilator</span>
       <div class="chips">
-        <span class="chip osc" id="of-rsi-ob"    onclick="toggleOF('rsi-ob')"    title="RSI di atas 70 — zona jenuh beli">RSI Jenuh Beli (&gt;70)</span>
-        <span class="chip osc" id="of-rsi-os"    onclick="toggleOF('rsi-os')"    title="RSI di bawah 30 — zona jenuh jual">RSI Jenuh Jual (&lt;30)</span>
-        <span class="chip osc" id="of-rsi-bull"  onclick="toggleOF('rsi-bull')"  title="RSI di atas 50 — momentum positif">RSI Bullish (&gt;50)</span>
-        <span class="chip osc" id="of-srsi-ob"   onclick="toggleOF('srsi-ob')"   title="StochRSI di atas 80">StochRSI Jenuh Beli (&gt;80)</span>
-        <span class="chip osc" id="of-srsi-os"   onclick="toggleOF('srsi-os')"   title="StochRSI di bawah 20">StochRSI Jenuh Jual (&lt;20)</span>
-        <span class="chip osc" id="of-macd-bull" onclick="toggleOF('macd-bull')" title="MACD histogram positif (garis MACD di atas sinyal)">MACD Bullish</span>
-        <span class="chip osc" id="of-macd-bear" onclick="toggleOF('macd-bear')" title="MACD histogram negatif (garis MACD di bawah sinyal)">MACD Bearish</span>
+        <span class="chip osc" id="of-rsi-ob"    onclick="toggleOF('rsi-ob')"    title="RSI di atas 70, zona jenuh beli">RSI Jenuh Beli (&gt;70)</span>
+        <span class="chip osc" id="of-rsi-os"    onclick="toggleOF('rsi-os')"    title="RSI di bawah 30, zona jenuh jual">RSI Jenuh Jual (&lt;30)</span>
+        <span class="chip osc" id="of-rsi-bull"  onclick="toggleOF('rsi-bull')"  title="RSI di atas 50, momentum positif">RSI Bullish (&gt;50)</span>
+        <span class="chip osc" id="of-srsi-ob"   onclick="toggleOF('srsi-ob')"   title="StochRSI di atas 80, jenuh beli">StochRSI Jenuh Beli (&gt;80)</span>
+        <span class="chip osc" id="of-srsi-os"   onclick="toggleOF('srsi-os')"   title="StochRSI di bawah 20, jenuh jual">StochRSI Jenuh Jual (&lt;20)</span>
+        <span class="chip osc" id="of-macd-bull" onclick="toggleOF('macd-bull')" title="Histogram MACD positif">MACD Bullish</span>
+        <span class="chip osc" id="of-macd-bear" onclick="toggleOF('macd-bear')" title="Histogram MACD negatif">MACD Bearish</span>
         <button class="chip-reset" onclick="resetOF()">↺ Reset</button>
       </div>
     </div>
 
   </div></div>
 
-  <!-- Table -->
   <div class="card">
     <div class="stats-bar" id="statsBar" style="display:none">
       <span class="stat">Tampil: <strong id="s-sho">0</strong></span>
@@ -440,13 +308,13 @@ tbody td:first-child{padding-left:.85rem;text-align:left}
       <table>
         <thead>
           <tr class="grp-row">
-            <th class="col-sticky" style="min-width:120px">TICKER</th>
+            <th class="col-sticky" style="min-width:130px">TICKER</th>
             <th colspan="3" class="gh-price">HARGA</th>
             <th colspan="2" class="gh-ma">MOVING AVERAGE</th>
             <th colspan="5" class="gh-osc">OSCILLATOR</th>
           </tr>
           <tr class="col-row">
-            <th class="nc col-sticky" style="min-width:120px">TICKER / NAMA</th>
+            <th class="nc col-sticky" style="min-width:130px">TICKER / NAMA</th>
             <th onclick="sortBy('price')" class="ch-price">HARGA</th>
             <th onclick="sortBy('pct')" class="ch-price">% CHG</th>
             <th onclick="sortBy('pct1today')" class="ch-price">1% TRX</th>
@@ -466,14 +334,17 @@ tbody td:first-child{padding-left:.85rem;text-align:left}
     </div>
   </div>
 
-  <p style="font-size:.63rem;color:var(--text3);text-align:center;padding-bottom:1.5rem">
+  <p style="font-size:.62rem;color:var(--text3);text-align:center;padding-bottom:1.5rem">
     Data dari Yahoo Finance via GitHub Actions · Bukan rekomendasi investasi
   </p>
 </div>
 <div class="toasts" id="toasts"></div>
 
 <script>
-const TICKER_META = {
+// 956 tickers from CLEANED_DATA.csv
+const TK=["AADI", "AALI", "ABBA", "ABDA", "ABMM", "ACES", "ACRO", "ACST", "ADCP", "ADES", "ADHI", "ADMF", "ADMG", "ADMR", "ADRO", "AEGS", "AGAR", "AGII", "AGRO", "AGRS", "AHAP", "AIMS", "AISA", "AKKU", "AKPI", "AKRA", "AKSI", "ALDO", "ALII", "ALKA", "ALMI", "ALTO", "AMAG", "AMAN", "AMAR", "AMFG", "AMIN", "AMMN", "AMMS", "AMOR", "AMRT", "ANDI", "ANJT", "ANTM", "APEX", "APIC", "APII", "APLI", "APLN", "ARCI", "AREA", "ARGO", "ARII", "ARKA", "ARKO", "ARMY", "ARNA", "ARTA", "ARTI", "ARTO", "ASBI", "ASDM", "ASGR", "ASHA", "ASII", "ASJT", "ASLC", "ASLI", "ASMI", "ASPI", "ASPR", "ASRI", "ASRM", "ASSA", "ATAP", "ATIC", "ATLA", "AUTO", "AVIA", "AWAN", "AXIO", "AYAM", "AYLS", "BABP", "BABY", "BACA", "BAIK", "BAJA", "BALI", "BANK", "BAPA", "BAPI", "BATA", "BATR", "BAUT", "BAYU", "BBCA", "BBHI", "BBKP", "BBLD", "BBMD", "BBNI", "BBRI", "BBRM", "BBSI", "BBSS", "BBTN", "BBYB", "BCAP", "BCIC", "BCIP", "BDKR", "BDMN", "BEBS", "BEEF", "BEER", "BEKS", "BELI", "BELL", "BESS", "BEST", "BFIN", "BGTG", "BHAT", "BHIT", "BIKA", "BIKE", "BIMA", "BINA", "BINO", "BIPI", "BIPP", "BIRD", "BISI", "BJBR", "BJTM", "BKDP", "BKSL", "BKSW", "BLES", "BLOG", "BLTA", "BLTZ", "BLUE", "BMAS", "BMBL", "BMHS", "BMRI", "BMSR", "BMTR", "BNBA", "BNBR", "BNGA", "BNII", "BNLI", "BOAT", "BOBA", "BOGA", "BOLA", "BOLT", "BOSS", "BPFI", "BPII", "BPTR", "BRAM", "BREN", "BRIS", "BRMS", "BRNA", "BRPT", "BRRC", "BSBK", "BSDE", "BSIM", "BSML", "BSSR", "BSWD", "BTEK", "BTEL", "BTON", "BTPN", "BTPS", "BUAH", "BUDI", "BUKA", "BUKK", "BULL", "BUMI", "BUVA", "BVIC", "BWPT", "BYAN", "CAKK", "CAMP", "CANI", "CARE", "CARS", "CASA", "CASH", "CASS", "CBDK", "CBMF", "CBPE", "CBRE", "CBUT", "CCSI", "CDIA", "CEKA", "CENT", "CFIN", "CGAS", "CHEK", "CHEM", "CHIP", "CINT", "CITA", "CITY", "CLAY", "CLEO", "CLPI", "CMNP", "CMNT", "CMPP", "CMRY", "CNKO", "CNMA", "CNTX", "COAL", "COCO", "COIN", "COWL", "CPIN", "CPRI", "CPRO", "CRAB", "CRSN", "CSAP", "CSIS", "CSMI", "CSRA", "CTBN", "CTRA", "CTTH", "CUAN", "CYBR", "DAAZ", "DADA", "DART", "DATA", "DAYA", "DCII", "DEAL", "DEFI", "DEPO", "DEWA", "DEWI", "DFAM", "DGIK", "DGNS", "DGWG", "DIGI", "DILD", "DIVA", "DKFT", "DKHH", "DLTA", "DMAS", "DMMX", "DMND", "DNAR", "DNET", "DOID", "DOOH", "DOSS", "DPNS", "DPUM", "DRMA", "DSFI", "DSNG", "DSSA", "DUCK", "DUTI", "DVLA", "DWGL", "DYAN", "EAST", "ECII", "EDGE", "EKAD", "ELIT", "ELPI", "ELSA", "ELTY", "EMAS", "EMDE", "EMTK", "ENAK", "ENRG", "ENVY", "ENZO", "EPAC", "EPMT", "ERAA", "ERAL", "ERTX", "ESIP", "ESSA", "ESTA", "ESTI", "ETWA", "EURO", "EXCL", "FAPA", "FAST", "FASW", "FILM", "FIMP", "FIRE", "FISH", "FITT", "FLMC", "FMII", "FOLK", "FOOD", "FORE", "FORU", "FPNI", "FUJI", "FUTR", "FWCT", "GAMA", "GDST", "GDYR", "GEMA", "GEMS", "GGRM", "GGRP", "GHON", "GIAA", "GJTL", "GLOB", "GLVA", "GMFI", "GMTD", "GOLD", "GOLF", "GOLL", "GOOD", "GOTO", "GPRA", "GPSO", "GRIA", "GRPH", "GRPM", "GSMF", "GTBO", "GTRA", "GTSI", "GULA", "GUNA", "GWSA", "GZCO", "HADE", "HAIS", "HAJJ", "HALO", "HATM", "HBAT", "HDFA", "HDIT", "HEAL", "HELI", "HERO", "HEXA", "HGII", "HILL", "HITS", "HKMU", "HMSP", "HOKI", "HOME", "HOMI", "HOPE", "HOTL", "HRME", "HRTA", "HRUM", "HUMI", "HYGN", "IATA", "IBFN", "IBOS", "IBST", "ICBP", "ICON", "IDEA", "IDPR", "IFII", "IFSH", "IGAR", "IIKP", "IKAI", "IKAN", "IKBI", "IKPM", "IMAS", "IMJS", "IMPC", "INAF", "INAI", "INCF", "INCI", "INCO", "INDF", "INDO", "INDR", "INDS", "INDX", "INDY", "INET", "INKP", "INOV", "INPC", "INPP", "INPS", "INRU", "INTA", "INTD", "INTP", "IOTF", "IPAC", "IPCC", "IPCM", "IPOL", "IPPE", "IPTV", "IRRA", "IRSX", "ISAP", "ISAT", "ISEA", "ISSP", "ITIC", "ITMA", "ITMG", "JARR", "JAST", "JATI", "JAWA", "JAYA", "JECC", "JGLE", "JIHD", "JKON", "JMAS", "JPFA", "JRPT", "JSKY", "JSMR", "JSPT", "JTPE", "KAEF", "KAQI", "KARW", "KAYU", "KBAG", "KBLI", "KBLM", "KBLV", "KBRI", "KDSI", "KDTN", "KEEN", "KEJU", "KETR", "KIAS", "KICI", "KIJA", "KING", "KINO", "KIOS", "KJEN", "KKES", "KKGI", "KLAS", "KLBF", "KLIN", "KMDS", "KMTR", "KOBX", "KOCI", "KOIN", "KOKA", "KONI", "KOPI", "KOTA", "KPIG", "KRAS", "KREN", "KRYA", "KSIX", "KUAS", "LABA", "LABS", "LAJU", "LAND", "LAPD", "LCGP", "LCKM", "LEAD", "LFLO", "LIFE", "LINK", "LION", "LIVE", "LMAS", "LMAX", "LMPI", "LMSH", "LOPI", "LPCK", "LPGI", "LPIN", "LPKR", "LPLI", "LPPF", "LPPS", "LRNA", "LSIP", "LTLS", "LUCK", "LUCY", "MABA", "MAGP", "MAHA", "MAIN", "MANG", "MAPA", "MAPB", "MAPI", "MARI", "MARK", "MASB", "MAXI", "MAYA", "MBAP", "MBMA", "MBSS", "MBTO", "MCAS", "MCOL", "MCOR", "MDIA", "MDIY", "MDKA", "MDKI", "MDLA", "MDLN", "MDRN", "MEDC", "MEDS", "MEGA", "MEJA", "MENN", "MERI", "MERK", "META", "MFMI", "MGLV", "MGNA", "MGRO", "MHKI", "MICE", "MIDI", "MIKA", "MINA", "MINE", "MIRA", "MITI", "MKAP", "MKNT", "MKPI", "MKTR", "MLBI", "MLIA", "MLPL", "MLPT", "MMIX", "MMLP", "MNCN", "MOLI", "MORA", "MPIX", "MPMX", "MPOW", "MPPA", "MPRO", "MPXL", "MRAT", "MREI", "MSIE", "MSIN", "MSJA", "MSKY", "MSTI", "MTDL", "MTEL", "MTFN", "MTLA", "MTMH", "MTPS", "MTRA", "MTSM", "MTWI", "MUTU", "MYOH", "MYOR", "MYTX", "NAIK", "NANO", "NASA", "NASI", "NATO", "NAYZ", "NCKL", "NELY", "NEST", "NETV", "NFCX", "NICE", "NICK", "NICL", "NIKL", "NINE", "NIRO", "NISP", "NOBU", "NPGF", "NRCA", "NSSS", "NTBK", "NUSA", "NZIA", "OASA", "OBAT", "OBMD", "OCAP", "OILS", "OKAS", "OLIV", "OMED", "OMRE", "OPMS", "PACK", "PADA", "PADI", "PALM", "PAMG", "PANI", "PANR", "PANS", "PART", "PBID", "PBRX", "PBSA", "PCAR", "PDES", "PDPP", "PEGE", "PEHA", "PEVE", "PGAS", "PGEO", "PGJO", "PGLI", "PGUN", "PICO", "PIPA", "PJAA", "PJHB", "PKPK", "PLAN", "PLAS", "PLIN", "PMJS", "PMMP", "PMUI", "PNBN", "PNBS", "PNGO", "PNIN", "PNLF", "PNSE", "POLA", "POLI", "POLL", "POLU", "POLY", "POOL", "PORT", "POSA", "POWR", "PPGL", "PPRE", "PPRI", "PPRO", "PRAY", "PRDA", "PRIM", "PSAB", "PSAT", "PSDN", "PSGO", "PSKT", "PSSI", "PTBA", "PTDU", "PTIS", "PTMP", "PTMR", "PTPP", "PTPS", "PTPW", "PTRO", "PTSN", "PTSP", "PUDP", "PURA", "PURE", "PURI", "PWON", "PYFA", "PZZA", "RAAM", "RAFI", "RAJA", "RALS", "RANC", "RATU", "RBMS", "RCCC", "RDTX", "REAL", "RELF", "RELI", "RGAS", "RICY", "RIGS", "RIMO", "RISE", "RLCO", "RMKE", "RMKO", "ROCK", "RODA", "RONY", "ROTI", "RSCH", "RSGK", "RUIS", "RUNS", "SAFE", "SAGE", "SAME", "SAMF", "SAPX", "SATU", "SBAT", "SBMA", "SCCO", "SCMA", "SCNP", "SCPI", "SDMU", "SDPC", "SDRA", "SEMA", "SFAN", "SGER", "SGRO", "SHID", "SHIP", "SICO", "SIDO", "SILO", "SIMA", "SIMP", "SINI", "SIPD", "SKBM", "SKLT", "SKRN", "SKYB", "SLIS", "SMAR", "SMBR", "SMCB", "SMDM", "SMDR", "SMGA", "SMGR", "SMIL", "SMKL", "SMKM", "SMLE", "SMMA", "SMMT", "SMRA", "SMRU", "SMSM", "SNLK", "SOCI", "SOFA", "SOHO", "SOLA", "SONA", "SOSS", "SOTS", "SOUL", "SPMA", "SPRE", "SPTO", "SQMI", "SRAJ", "SRIL", "SRSN", "SRTG", "SSIA", "SSMS", "SSTM", "STAA", "STAR", "STRK", "STTP", "SUGI", "SULI", "SUNI", "SUPA", "SUPR", "SURE", "SURI", "SWAT", "SWID", "TALF", "TAMA", "TAMU", "TAPG", "TARA", "TAXI", "TAYS", "TBIG", "TBLA", "TBMS", "TCID", "TCPI", "TDPM", "TEBE", "TECH", "TELE", "TFAS", "TFCO", "TGKA", "TGRA", "TGUK", "TIFA", "TINS", "TIRA", "TIRT", "TKIM", "TLDN", "TLKM", "TMAS", "TMPO", "TNCA", "TOBA", "TOOL", "TOPS", "TOSK", "TOTL", "TOTO", "TOWR", "TOYS", "TPIA", "TPMA", "TRAM", "TRGU", "TRIL", "TRIM", "TRIN", "TRIO", "TRIS", "TRJA", "TRON", "TRST", "TRUE", "TRUK", "TRUS", "TSPC", "TUGU", "TYRE", "UANG", "UCID", "UDNG", "UFOE", "ULTJ", "UNIC", "UNIQ", "UNIT", "UNSP", "UNTD", "UNTR", "UNVR", "URBN", "UVCR", "VAST", "VERN", "VICI", "VICO", "VINS", "VISI", "VIVA", "VKTR", "VOKS", "VRNA", "VTNY", "WAPO", "WEGE", "WEHA", "WGSH", "WICO", "WIDI", "WIFI", "WIIM", "WIKA", "WINE", "WINR", "WINS", "WIRG", "WMPP", "WMUU", "WOMF", "WOOD", "WOWS", "WSBP", "WSKT", "WTON", "YELO", "YOII", "YPAS", "YULE", "YUPI", "ZATA", "ZBRA", "ZINC", "ZONE", "ZYRX"];
+
+const TM={
   "AADI":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
   "AALI":{p:"Utama",i:["ISSI"]},
   "ABBA":{p:"Pemantauan Khusus",i:[]},
@@ -1429,268 +1300,136 @@ const TICKER_META = {
   "ZBRA":{p:"Pemantauan Khusus",i:[]},
   "ZINC":{p:"Pemantauan Khusus",i:[]},
   "ZONE":{p:"Pengembangan",i:["ISSI"]},
-  "ZYRX":{p:"Pengembangan",i:["ISSI"]},
+  "ZYRX":{p:"Pengembangan",i:["ISSI"]}
 };
 
-/* ══════════════════════════════════════════════
-   CONFIG
-══════════════════════════════════════════════ */
-const DATA_URL = 'data/issi_data.json';
-const SK = 'issi_v5', SKT = 'issi_v5_ts';
 
-/* ══════════════════════════════════════════════
-   STATE
-══════════════════════════════════════════════ */
-let AD=[], DD=[];
-let maF=new Set(), volF=new Set(), oscF=new Set();
-let idxF=new Set(), papanF=new Set();
-let sCol='pct', sDir=-1, dbOn=false;
+/* ── CONFIG ─────────────────────────────────── */
+const DATA_URL='data/issi_data.json';
+const SK='scr_v1',SKT='scr_v1_ts';
 
-/* ══════════════════════════════════════════════
-   DARK MODE
-══════════════════════════════════════════════ */
-(function(){
-  const t=localStorage.getItem('issi_theme')||'light';
-  document.documentElement.setAttribute('data-theme',t);
-  _updDk(t);
-})();
-function toggleDark(){
-  const n=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
-  document.documentElement.setAttribute('data-theme',n);
-  localStorage.setItem('issi_theme',n);
-  _updDk(n);
-}
-function _updDk(t){
-  document.getElementById('dkIco').textContent=t==='dark'?'☀️':'🌙';
-  document.getElementById('dkLbl').textContent=t==='dark'?'Light':'Dark';
-}
+/* ── STATE ──────────────────────────────────── */
+let AD=[],DD=[];
+let maF=new Set(),volF=new Set(),oscF=new Set(),idxF=new Set(),papanF=new Set();
+let sCol='pct',sDir=-1,dbOn=false;
 
-/* ══════════════════════════════════════════════
-   DEBUG
-══════════════════════════════════════════════ */
+/* ── DARK MODE ──────────────────────────────── */
+(function(){const t=localStorage.getItem('scr_theme')||'light';document.documentElement.setAttribute('data-theme',t);_dk(t)})();
+function toggleDark(){const n=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('scr_theme',n);_dk(n)}
+function _dk(t){document.getElementById('dkIco').textContent=t==='dark'?'☀️':'🌙';document.getElementById('dkLbl').textContent=t==='dark'?'Light':'Dark'}
+
+/* ── DEBUG ──────────────────────────────────── */
 let _db=[];
-function dLog(m,t=''){
-  _db.push({m,t});if(_db.length>60)_db.shift();
-  if(!dbOn)return;
-  const el=document.getElementById('dbLog');
-  el.innerHTML=_db.slice(-25).map(l=>`<div class="dl ${l.t}">${l.m}</div>`).join('');
-  el.scrollTop=el.scrollHeight;
-}
-function toggleDebug(){
-  dbOn=!dbOn;
-  document.getElementById('dbPanel').classList.toggle('show',dbOn);
-  if(dbOn){
-    const el=document.getElementById('dbLog');
-    el.innerHTML=_db.slice(-25).map(l=>`<div class="dl ${l.t}">${l.m}</div>`).join('');
-    el.scrollTop=el.scrollHeight;
-  }
-}
+function dLog(m,t=''){_db.push({m,t});if(_db.length>60)_db.shift();if(!dbOn)return;const el=document.getElementById('dbLog');el.innerHTML=_db.slice(-25).map(l=>`<div class="dl ${l.t}">${l.m}</div>`).join('');el.scrollTop=el.scrollHeight}
+function toggleDebug(){dbOn=!dbOn;document.getElementById('dbPanel').classList.toggle('show',dbOn);if(dbOn){const el=document.getElementById('dbLog');el.innerHTML=_db.slice(-25).map(l=>`<div class="dl ${l.t}">${l.m}</div>`).join('');el.scrollTop=el.scrollHeight}}
 
-/* ══════════════════════════════════════════════
-   MATH
-══════════════════════════════════════════════ */
-function _ema(a,p){
-  if(!a||a.length<p)return null;
-  const k=2/(p+1);let v=a.slice(0,p).reduce((x,y)=>x+y,0)/p;
-  for(let i=p;i<a.length;i++)v=a[i]*k+v*(1-k);
-  return v;
-}
+/* ── MATH ───────────────────────────────────── */
+function _ema(a,p){if(!a||a.length<p)return null;const k=2/(p+1);let v=a.slice(0,p).reduce((x,y)=>x+y,0)/p;for(let i=p;i<a.length;i++)v=a[i]*k+v*(1-k);return v}
 function _sma(a,p){if(!a||a.length<p)return null;return a.slice(-p).reduce((x,y)=>x+y,0)/p}
-function _rsi(a){
-  if(!a||a.length<15)return null;
-  const s=a.slice(-15);let g=0,l=0;
-  for(let i=1;i<s.length;i++){const d=s[i]-s[i-1];if(d>0)g+=d;else l-=d}
-  const ag=g/14,al=l/14;return al===0?100:100-100/(1+ag/al);
-}
-function _stochRSI(a){
-  if(!a||a.length<33)return null;
-  const ra=[];
-  for(let i=15;i<=a.length;i++){
-    const s=a.slice(0,i).slice(-15);let g=0,l=0;
-    for(let j=1;j<s.length;j++){const d=s[j]-s[j-1];if(d>0)g+=d;else l-=d}
-    const ag=g/14,al=l/14;ra.push(al===0?100:100-100/(1+ag/al));
-  }
-  if(ra.length<14)return null;
-  const rec=ra.slice(-14),mn=Math.min(...rec),mx=Math.max(...rec);
-  return mx===mn?50:((ra[ra.length-1]-mn)/(mx-mn))*100;
-}
-function _macd(a){
-  if(!a||a.length<35)return null;
-  const lines=[];
-  for(let i=26;i<=a.length;i++){
-    const sl=a.slice(0,i),m12=_ema(sl,12),m26=_ema(sl,26);
-    if(m12!==null&&m26!==null)lines.push(m12-m26);
-  }
-  if(lines.length<9)return null;
-  const sig=_ema(lines,9);if(sig===null)return null;
-  const line=lines.at(-1),hist=line-sig;
-  let prevHist=null;
-  if(lines.length>=2){const pl=lines.slice(0,-1),ps=_ema(pl,9);if(ps!==null)prevHist=pl.at(-1)-ps}
-  return{line,signal:sig,hist,bull:hist>0,cross:prevHist!==null&&Math.sign(hist)!==Math.sign(prevHist)};
-}
-function _atr(rows){
-  if(!rows||rows.length<15)return null;
-  const trs=[];
-  for(let i=1;i<rows.length;i++)
-    trs.push(Math.max(rows[i].h-rows[i].l,Math.abs(rows[i].h-rows[i-1].c),Math.abs(rows[i].l-rows[i-1].c)));
-  return trs.length>=14?trs.slice(-14).reduce((a,b)=>a+b,0)/14:null;
-}
-function _adr(rows){
-  if(!rows||rows.length<14)return null;
-  const r=rows.slice(-14);
-  return{nom:r.reduce((a,b)=>a+(b.h-b.l),0)/14,pct:r.reduce((a,b)=>a+(b.h-b.l)/b.l,0)/14*100};
-}
+function _rsi(a){if(!a||a.length<15)return null;const s=a.slice(-15);let g=0,l=0;for(let i=1;i<s.length;i++){const d=s[i]-s[i-1];if(d>0)g+=d;else l-=d}const ag=g/14,al=l/14;return al===0?100:100-100/(1+ag/al)}
+function _stochRSI(a){if(!a||a.length<33)return null;const ra=[];for(let i=15;i<=a.length;i++){const s=a.slice(0,i).slice(-15);let g=0,l=0;for(let j=1;j<s.length;j++){const d=s[j]-s[j-1];if(d>0)g+=d;else l-=d}const ag=g/14,al=l/14;ra.push(al===0?100:100-100/(1+ag/al))}if(ra.length<14)return null;const rec=ra.slice(-14),mn=Math.min(...rec),mx=Math.max(...rec);return mx===mn?50:((ra[ra.length-1]-mn)/(mx-mn))*100}
+function _macd(a){if(!a||a.length<35)return null;const lines=[];for(let i=26;i<=a.length;i++){const sl=a.slice(0,i),m12=_ema(sl,12),m26=_ema(sl,26);if(m12!==null&&m26!==null)lines.push(m12-m26)}if(lines.length<9)return null;const sig=_ema(lines,9);if(sig===null)return null;const line=lines.at(-1),hist=line-sig;let prevHist=null;if(lines.length>=2){const pl=lines.slice(0,-1),ps=_ema(pl,9);if(ps!==null)prevHist=pl.at(-1)-ps}return{line,signal:sig,hist,bull:hist>0,cross:prevHist!==null&&Math.sign(hist)!==Math.sign(prevHist)}}
+function _atr(rows){if(!rows||rows.length<15)return null;const trs=[];for(let i=1;i<rows.length;i++)trs.push(Math.max(rows[i].h-rows[i].l,Math.abs(rows[i].h-rows[i-1].c),Math.abs(rows[i].l-rows[i-1].c)));return trs.length>=14?trs.slice(-14).reduce((a,b)=>a+b,0)/14:null}
+function _adr(rows){if(!rows||rows.length<14)return null;const r=rows.slice(-14);return{nom:r.reduce((a,b)=>a+(b.h-b.l),0)/14,pct:r.reduce((a,b)=>a+(b.h-b.l)/b.l,0)/14*100}}
 
-/* ══════════════════════════════════════════════
-   PROCESS YAHOO → STOCK OBJ
-══════════════════════════════════════════════ */
+/* ── PROCESS YAHOO DATA ─────────────────────── */
 function processYahoo(ticker,res){
-  const meta=res.meta||{};
-  const raw=res.indicators?.quote?.[0]||{};
-  const ts=res.timestamp||[];
+  const meta=res.meta||{};const raw=res.indicators?.quote?.[0]||{};const ts=res.timestamp||[];
   const rows=[];
-  for(let i=0;i<ts.length;i++){
-    const c=raw.close?.[i],h=raw.high?.[i],l=raw.low?.[i],v=raw.volume?.[i];
-    if(c!=null&&h!=null&&l!=null&&v!=null&&!isNaN(c)&&c>0&&h>0&&l>0)rows.push({c,h,l,v});
-  }
+  for(let i=0;i<ts.length;i++){const c=raw.close?.[i],h=raw.high?.[i],l=raw.low?.[i],v=raw.volume?.[i];if(c!=null&&h!=null&&l!=null&&v!=null&&!isNaN(c)&&c>0&&h>0&&l>0)rows.push({c,h,l,v})}
   if(rows.length<30)return null;
   const closes=rows.map(x=>x.c),vols=rows.map(x=>x.v);
-  const last=closes.at(-1),prev=closes.at(-2)??last;
-  const pct=((last-prev)/prev)*100;
+  const last=closes.at(-1),prev=closes.at(-2)??last,pct=((last-prev)/prev)*100;
   const e3=_ema(closes,3),e5=_ema(closes,5),e10=_ema(closes,10),e20=_ema(closes,20);
   const s50=_sma(closes,50),s100=_sma(closes,100),s200=_sma(closes,200);
-  const rsiV=_rsi(closes),srsiV=_stochRSI(closes);
-  const macdV=_macd(closes),atrV=_atr(rows),adrV=_adr(rows);
+  const rsiV=_rsi(closes),srsiV=_stochRSI(closes),macdV=_macd(closes),atrV=_atr(rows),adrV=_adr(rows);
   const lastVol=vols.at(-1)??0,lastValue=lastVol*last,pct1today=lastValue*0.01;
   const vm3=_sma(vols,3),vm5=_sma(vols,5),vm20=_sma(vols,20),vm50=_sma(vols,50);
-  const ms={
-    ema3:e3!==null&&last>e3,ema5:e5!==null&&last>e5,
-    ema10:e10!==null&&last>e10,ema20:e20!==null&&last>e20,
-    sma50:s50!==null&&last>s50,sma100:s100!==null&&last>s100,sma200:s200!==null&&last>s200,
-    vma3:vm3!==null&&lastVol>vm3,vma5:vm5!==null&&lastVol>vm5,
-    vma20:vm20!==null&&lastVol>vm20,vma50:vm50!==null&&lastVol>vm50,
-  };
+  const ms={ema3:e3!==null&&last>e3,ema5:e5!==null&&last>e5,ema10:e10!==null&&last>e10,ema20:e20!==null&&last>e20,sma50:s50!==null&&last>s50,sma100:s100!==null&&last>s100,sma200:s200!==null&&last>s200,vma3:vm3!==null&&lastVol>vm3,vma5:vm5!==null&&lastVol>vm5,vma20:vm20!==null&&lastVol>vm20,vma50:vm50!==null&&lastVol>vm50};
   const above4=ms.ema3&&ms.ema5&&ms.ema10&&ms.ema20;
-  let bull=0,bear=0;
-  ['ema3','ema5','ema10','ema20','sma50','sma100','sma200'].forEach(k=>{if(ms[k])bull++;else bear++;});
-  if(rsiV!==null){if(rsiV>50)bull++;else bear++;}
-  if(srsiV!==null){if(srsiV>50)bull++;else bear++;}
-  if(macdV){if(macdV.bull)bull++;else bear++;}
+  let bull=0,bear=0;['ema3','ema5','ema10','ema20','sma50','sma100','sma200'].forEach(k=>{if(ms[k])bull++;else bear++});
+  if(rsiV!==null){if(rsiV>50)bull++;else bear++}
+  if(srsiV!==null){if(srsiV>50)bull++;else bear++}
+  if(macdV){if(macdV.bull)bull++;else bear++}
   const company=(meta.longName||meta.shortName||'').replace(/\s*\([^)]*\)\s*/g,'').trim()||ticker;
-  // Enrich with papan/indeks from TICKER_META
-  const tm=TICKER_META[ticker]||{};
-  return{
-    ticker,company,price:last,pct,maStatus:ms,above4,bull,bear,
-    rsi:rsiV,stochRsi:srsiV,
-    macdBull:macdV?.bull??null,macdHist:macdV?.hist??null,macdCross:macdV?.cross??false,
-    atrV,adrPct:adrV?.pct??null,adrNom:adrV?.nom??null,
-    lastVol,lastValue,pct1today,
-    papan:tm.p||'',indeks:tm.i||[],
-  };
+  const tm=TM[ticker]||{};
+  return{ticker,company,price:last,pct,maStatus:ms,above4,bull,bear,rsi:rsiV,stochRsi:srsiV,macdBull:macdV?.bull??null,macdHist:macdV?.hist??null,macdCross:macdV?.cross??false,atrV,adrPct:adrV?.pct??null,adrNom:adrV?.nom??null,lastVol,lastValue,pct1today,papan:tm.p||'',indeks:tm.i||[]}
 }
 
-/* ══════════════════════════════════════════════
-   DATA LOADING
-══════════════════════════════════════════════ */
+/* ── DATA LOADING ───────────────────────────── */
+function _enrich(data){return data.map(d=>{const tm=TM[d.ticker]||{};return{...d,papan:tm.p||d.papan||'',indeks:tm.i||d.indeks||[]}})}
+
 window.addEventListener('load',async()=>{
   try{
-    dLog('Loading GitHub repo…');
+    dLog('Loading…');
     const res=await fetch(DATA_URL+'?_='+Date.now());
     if(res.ok){
       const j=await res.json();
       if(j?.data?.length>0){
-        // Enrich with papan/indeks metadata
-        const enriched=j.data.map(d=>{const tm=TICKER_META[d.ticker]||{};return{...d,papan:tm.p||d.papan||'',indeks:tm.i||d.indeks||[]}});
+        const enriched=_enrich(j.data);
         try{localStorage.setItem(SK,JSON.stringify(enriched));localStorage.setItem(SKT,j.fetchedAt||Date.now())}catch(_){}
-        _loadData(enriched,new Date(j.fetchedAt||Date.now()).getTime(),'gh',j.fetchedAtWIB||'—');
-        dLog(`GitHub OK: ${enriched.length} saham`,'ok');
-        return;
+        _load(enriched,new Date(j.fetchedAt||Date.now()).getTime(),'gh',j.fetchedAtWIB||'—');
+        dLog(`GitHub OK: ${enriched.length} saham`,'ok');return;
       }
     }
   }catch(e){dLog('GitHub gagal: '+e.message,'warn')}
   try{
     const raw=localStorage.getItem(SK),ts=localStorage.getItem(SKT);
-    if(raw){
-      const data=JSON.parse(raw);
-      if(data?.length>0){
-        const enriched=data.map(d=>{const tm=TICKER_META[d.ticker]||{};return{...d,papan:tm.p||d.papan||'',indeks:tm.i||d.indeks||[]}});
-        _loadData(enriched,ts?parseInt(ts):Date.now(),'cache');
-        dLog(`Cache: ${enriched.length} saham`,'ok');
-        return;
-      }
-    }
+    if(raw){const data=JSON.parse(raw);if(data?.length>0){const e=_enrich(data);_load(e,ts?parseInt(ts):Date.now(),'cache');dLog(`Cache: ${e.length} saham`,'ok');return}}
   }catch(e){dLog('Cache error: '+e.message,'err')}
-  setDot('');
-  document.getElementById('sText').textContent='Data belum tersedia';
+  setDot('');document.getElementById('sText').textContent='Data belum tersedia';
 });
 
-function _loadData(data,ts,src,ghLabel){
+function _load(data,ts,src,ghLabel){
   AD=data;
-  const srcMap={gh:'📦 GitHub',cache:'💾 Cache'};
-  const badge=`<span class="src-badge ${src}">${srcMap[src]||src}</span>`;
+  const lbl={gh:'📦 GitHub',cache:'💾 Cache'};
+  const badge=`<span class="src-badge ${src}">${lbl[src]||src}</span>`;
   document.getElementById('sText').textContent=`${AD.length} saham`;
   document.getElementById('tsWrap').style.display='flex';
-  document.getElementById('tsText').textContent=src==='gh'?`${ghLabel}`:`Cache: ${_ago(ts)}`;
+  document.getElementById('tsText').textContent=src==='gh'?ghLabel:`Cache: ${_ago(ts)}`;
   document.getElementById('srcWrap').style.display='flex';
   document.getElementById('srcBadge').innerHTML=badge;
   document.getElementById('statsBar').style.display='flex';
   document.getElementById('s-src').style.display='inline-flex';
   document.getElementById('s-src').innerHTML=badge;
-  setDot('ok');
-  _updateStats();applyF();renderT();
+  setDot('ok');_stats();applyF();renderT();
   toast(`${AD.length} saham dimuat`,'in');
 }
 
-/* ══════════════════════════════════════════════
-   SEARCH
-══════════════════════════════════════════════ */
+/* ── SEARCH ─────────────────────────────────── */
 document.getElementById('sInp').addEventListener('input',function(){
   document.getElementById('sClear').classList.toggle('show',this.value.length>0);
   applyF();renderT();
 });
-function clearSearch(){
-  document.getElementById('sInp').value='';
-  document.getElementById('sClear').classList.remove('show');
-  applyF();renderT();
-  document.getElementById('sInp').focus();
-}
+function clearSearch(){document.getElementById('sInp').value='';document.getElementById('sClear').classList.remove('show');applyF();renderT();document.getElementById('sInp').focus()}
 
-/* ══════════════════════════════════════════════
-   SCROLL SHADOW FOR STICKY COLUMN
-══════════════════════════════════════════════ */
-document.getElementById('tWrap').addEventListener('scroll',function(){
-  this.classList.toggle('scrolled',this.scrollLeft>4);
-});
+/* ── SCROLL SHADOW ──────────────────────────── */
+document.getElementById('tWrap').addEventListener('scroll',function(){this.classList.toggle('scrolled',this.scrollLeft>4)});
 
-/* ══════════════════════════════════════════════
-   FILTERS
-══════════════════════════════════════════════ */
+/* ── FILTER MAPS ────────────────────────────── */
+const IDX_MAP={issi:'ISSI',lq45:'LQ45',kompas100:'KOMPAS100',bumn:'BUMN'};
+const PAPAN_MAP={utama:'Utama',pengembangan:'Pengembangan',akselerasi:'Akselerasi',ekonomibaru:'Ekonomi Baru',pkm:'Pemantauan Khusus'};
+
 function toggleMF(k){maF.has(k)?maF.delete(k):maF.add(k);document.getElementById('mf-'+k).classList.toggle('on',maF.has(k));applyF();renderT()}
 function resetMF(){maF.clear();['ema3','ema5','ema10','ema20','sma50','sma100','sma200'].forEach(k=>document.getElementById('mf-'+k).classList.remove('on'));applyF();renderT()}
 function toggleVF(k){volF.has(k)?volF.delete(k):volF.add(k);document.getElementById('vf-'+k).classList.toggle('on',volF.has(k));applyF();renderT()}
 function resetVF(){volF.clear();['vma3','vma5','vma20','vma50'].forEach(k=>document.getElementById('vf-'+k).classList.remove('on'));applyF();renderT()}
 function toggleOF(k){oscF.has(k)?oscF.delete(k):oscF.add(k);document.getElementById('of-'+k).classList.toggle('on',oscF.has(k));applyF();renderT()}
 function resetOF(){oscF.clear();['rsi-ob','rsi-os','rsi-bull','srsi-ob','srsi-os','macd-bull','macd-bear'].forEach(k=>document.getElementById('of-'+k).classList.remove('on'));applyF();renderT()}
-
-const IDX_MAP={'issi':'ISSI','lq45':'LQ45','kompas100':'KOMPAS100','bumn':'BUMN'};
-const PAPAN_MAP={'utama':'Utama','pengembangan':'Pengembangan','akselerasi':'Akselerasi','ekonomibaru':'Ekonomi Baru'};
 function toggleIF(k){idxF.has(k)?idxF.delete(k):idxF.add(k);document.getElementById('if-'+k).classList.toggle('on',idxF.has(k));applyF();renderT()}
 function resetIF(){idxF.clear();Object.keys(IDX_MAP).forEach(k=>document.getElementById('if-'+k).classList.remove('on'));applyF();renderT()}
 function togglePF(k){papanF.has(k)?papanF.delete(k):papanF.add(k);document.getElementById('pf-'+k).classList.toggle('on',papanF.has(k));applyF();renderT()}
 function resetPF(){papanF.clear();Object.keys(PAPAN_MAP).forEach(k=>document.getElementById('pf-'+k).classList.remove('on'));applyF();renderT()}
 
+/* ── APPLY FILTERS ──────────────────────────── */
 function applyF(){
   const q=document.getElementById('sInp').value.trim().toUpperCase();
   let d=[...AD];
   if(q)d=d.filter(x=>x.ticker.includes(q)||(x.company||'').toUpperCase().includes(q));
-  // Indeks filter (OR within group: match any selected)
-  if(idxF.size>0)d=d.filter(x=>{const idxArr=x.indeks||[];return[...idxF].some(k=>idxArr.includes(IDX_MAP[k]))});
-  // Papan filter (OR)
+  if(idxF.size>0)d=d.filter(x=>[...idxF].some(k=>(x.indeks||[]).includes(IDX_MAP[k])));
   if(papanF.size>0)d=d.filter(x=>[...papanF].some(k=>x.papan===PAPAN_MAP[k]));
-  // MA filters (AND: all selected must pass)
   maF.forEach(k=>{d=d.filter(x=>x.maStatus?.[k]===true)});
   volF.forEach(k=>{d=d.filter(x=>x.maStatus?.[k]===true)});
-  // Oscillator
   if(oscF.has('rsi-ob'))   d=d.filter(x=>x.rsi!=null&&x.rsi>70);
   if(oscF.has('rsi-os'))   d=d.filter(x=>x.rsi!=null&&x.rsi<30);
   if(oscF.has('rsi-bull')) d=d.filter(x=>x.rsi!=null&&x.rsi>50);
@@ -1712,25 +1451,15 @@ function sortBy(c){
   th.classList.add(sDir===1?'sa':'sd');
   applyF();renderT();
 }
-function _updateStats(){
+function _stats(){
   document.getElementById('s-tot').textContent=AD.length;
   document.getElementById('s-bul').textContent=AD.filter(x=>x.bull>x.bear).length;
   document.getElementById('s-bea').textContent=AD.filter(x=>x.bear>x.bull).length;
   document.getElementById('s-abo').textContent=AD.filter(x=>x.above4).length;
 }
 
-/* ══════════════════════════════════════════════
-   FORMAT
-══════════════════════════════════════════════ */
-function _fmt(n){
-  if(n==null||isNaN(n)||n===0)return'—';
-  const a=Math.abs(n);
-  if(a>=1e12)return(n/1e12).toFixed(2)+' T';
-  if(a>=1e9) return(n/1e9).toFixed(2)+' M';
-  if(a>=1e6) return(n/1e6).toFixed(1)+' Jt';
-  if(a>=1e3) return(n/1e3).toFixed(1)+' Rb';
-  return n.toFixed(0);
-}
+/* ── FORMAT ─────────────────────────────────── */
+function _fmt(n){if(n==null||isNaN(n)||n===0)return'—';const a=Math.abs(n);if(a>=1e12)return(n/1e12).toFixed(2)+' T';if(a>=1e9)return(n/1e9).toFixed(2)+' M';if(a>=1e6)return(n/1e6).toFixed(1)+' Jt';if(a>=1e3)return(n/1e3).toFixed(1)+' Rb';return n.toFixed(0)}
 function _price(n){if(n==null||isNaN(n))return'—';if(n>=1000)return Math.round(n).toLocaleString('id-ID');return n.toFixed(n>=10?0:2)}
 function _pct(n){if(n==null||isNaN(n))return'—';return(n>=0?'+':'')+n.toFixed(2)+'%'}
 function _dec(n,d=1){if(n==null||isNaN(n))return'—';return n.toFixed(d)}
@@ -1738,96 +1467,47 @@ function _rsiC(v){if(v==null)return'var(--text3)';if(v>70)return'var(--red)';if(
 
 const MAK=['ema3','ema5','ema10','ema20','sma50','sma100','sma200'];
 const MAL=['E3','E5','E10','E20','S50','S1','S2'];
-const VK =['vma3','vma5','vma20','vma50'];
-const VL =['V3','V5','V20','V50'];
+const VK=['vma3','vma5','vma20','vma50'];
+const VL=['V3','V5','V20','V50'];
 
-/* ══════════════════════════════════════════════
-   RENDER
-══════════════════════════════════════════════ */
+/* ── RENDER ─────────────────────────────────── */
 function renderT(){
   const tb=document.getElementById('tBody');
-  if(!DD.length){
-    tb.innerHTML=`<tr><td colspan="11"><div class="t-empty"><div class="t-empty-ico">∅</div>Tidak ada data sesuai filter</div></td></tr>`;
-    return;
-  }
+  if(!DD.length){tb.innerHTML=`<tr><td colspan="11"><div class="t-empty"><div class="t-empty-ico">∅</div>Tidak ada data sesuai filter</div></td></tr>`;return}
   tb.innerHTML=DD.map(d=>{
     const tvUrl=`https://www.tradingview.com/chart/?symbol=IDX%3A${d.ticker}`;
-    // MA pips
-    const maPips=MAK.map((k,i)=>{
-      const v=d.maStatus?.[k];
-      return`<span class="pip ${v===true?'on-g':v===false?'off-r':'na'}" title="${k.toUpperCase()}">${MAL[i]}</span>`;
-    }).join('');
-    // Vol pips
-    const vPips=VK.map((k,i)=>{
-      const v=d.maStatus?.[k];
-      return`<span class="pip ${v===true?'on-b':v===false?'off-r':'na'}" title="Vol vs ${k.toUpperCase()}">${VL[i]}</span>`;
-    }).join('');
-    // RSI
+    const maPips=MAK.map((k,i)=>{const v=d.maStatus?.[k];return`<span class="pip ${v===true?'on-g':v===false?'off-r':'na'}" title="${k.toUpperCase()}">${MAL[i]}</span>`}).join('');
+    const vPips=VK.map((k,i)=>{const v=d.maStatus?.[k];return`<span class="pip ${v===true?'on-b':v===false?'off-r':'na'}" title="Vol vs ${k.toUpperCase()}">${VL[i]}</span>`}).join('');
     const rCv=_rsiC(d.rsi),sCv=_rsiC(d.stochRsi);
     const rP=d.rsi!=null?Math.min(100,Math.max(0,d.rsi)):0;
     const sP=d.stochRsi!=null?Math.min(100,Math.max(0,d.stochRsi)):0;
-    // MACD
     let macdHtml='<span class="macd-badge macd-neu">N/A</span>';
-    if(d.macdBull!==null){
-      const cls=d.macdBull?'macd-bull':'macd-bear';
-      const lbl=d.macdBull?'▲ Bull':'▼ Bear';
-      const cross=d.macdCross?'✦ ':'';
-      macdHtml=`<span class="macd-badge ${cls}" title="Hist: ${d.macdHist!=null?d.macdHist.toFixed(2):'—'}">${cross}${lbl}</span>`;
-    }
-    // Ticker meta badges
+    if(d.macdBull!==null){const cls=d.macdBull?'macd-bull':'macd-bear';const lbl=d.macdBull?'▲ Bull':'▼ Bear';const cross=d.macdCross?'✦ ':'';macdHtml=`<span class="macd-badge ${cls}" title="Hist: ${d.macdHist!=null?d.macdHist.toFixed(2):'—'}">${cross}${lbl}</span>`}
     const papanBadge=d.papan?`<span class="badge-papan">${d.papan}</span>`:'';
     const idxBadges=(d.indeks||[]).filter(x=>x!=='ISSI').map(x=>`<span class="badge-idx">${x}</span>`).join('');
     const metaRow=(papanBadge||idxBadges)?`<div class="c-meta">${papanBadge}${idxBadges}</div>`:'';
-    // ADR
     const adrCls=d.adrPct!=null?(d.adrPct>4?'up':d.adrPct<1.5?'nu':''):'';
     const pU=d.pct>=0;
-
     return`<tr>
-<td class="col-sticky">
-  <div class="c-tk"><a href="${tvUrl}" target="_blank" rel="noopener">${d.ticker}</a></div>
-  <div class="c-co" title="${d.company||''}">${d.company||'—'}</div>
-  ${metaRow}
-</td>
+<td class="col-sticky"><div class="c-tk"><a href="${tvUrl}" target="_blank" rel="noopener">${d.ticker}</a></div><div class="c-co" title="${d.company||''}">${d.company||'—'}</div>${metaRow}</td>
 <td class="bd-price c-num lg">${_price(d.price)}</td>
 <td class="bd-price c-num ${pU?'up':'dn'}">${_pct(d.pct)}</td>
 <td class="bd-price c-num" style="color:var(--accent)">${_fmt(d.pct1today)}</td>
 <td class="bd-ma"><div class="pips">${maPips}</div></td>
 <td class="bd-ma"><div class="pips">${vPips}</div></td>
-<td class="bd-osc">
-  <div class="gauge">
-    <div class="g-track"><div class="g-fill" style="width:${rP}%;background:${rCv}"></div></div>
-    <span class="g-val" style="color:${rCv}">${_dec(d.rsi)}</span>
-  </div>
-</td>
-<td class="bd-osc">
-  <div class="gauge">
-    <div class="g-track"><div class="g-fill" style="width:${sP}%;background:${sCv}"></div></div>
-    <span class="g-val" style="color:${sCv}">${_dec(d.stochRsi)}</span>
-  </div>
-</td>
+<td class="bd-osc"><div class="gauge"><div class="g-track"><div class="g-fill" style="width:${rP}%;background:${rCv}"></div></div><span class="g-val" style="color:${rCv}">${_dec(d.rsi)}</span></div></td>
+<td class="bd-osc"><div class="gauge"><div class="g-track"><div class="g-fill" style="width:${sP}%;background:${sCv}"></div></div><span class="g-val" style="color:${sCv}">${_dec(d.stochRsi)}</span></div></td>
 <td class="bd-osc">${macdHtml}</td>
 <td class="bd-osc c-num">${_dec(d.atrV,1)}</td>
-<td class="bd-osc">
-  <div class="adr-wrap">
-    <div class="adr-pct ${adrCls}">${_dec(d.adrPct,2)}%</div>
-    <div class="adr-nom">${_fmt(d.adrNom)}</div>
-  </div>
-</td>
+<td class="bd-osc"><div class="adr-wrap"><div class="adr-pct ${adrCls}">${_dec(d.adrPct,2)}%</div><div class="adr-nom">${_fmt(d.adrNom)}</div></div></td>
 </tr>`;
   }).join('');
 }
 
-/* ══════════════════════════════════════════════
-   UTILS
-══════════════════════════════════════════════ */
+/* ── UTILS ──────────────────────────────────── */
 function setDot(s){const d=document.getElementById('sDot');d.className='dot';if(s==='ok')d.classList.add('ok');if(s==='spin')d.classList.add('spin')}
 function _ago(ts){const d=Date.now()-ts,h=Math.floor(d/3600000),m=Math.floor((d%3600000)/60000);if(h>=24)return Math.floor(h/24)+'h lalu';if(h>0)return h+'j '+m+'m lalu';return m+'m lalu'}
-function toast(m,t='in'){
-  const el=document.createElement('div');el.className=`toast ${t}`;el.textContent=m;
-  document.getElementById('toasts').appendChild(el);
-  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));
-  setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),300)},3000);
-}
+function toast(m,t='in'){const el=document.createElement('div');el.className=`toast ${t}`;el.textContent=m;document.getElementById('toasts').appendChild(el);requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),300)},3000)}
 </script>
 </body>
 </html>
