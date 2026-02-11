@@ -3,207 +3,270 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ISSI Screener — Saham Syariah IDX</title>
+<title>ISSI Screener</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-/* ── TOKENS ────────────────────────────────────── */
+/* ─── TOKENS ─────────────────────────────────── */
 :root{
-  --bg:#f8f9fb;--surface:#ffffff;--surface2:#f1f3f6;--border:#e2e5eb;--border2:#c9cdd6;
-  --text:#0f1117;--text2:#404755;--text3:#8891a0;
-  --accent:#2563eb;--accent-bg:#eff6ff;--accent-h:#1d4ed8;
+  --bg:#f5f6f8;
+  --surface:#fff;
+  --surface2:#f8f9fa;
+  --border:#e8eaed;
+  --border-cell:#edf0f2;
+  --text:#1a1d23;
+  --text2:#5a6070;
+  --text3:#9ba3b0;
+  --accent:#2563eb;
+  --accent-bg:#eff6ff;
   --green:#16a34a;--green-bg:#f0fdf4;--green-dim:#dcfce7;
   --red:#dc2626;--red-bg:#fff5f5;--red-dim:#fee2e2;
-  --amber:#d97706;--amber-bg:#fffbeb;
+  --amber:#b45309;--amber-bg:#fffbeb;
   --blue:#2563eb;--blue-bg:#eff6ff;--blue-dim:#dbeafe;
-  --purple:#7c3aed;--purple-bg:#f5f3ff;--purple-dim:#ede9fe;
-  --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
-  --shadow-md:0 4px 6px rgba(0,0,0,.05),0 2px 4px rgba(0,0,0,.04);
-  --font:'Inter',system-ui,sans-serif;
-  --mono:'JetBrains Mono','Fira Mono',monospace;
-  --r:8px;--rs:5px;
+  --purple:#6d28d9;--purple-bg:#f5f3ff;--purple-dim:#ede9fe;
+  --teal:#0d9488;--teal-bg:#f0fdfa;--teal-dim:#ccfbf1;
+  --font:'Plus Jakarta Sans',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --r:10px;--rs:6px;
+  --shadow:0 1px 2px rgba(0,0,0,.05);
+  --shadow-sm:0 1px 3px rgba(0,0,0,.08);
 }
 [data-theme="dark"]{
-  --bg:#0d0f14;--surface:#161920;--surface2:#1e2028;--border:#272b36;--border2:#363c4a;
-  --text:#edf0f7;--text2:#9aa4b8;--text3:#4e5669;
-  --accent:#3b82f6;--accent-bg:#172035;--accent-h:#60a5fa;
-  --green:#22c55e;--green-bg:#0a1f12;--green-dim:#14532d;
-  --red:#f87171;--red-bg:#1c0a0a;--red-dim:#450a0a;
+  --bg:#0e1015;--surface:#161a22;--surface2:#1c2029;--border:#272d3a;--border-cell:#222733;
+  --text:#e8ecf3;--text2:#8a94a8;--text3:#404a5e;
+  --accent:#3b82f6;--accent-bg:#162040;
+  --green:#22c55e;--green-bg:#0a1f12;--green-dim:#166534;
+  --red:#f87171;--red-bg:#1c0a0a;--red-dim:#7f1d1d;
   --amber:#fbbf24;--amber-bg:#1c1404;
   --blue:#60a5fa;--blue-bg:#172035;--blue-dim:#1e3a5f;
-  --purple:#a78bfa;--purple-bg:#1d1535;--purple-dim:#2e1f5e;
-  --shadow:0 1px 3px rgba(0,0,0,.3),0 1px 2px rgba(0,0,0,.2);
-  --shadow-md:0 4px 6px rgba(0,0,0,.3),0 2px 4px rgba(0,0,0,.2);
+  --purple:#a78bfa;--purple-bg:#1d1535;--purple-dim:#3b0764;
+  --teal:#2dd4bf;--teal-bg:#042f2e;--teal-dim:#134e4a;
+  --shadow:0 1px 2px rgba(0,0,0,.2);--shadow-sm:0 1px 3px rgba(0,0,0,.3);
 }
 
-/* ── RESET ──────────────────────────────────────── */
+/* ─── BASE ────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{font-size:14px;-webkit-text-size-adjust:100%}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;transition:background .2s,color .2s}
+html{font-size:14px;-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
 
-/* ── TOPBAR ──────────────────────────────────────── */
+/* ─── TOPBAR ──────────────────────────────────── */
 .topbar{
   background:var(--surface);border-bottom:1px solid var(--border);
-  padding:0 1rem;display:flex;align-items:center;height:52px;
-  position:sticky;top:0;z-index:200;box-shadow:var(--shadow);gap:.6rem;
+  padding:0 1rem;display:flex;align-items:center;height:50px;gap:.5rem;
+  position:sticky;top:0;z-index:300;box-shadow:var(--shadow);
 }
-.brand{display:flex;align-items:center;gap:.4rem;font-weight:700;font-size:.92rem;flex-shrink:0;letter-spacing:-.01em}
-.brand-ico{width:28px;height:28px;background:linear-gradient(135deg,var(--accent),#1d4ed8);border-radius:var(--rs);display:grid;place-items:center;font-size:.6rem;font-weight:700;color:#fff;letter-spacing:.04em;box-shadow:0 2px 6px rgba(37,99,235,.35)}
-.topbar-meta{display:flex;align-items:center;gap:.9rem;font-size:.73rem;color:var(--text3);flex:1;min-width:0;overflow:hidden}
-.meta-item{display:flex;align-items:center;gap:.28rem;white-space:nowrap}
-.dot{width:6px;height:6px;border-radius:50%;background:var(--text3);flex-shrink:0}
+.brand{display:flex;align-items:center;gap:.4rem;font-weight:700;font-size:.9rem;flex-shrink:0;letter-spacing:-.02em}
+.brand-ico{
+  width:26px;height:26px;background:var(--accent);border-radius:6px;
+  display:grid;place-items:center;font-size:.55rem;font-weight:700;
+  color:#fff;letter-spacing:.05em;flex-shrink:0;
+}
+.topbar-meta{display:flex;align-items:center;gap:.75rem;font-size:.72rem;color:var(--text3);flex:1;min-width:0;overflow:hidden;padding-left:.2rem}
+.meta-item{display:flex;align-items:center;gap:.22rem;white-space:nowrap}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--text3)}
 .dot.ok{background:var(--green)}.dot.spin{background:var(--accent);animation:pulse 1s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.topbar-right{display:flex;align-items:center;gap:.4rem;margin-left:auto;flex-shrink:0}
-.btn-icon{display:flex;align-items:center;gap:.28rem;padding:.3rem .6rem;border-radius:var(--rs);border:1px solid var(--border);background:var(--surface);color:var(--text2);font-family:var(--font);font-size:.73rem;cursor:pointer;transition:all .15s;font-weight:500;white-space:nowrap;line-height:1}
-.btn-icon:hover{background:var(--surface2);border-color:var(--border2);color:var(--text)}
-.btn-icon.active{background:var(--surface2);border-color:var(--border2)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.topbar-right{display:flex;align-items:center;gap:.35rem;margin-left:auto;flex-shrink:0}
+.btn-sm{
+  display:inline-flex;align-items:center;gap:.22rem;
+  padding:.28rem .55rem;border-radius:var(--rs);
+  border:1px solid var(--border);background:var(--surface);
+  color:var(--text2);font-family:var(--font);font-size:.7rem;
+  cursor:pointer;font-weight:500;white-space:nowrap;line-height:1;transition:all .12s;
+}
+.btn-sm:hover{background:var(--surface2);color:var(--text);border-color:#c5cad5}
 
-/* ── PROGRESS ────────────────────────────────────── */
-.progress-bar{height:2px;background:var(--border);position:sticky;top:52px;z-index:199}
-.progress-fill{height:100%;background:var(--accent);width:0;transition:width .25s ease}
+/* ─── LAYOUT ──────────────────────────────────── */
+.page{max-width:1600px;margin:0 auto;padding:.75rem .75rem .75rem}
 
-/* ── PAGE LAYOUT ─────────────────────────────────── */
-.page{max-width:1680px;margin:0 auto;padding:1rem}
+/* ─── CARD ────────────────────────────────────── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:.6rem;overflow:hidden}
+.card-inner{padding:.65rem .85rem}
 
-/* ── CARD ────────────────────────────────────────── */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:.75rem;overflow:hidden}
-.card-body{padding:.75rem 1rem}
-
-/* ── SEARCH ──────────────────────────────────────── */
-.search-wrap{position:relative;display:flex;align-items:center}
-.search-icon{position:absolute;left:.75rem;color:var(--text3);pointer-events:none;display:flex}
-.search-inp{
-  width:100%;padding:.55rem .75rem .55rem 2.1rem;
+/* ─── SEARCH ──────────────────────────────────── */
+.search-wrap{position:relative}
+.s-ico{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none}
+.s-inp{
+  width:100%;padding:.5rem .7rem .5rem 2rem;
   border:1px solid var(--border);border-radius:var(--rs);
   background:var(--surface);color:var(--text);
-  font-family:var(--font);font-size:.875rem;outline:none;
-  transition:border-color .15s,box-shadow .15s;
-  padding-right:2.2rem;
+  font-family:var(--font);font-size:.84rem;outline:none;
+  transition:border-color .12s,box-shadow .12s;
 }
-.search-inp::placeholder{color:var(--text3)}
-.search-inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 12%,transparent)}
-.search-clear{
-  position:absolute;right:.6rem;color:var(--text3);background:none;border:none;
-  cursor:pointer;display:none;align-items:center;justify-content:center;
-  width:18px;height:18px;border-radius:50%;transition:all .15s;padding:0;
+.s-inp::placeholder{color:var(--text3)}
+.s-inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 10%,transparent)}
+.s-clear{
+  position:absolute;right:.5rem;top:50%;transform:translateY(-50%);
+  width:18px;height:18px;border-radius:50%;border:none;
+  background:var(--surface2);color:var(--text3);cursor:pointer;
+  display:none;align-items:center;justify-content:center;
+  font-size:.75rem;transition:all .12s;padding:0;line-height:1;
 }
-.search-clear:hover{background:var(--surface2);color:var(--text)}
-.search-clear.show{display:flex}
+.s-clear:hover{background:var(--border);color:var(--text)}
+.s-clear.show{display:flex}
 
-/* ── FILTER PANEL ────────────────────────────────── */
-.filter-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--border)}
-.filter-grid:last-child{border-bottom:none}
-@media(max-width:700px){.filter-grid{grid-template-columns:1fr}}
-.f-block{padding:.65rem 1rem;border-right:1px solid var(--border)}
-.f-block:last-child{border-right:none}
-@media(max-width:700px){.f-block{border-right:none;border-bottom:1px solid var(--border)}}
-.f-label{font-size:.62rem;font-weight:700;letter-spacing:.1em;color:var(--text3);text-transform:uppercase;display:flex;align-items:center;gap:.28rem;margin-bottom:.45rem}
-.f-label::before{content:'';width:3px;height:9px;border-radius:2px;display:inline-block;flex-shrink:0}
+/* ─── FILTER PANEL ────────────────────────────── */
+.filter-rows{display:flex;flex-direction:column;gap:0}
+.f-row{
+  display:flex;align-items:flex-start;gap:.5rem;
+  padding:.55rem .85rem;border-bottom:1px solid var(--border);
+}
+.f-row:last-child{border-bottom:none}
+.f-label{
+  font-size:.62rem;font-weight:700;letter-spacing:.08em;color:var(--text3);
+  text-transform:uppercase;white-space:nowrap;padding-top:.22rem;min-width:80px;
+  display:flex;align-items:center;gap:.3rem;flex-shrink:0;
+}
+.f-label::before{
+  content:'';display:inline-block;width:2px;height:12px;border-radius:2px;flex-shrink:0;
+}
 .f-label.ma::before{background:var(--green)}
 .f-label.vol::before{background:var(--blue)}
 .f-label.osc::before{background:var(--purple)}
-.chips{display:flex;flex-wrap:wrap;gap:.28rem;align-items:center}
-.chip{
-  padding:.2rem .5rem;border-radius:20px;border:1px solid var(--border);
-  background:var(--surface);color:var(--text2);
-  font-family:var(--font);font-size:.7rem;cursor:pointer;
-  transition:all .15s;font-weight:500;user-select:none;line-height:1.4;
-}
-.chip:hover{border-color:currentColor}
-.chip.ma:hover,.chip.ma.on{border-color:var(--green);color:var(--green);background:var(--green-bg)}
-.chip.ma.on{font-weight:600}
-.chip.vol:hover,.chip.vol.on{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
-.chip.vol.on{font-weight:600}
-.chip.osc:hover,.chip.osc.on{border-color:var(--purple);color:var(--purple);background:var(--purple-bg)}
-.chip.osc.on{font-weight:600}
-.chip.reset{color:var(--text3);font-size:.66rem}
-.chip.reset:hover{color:var(--text);border-color:var(--border2);background:var(--surface2)}
+.f-label.idx::before{background:var(--teal)}
+.f-label.papan::before{background:var(--amber)}
+.chips{display:flex;flex-wrap:wrap;gap:.28rem;flex:1}
 
-/* ── STATS BAR ───────────────────────────────────── */
-.stats-bar{
-  display:flex;align-items:center;gap:1rem;
-  padding:.45rem 1rem;border-bottom:1px solid var(--border);
-  font-size:.72rem;color:var(--text3);flex-wrap:wrap;
+/* Chip base */
+.chip{
+  padding:.22rem .55rem;border-radius:20px;border:1px solid var(--border);
+  background:var(--surface);color:var(--text2);
+  font-family:var(--font);font-size:.7rem;font-weight:500;
+  cursor:pointer;transition:all .12s;user-select:none;line-height:1.35;
+  white-space:nowrap;
 }
-.stat{display:flex;align-items:center;gap:.28rem}
+.chip:hover{background:var(--surface2)}
+
+/* Colored chip states */
+.chip.ma:hover,.chip.ma.on{border-color:var(--green);color:var(--green);background:var(--green-bg)}
+.chip.vol:hover,.chip.vol.on{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
+.chip.osc:hover,.chip.osc.on{border-color:var(--purple);color:var(--purple);background:var(--purple-bg)}
+.chip.idx:hover,.chip.idx.on{border-color:var(--teal);color:var(--teal);background:var(--teal-bg)}
+.chip.papan:hover,.chip.papan.on{border-color:var(--amber);color:var(--amber);background:var(--amber-bg)}
+
+/* Reset chip — distinct, never looks like a filter */
+.chip-reset{
+  padding:.22rem .65rem;border-radius:20px;
+  border:1.5px solid var(--border);
+  background:var(--surface);color:var(--text3);
+  font-family:var(--font);font-size:.7rem;font-weight:700;
+  cursor:pointer;transition:all .12s;user-select:none;line-height:1.35;
+  white-space:nowrap;letter-spacing:.03em;
+}
+.chip-reset:hover{background:var(--red-bg);border-color:var(--red);color:var(--red)}
+
+/* ─── STATS BAR ───────────────────────────────── */
+.stats-bar{
+  display:flex;align-items:center;gap:.85rem;flex-wrap:wrap;
+  padding:.4rem .85rem;border-bottom:1px solid var(--border);font-size:.71rem;
+}
+.stat{display:flex;align-items:center;gap:.22rem;color:var(--text3)}
 .stat strong{color:var(--text);font-weight:600}
 .stat.g strong{color:var(--green)}
 .stat.r strong{color:var(--red)}
 .stat.b strong{color:var(--accent)}
-.src-tag{margin-left:auto;display:inline-flex;align-items:center;gap:.25rem;padding:.15rem .5rem;border-radius:20px;font-size:.65rem;font-weight:600;border:1px solid transparent}
-.src-tag.gh{background:var(--green-dim);color:var(--green);border-color:color-mix(in srgb,var(--green) 25%,transparent)}
-.src-tag.cache{background:var(--blue-dim);color:var(--blue);border-color:color-mix(in srgb,var(--blue) 25%,transparent)}
+.src-badge{margin-left:auto;padding:.15rem .5rem;border-radius:20px;font-size:.65rem;font-weight:600;border:1px solid var(--border);color:var(--text3);background:var(--surface2)}
+.src-badge.gh{background:var(--green-dim);color:var(--green);border-color:color-mix(in srgb,var(--green) 30%,transparent)}
+.src-badge.cache{background:var(--blue-dim);color:var(--blue);border-color:color-mix(in srgb,var(--blue) 30%,transparent)}
 
-/* ── DEBUG ───────────────────────────────────────── */
-.debug-bar{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:.55rem .85rem;margin-bottom:.75rem;font-family:var(--mono);font-size:.65rem;color:var(--text2);max-height:110px;overflow-y:auto;display:none}
-.debug-bar.show{display:block}
-.dline{padding:1px 0}.dline.ok{color:var(--green)}.dline.err{color:var(--red)}.dline.warn{color:var(--amber)}
+/* ─── TABLE WRAPPER ───────────────────────────── */
+.t-wrap{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  position:relative;
+}
+table{width:100%;border-collapse:collapse;font-size:.75rem}
 
-/* ── TABLE ───────────────────────────────────────── */
-.t-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table{width:100%;border-collapse:collapse;font-size:.76rem}
+/* Sticky first column (ticker) */
+.col-sticky{
+  position:sticky;left:0;z-index:10;
+  background:var(--surface);
+}
+tbody tr:hover .col-sticky{background:var(--surface2)}
+/* shadow indicator when scrolled */
+.t-wrap.scrolled .col-sticky::after{
+  content:'';position:absolute;top:0;right:-8px;bottom:0;width:8px;
+  background:linear-gradient(to right,rgba(0,0,0,.07),transparent);
+  pointer-events:none;
+}
+[data-theme="dark"] .t-wrap.scrolled .col-sticky::after{
+  background:linear-gradient(to right,rgba(0,0,0,.25),transparent);
+}
 
-/* Group header row */
+/* Group header */
 tr.grp-row th{
-  padding:.22rem .6rem;font-size:.6rem;font-weight:700;letter-spacing:.08em;
+  padding:.2rem .55rem;font-size:.58rem;font-weight:700;letter-spacing:.1em;
   text-transform:uppercase;color:var(--text3);background:var(--surface2);
-  cursor:default;white-space:nowrap;border-bottom:1px solid var(--border);
+  white-space:nowrap;cursor:default;border-bottom:1px solid var(--border);
+  text-align:center;
 }
-tr.grp-row th:first-child{padding-left:1rem}
-.gh-price{border-left:3px solid var(--accent);color:var(--accent)}
-.gh-ma{border-left:3px solid var(--green);color:var(--green)}
-.gh-vol{border-left:3px solid var(--blue);color:var(--blue)}
-.gh-osc{border-left:3px solid var(--purple);color:var(--purple)}
+tr.grp-row th:first-child{text-align:left;padding-left:.85rem}
+.gh-price{border-left:1px solid var(--border-cell);color:var(--accent)!important}
+.gh-ma{border-left:1px solid var(--border-cell);color:var(--green)!important}
+.gh-vol{border-left:1px solid var(--border-cell);color:var(--blue)!important}
+.gh-osc{border-left:1px solid var(--border-cell);color:var(--purple)!important}
 
-/* Main header row */
+/* Column header */
 tr.col-row th{
-  padding:.45rem .6rem;font-size:.68rem;font-weight:600;letter-spacing:.02em;
-  color:var(--text2);background:var(--surface2);white-space:nowrap;
-  cursor:pointer;user-select:none;
-  border-bottom:2px solid var(--border);
-  transition:color .15s;text-align:right;
+  padding:.38rem .55rem;font-size:.66rem;font-weight:600;
+  color:var(--text2);background:var(--surface2);
+  white-space:nowrap;cursor:pointer;user-select:none;
+  border-bottom:2px solid var(--border);text-align:right;
+  transition:color .12s;
 }
-tr.col-row th:first-child,tr.col-row th:nth-child(2){text-align:left}
-tr.col-row th:first-child{padding-left:1rem}
-tr.col-row th:hover{color:var(--text)}
+tr.col-row th:first-child{text-align:left;padding-left:.85rem}
 tr.col-row th.nc{cursor:default}
-tr.col-row th.nc:hover{color:var(--text2)}
-tr.col-row th.sa::after{content:' ↑';color:var(--accent);font-size:.6rem}
-tr.col-row th.sd::after{content:' ↓';color:var(--accent);font-size:.6rem}
-.ch-price{border-left:3px solid color-mix(in srgb,var(--accent) 35%,transparent)}
-.ch-ma{border-left:3px solid color-mix(in srgb,var(--green) 35%,transparent)}
-.ch-vol{border-left:3px solid color-mix(in srgb,var(--blue) 35%,transparent)}
-.ch-osc{border-left:3px solid color-mix(in srgb,var(--purple) 35%,transparent)}
+tr.col-row th:hover:not(.nc){color:var(--text)}
+tr.col-row th.sa::after{content:' ↑';color:var(--accent);font-size:.58rem}
+tr.col-row th.sd::after{content:' ↓';color:var(--accent);font-size:.58rem}
+.ch-price{border-left:1px solid var(--border-cell)}
+.ch-ma{border-left:1px solid var(--border-cell)}
+.ch-vol{border-left:1px solid var(--border-cell)}
+.ch-osc{border-left:1px solid var(--border-cell)}
 
-/* Body rows */
-tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
+/* Body */
+tbody tr{border-bottom:1px solid var(--border-cell);transition:background .08s}
 tbody tr:hover{background:var(--surface2)}
 tbody tr:last-child{border-bottom:none}
-tbody td{padding:.45rem .6rem;white-space:nowrap;vertical-align:middle;text-align:right}
-tbody td:first-child,tbody td:nth-child(2){text-align:left}
-tbody td:first-child{padding-left:1rem}
-.bd-price{border-left:3px solid color-mix(in srgb,var(--accent) 15%,transparent)}
-.bd-ma{border-left:3px solid color-mix(in srgb,var(--green) 15%,transparent)}
-.bd-vol{border-left:3px solid color-mix(in srgb,var(--blue) 15%,transparent)}
-.bd-osc{border-left:3px solid color-mix(in srgb,var(--purple) 15%,transparent)}
+tbody td{
+  padding:.42rem .55rem;white-space:nowrap;
+  vertical-align:middle;text-align:right;
+}
+tbody td:first-child{padding-left:.85rem;text-align:left}
+.bd-price{border-left:1px solid var(--border-cell)}
+.bd-ma{border-left:1px solid var(--border-cell)}
+.bd-vol{border-left:1px solid var(--border-cell)}
+.bd-osc{border-left:1px solid var(--border-cell)}
 
-/* Cell types */
-.c-no{color:var(--text3);font-size:.66rem;min-width:24px}
-.c-tk{font-family:var(--mono);font-weight:600;font-size:.78rem;line-height:1.2}
-.c-tk a{color:var(--accent);text-decoration:none;transition:color .12s}
-.c-tk a:hover{color:var(--accent-h);text-decoration:underline}
-.c-co{font-size:.68rem;color:var(--text3);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.3;margin-top:.5px}
+/* Ticker cell */
+.c-tk{font-family:var(--mono);font-weight:600;font-size:.77rem;line-height:1.2}
+.c-tk a{color:var(--accent);text-decoration:none;transition:color .1s}
+.c-tk a:hover{text-decoration:underline}
+.c-co{font-size:.67rem;color:var(--text3);max-width:130px;overflow:hidden;text-overflow:ellipsis;line-height:1.25;margin-top:1px}
+.c-meta{display:flex;flex-wrap:wrap;gap:.2rem;margin-top:2px}
+.badge-papan{
+  display:inline-block;font-size:.58rem;font-weight:600;
+  padding:.05rem .32rem;border-radius:3px;
+  color:var(--amber);background:var(--amber-bg);
+  letter-spacing:.02em;line-height:1.4;
+}
+.badge-idx{
+  display:inline-block;font-size:.58rem;font-weight:600;
+  padding:.05rem .32rem;border-radius:3px;
+  color:var(--teal);background:var(--teal-dim);
+  letter-spacing:.02em;line-height:1.4;
+}
+
+/* Number cells */
 .c-num{font-family:var(--mono);font-weight:500}
 .c-num.lg{font-weight:600;font-size:.79rem}
 .up{color:var(--green)}.dn{color:var(--red)}.nu{color:var(--text3)}
 
-/* Pip clusters */
+/* Pips */
 .pips{display:flex;gap:2px;justify-content:flex-end}
 .pip{
-  width:20px;height:18px;border-radius:3px;
-  font-size:.54rem;font-weight:700;display:grid;place-items:center;
-  font-family:var(--mono);cursor:default;line-height:1;
+  width:19px;height:17px;border-radius:3px;font-size:.52rem;font-weight:700;
+  display:grid;place-items:center;font-family:var(--mono);cursor:default;
 }
 .pip.on-g{background:var(--green-dim);color:var(--green)}
 .pip.off-r{background:var(--red-dim);color:var(--red)}
@@ -211,166 +274,184 @@ tbody td:first-child{padding-left:1rem}
 .pip.na{background:var(--surface2);color:var(--text3)}
 
 /* Gauge */
-.gauge{display:flex;align-items:center;gap:.3rem;justify-content:flex-end}
-.g-track{width:36px;height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;flex-shrink:0}
+.gauge{display:flex;align-items:center;gap:.28rem;justify-content:flex-end}
+.g-track{width:32px;height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;flex-shrink:0;border:1px solid var(--border-cell)}
 .g-fill{height:100%;border-radius:2px}
-.g-val{font-family:var(--mono);font-size:.69rem;font-weight:500;min-width:2.8rem;text-align:right}
+.g-val{font-family:var(--mono);font-size:.68rem;font-weight:500;min-width:2.7rem;text-align:right}
 
 /* MACD badge */
-.macd-badge{display:inline-flex;align-items:center;gap:.25rem;padding:.18rem .45rem;border-radius:20px;font-size:.65rem;font-weight:700;font-family:var(--mono)}
+.macd-badge{display:inline-flex;align-items:center;padding:.15rem .42rem;border-radius:20px;font-size:.63rem;font-weight:700;font-family:var(--mono)}
 .macd-bull{background:var(--green-dim);color:var(--green)}
 .macd-bear{background:var(--red-dim);color:var(--red)}
 .macd-neu{background:var(--surface2);color:var(--text3)}
 
-/* ADR cell */
+/* ADR */
 .adr-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
 .adr-pct{font-family:var(--mono);font-size:.71rem;font-weight:600}
 .adr-nom{font-family:var(--mono);font-size:.62rem;color:var(--text3)}
 
-/* Empty state */
-.t-empty{padding:3rem 1rem;text-align:center;color:var(--text3);font-size:.82rem}
-.t-empty .ico{font-size:2rem;margin-bottom:.5rem;opacity:.5}
+/* Empty */
+.t-empty{padding:3rem 1rem;text-align:center;color:var(--text3)}
+.t-empty-ico{font-size:1.8rem;margin-bottom:.4rem;opacity:.4}
 
-/* ── TOAST ───────────────────────────────────────── */
-.toasts{position:fixed;bottom:1.25rem;right:1.25rem;display:flex;flex-direction:column;gap:.3rem;z-index:999;pointer-events:none}
-.toast{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:.48rem .8rem;font-size:.74rem;color:var(--text);box-shadow:var(--shadow-md);transform:translateX(120%);transition:transform .28s cubic-bezier(.4,0,.2,1);max-width:260px;pointer-events:auto}
+/* Toast */
+.toasts{position:fixed;bottom:1rem;right:1rem;display:flex;flex-direction:column;gap:.3rem;z-index:999;pointer-events:none}
+.toast{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:.45rem .75rem;font-size:.73rem;color:var(--text);box-shadow:var(--shadow-sm);transform:translateX(130%);transition:transform .25s;max-width:240px;pointer-events:auto}
 .toast.show{transform:translateX(0)}
 .toast.ok{border-left:3px solid var(--green)}.toast.er{border-left:3px solid var(--red)}.toast.in{border-left:3px solid var(--accent)}
 
-/* ── RESPONSIVE ──────────────────────────────────── */
-@media(max-width:960px){
+/* Debug */
+.debug-bar{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:.5rem .75rem;margin-bottom:.6rem;font-family:var(--mono);font-size:.63rem;color:var(--text2);max-height:100px;overflow-y:auto;display:none}
+.debug-bar.show{display:block}
+.dl{padding:1px 0}.dl.ok{color:var(--green)}.dl.err{color:var(--red)}.dl.warn{color:var(--amber)}
+
+/* Progress */
+.prog-bar{height:2px;background:var(--border);position:sticky;top:50px;z-index:299}
+.prog-fill{height:100%;background:var(--accent);width:0;transition:width .2s}
+
+/* ─── RESPONSIVE ──────────────────────────────── */
+@media(max-width:700px){
   .topbar-meta{display:none}
-  .page{padding:.75rem .6rem}
-  .filter-grid{grid-template-columns:1fr}
-  .f-block{border-right:none;border-bottom:1px solid var(--border)}
-  .f-block:last-child{border-bottom:none}
-}
-@media(max-width:600px){
+  .page{padding:.5rem}
+  .f-row{flex-direction:column;gap:.3rem;padding:.5rem .65rem}
+  .f-label{min-width:unset;padding-top:0}
   html{font-size:13px}
-  .topbar{padding:0 .75rem}
+}
+@media(max-width:480px){
   .brand span{display:none}
-  .btn-icon span{display:none}
+  .btn-sm .lbl{display:none}
 }
 </style>
 </head>
 <body>
 
-<!-- ── TOPBAR ────────────────────────────────────── -->
+<!-- TOPBAR -->
 <header class="topbar">
   <div class="brand">
     <div class="brand-ico">IDX</div>
     <span>ISSI Screener</span>
   </div>
   <div class="topbar-meta">
-    <div class="meta-item"><span class="dot" id="sDot"></span><span id="sText">Memuat data...</span></div>
-    <div class="meta-item" id="tsWrap" style="display:none"><span>🕐</span><span id="tsText">—</span></div>
+    <div class="meta-item"><span class="dot" id="sDot"></span><span id="sText">Memuat…</span></div>
+    <div class="meta-item" id="tsWrap" style="display:none">🕐 <span id="tsText">—</span></div>
     <div class="meta-item" id="srcWrap" style="display:none"><span id="srcBadge"></span></div>
   </div>
   <div class="topbar-right">
-    <button class="btn-icon active" id="dbBtn" onclick="toggleDebug()">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-      <span>Debug</span>
-    </button>
-    <button class="btn-icon" onclick="toggleDark()">
-      <span id="dkIco">🌙</span><span id="dkLbl">Dark</span>
-    </button>
+    <button class="btn-sm" id="dbBtn" onclick="toggleDebug()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> <span class="lbl">Debug</span></button>
+    <button class="btn-sm" onclick="toggleDark()"><span id="dkIco">🌙</span> <span class="lbl" id="dkLbl">Dark</span></button>
   </div>
 </header>
-<div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+<div class="prog-bar"><div class="prog-fill" id="prog"></div></div>
 
-<!-- ── PAGE ──────────────────────────────────────── -->
 <div class="page">
   <div class="debug-bar" id="dbPanel"><div id="dbLog"></div></div>
 
   <!-- Search -->
-  <div class="card"><div class="card-body">
+  <div class="card"><div class="card-inner">
     <div class="search-wrap">
-      <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input class="search-inp" id="sInp" placeholder="Cari ticker atau nama perusahaan..." autocomplete="off" spellcheck="false">
-      <button class="search-clear" id="sClear" onclick="clearSearch()" title="Hapus pencarian">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg>
-      </button>
+      <svg class="s-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input class="s-inp" id="sInp" placeholder="Cari ticker atau nama perusahaan…" autocomplete="off" spellcheck="false">
+      <button class="s-clear" id="sClear" onclick="clearSearch()" title="Hapus">✕</button>
     </div>
   </div></div>
 
   <!-- Filters -->
-  <div class="card">
-    <div class="filter-grid">
-      <!-- MA -->
-      <div class="f-block">
-        <div class="f-label ma">Moving Average — harga di atas</div>
-        <div class="chips">
-          <span class="chip ma" id="mf-ema3"   onclick="toggleMF('ema3')">EMA 3</span>
-          <span class="chip ma" id="mf-ema5"   onclick="toggleMF('ema5')">EMA 5</span>
-          <span class="chip ma" id="mf-ema10"  onclick="toggleMF('ema10')">EMA 10</span>
-          <span class="chip ma" id="mf-ema20"  onclick="toggleMF('ema20')">EMA 20</span>
-          <span class="chip ma" id="mf-sma50"  onclick="toggleMF('sma50')">SMA 50</span>
-          <span class="chip ma" id="mf-sma100" onclick="toggleMF('sma100')">SMA 100</span>
-          <span class="chip ma" id="mf-sma200" onclick="toggleMF('sma200')">SMA 200</span>
-          <span class="chip reset" onclick="resetMF()">✕ Reset</span>
-        </div>
-      </div>
-      <!-- VOL -->
-      <div class="f-block">
-        <div class="f-label vol">Volume MA — volume di atas</div>
-        <div class="chips">
-          <span class="chip vol" id="vf-vma3"  onclick="toggleVF('vma3')">VMA 3</span>
-          <span class="chip vol" id="vf-vma5"  onclick="toggleVF('vma5')">VMA 5</span>
-          <span class="chip vol" id="vf-vma20" onclick="toggleVF('vma20')">VMA 20</span>
-          <span class="chip vol" id="vf-vma50" onclick="toggleVF('vma50')">VMA 50</span>
-          <span class="chip reset" onclick="resetVF()">✕ Reset</span>
-        </div>
+  <div class="card"><div class="filter-rows">
+
+    <!-- Indeks -->
+    <div class="f-row">
+      <span class="f-label idx">Indeks</span>
+      <div class="chips">
+        <span class="chip idx" id="if-issi"     onclick="toggleIF('issi')">ISSI</span>
+        <span class="chip idx" id="if-lq45"     onclick="toggleIF('lq45')">LQ45</span>
+        <span class="chip idx" id="if-kompas100" onclick="toggleIF('kompas100')">KOMPAS100</span>
+        <span class="chip idx" id="if-bumn"     onclick="toggleIF('bumn')">BUMN</span>
+        <button class="chip-reset" onclick="resetIF()">↺ Reset</button>
       </div>
     </div>
-    <div class="filter-grid" style="border-bottom:none">
-      <!-- OSC -->
-      <div class="f-block" style="border-bottom:none">
-        <div class="f-label osc">Oscillator</div>
-        <div class="chips">
-          <span class="chip osc" id="of-rsi-ob"  onclick="toggleOF('rsi-ob')">RSI &gt;70 (OB)</span>
-          <span class="chip osc" id="of-rsi-os"  onclick="toggleOF('rsi-os')">RSI &lt;30 (OS)</span>
-          <span class="chip osc" id="of-rsi-bull" onclick="toggleOF('rsi-bull')">RSI &gt;50</span>
-          <span class="chip osc" id="of-srsi-ob" onclick="toggleOF('srsi-ob')">StochRSI &gt;80</span>
-          <span class="chip osc" id="of-srsi-os" onclick="toggleOF('srsi-os')">StochRSI &lt;20</span>
-          <span class="chip osc" id="of-macd-bull" onclick="toggleOF('macd-bull')">MACD Bullish</span>
-          <span class="chip osc" id="of-macd-bear" onclick="toggleOF('macd-bear')">MACD Bearish</span>
-          <span class="chip reset" onclick="resetOF()">✕ Reset</span>
-        </div>
+
+    <!-- Papan -->
+    <div class="f-row">
+      <span class="f-label papan">Papan</span>
+      <div class="chips">
+        <span class="chip papan" id="pf-utama"     onclick="togglePF('utama')">Utama</span>
+        <span class="chip papan" id="pf-pengembangan" onclick="togglePF('pengembangan')">Pengembangan</span>
+        <span class="chip papan" id="pf-akselerasi" onclick="togglePF('akselerasi')">Akselerasi</span>
+        <span class="chip papan" id="pf-ekonomibaru" onclick="togglePF('ekonomibaru')">Ekonomi Baru</span>
+        <button class="chip-reset" onclick="resetPF()">↺ Reset</button>
       </div>
-      <div class="f-block" style="border-bottom:none"></div>
     </div>
-  </div>
+
+    <!-- MA -->
+    <div class="f-row">
+      <span class="f-label ma">MA</span>
+      <div class="chips">
+        <span class="chip ma" id="mf-ema3"   onclick="toggleMF('ema3')">EMA 3</span>
+        <span class="chip ma" id="mf-ema5"   onclick="toggleMF('ema5')">EMA 5</span>
+        <span class="chip ma" id="mf-ema10"  onclick="toggleMF('ema10')">EMA 10</span>
+        <span class="chip ma" id="mf-ema20"  onclick="toggleMF('ema20')">EMA 20</span>
+        <span class="chip ma" id="mf-sma50"  onclick="toggleMF('sma50')">SMA 50</span>
+        <span class="chip ma" id="mf-sma100" onclick="toggleMF('sma100')">SMA 100</span>
+        <span class="chip ma" id="mf-sma200" onclick="toggleMF('sma200')">SMA 200</span>
+        <button class="chip-reset" onclick="resetMF()">↺ Reset</button>
+      </div>
+    </div>
+
+    <!-- Volume MA -->
+    <div class="f-row">
+      <span class="f-label vol">Volume</span>
+      <div class="chips">
+        <span class="chip vol" id="vf-vma3"  onclick="toggleVF('vma3')">Vol &gt; VMA 3</span>
+        <span class="chip vol" id="vf-vma5"  onclick="toggleVF('vma5')">Vol &gt; VMA 5</span>
+        <span class="chip vol" id="vf-vma20" onclick="toggleVF('vma20')">Vol &gt; VMA 20</span>
+        <span class="chip vol" id="vf-vma50" onclick="toggleVF('vma50')">Vol &gt; VMA 50</span>
+        <button class="chip-reset" onclick="resetVF()">↺ Reset</button>
+      </div>
+    </div>
+
+    <!-- Oscillator -->
+    <div class="f-row" style="border-bottom:none">
+      <span class="f-label osc">Osilator</span>
+      <div class="chips">
+        <span class="chip osc" id="of-rsi-ob"    onclick="toggleOF('rsi-ob')"    title="RSI di atas 70 — zona jenuh beli">RSI Jenuh Beli (&gt;70)</span>
+        <span class="chip osc" id="of-rsi-os"    onclick="toggleOF('rsi-os')"    title="RSI di bawah 30 — zona jenuh jual">RSI Jenuh Jual (&lt;30)</span>
+        <span class="chip osc" id="of-rsi-bull"  onclick="toggleOF('rsi-bull')"  title="RSI di atas 50 — momentum positif">RSI Bullish (&gt;50)</span>
+        <span class="chip osc" id="of-srsi-ob"   onclick="toggleOF('srsi-ob')"   title="StochRSI di atas 80">StochRSI Jenuh Beli (&gt;80)</span>
+        <span class="chip osc" id="of-srsi-os"   onclick="toggleOF('srsi-os')"   title="StochRSI di bawah 20">StochRSI Jenuh Jual (&lt;20)</span>
+        <span class="chip osc" id="of-macd-bull" onclick="toggleOF('macd-bull')" title="MACD histogram positif (garis MACD di atas sinyal)">MACD Bullish</span>
+        <span class="chip osc" id="of-macd-bear" onclick="toggleOF('macd-bear')" title="MACD histogram negatif (garis MACD di bawah sinyal)">MACD Bearish</span>
+        <button class="chip-reset" onclick="resetOF()">↺ Reset</button>
+      </div>
+    </div>
+
+  </div></div>
 
   <!-- Table -->
   <div class="card">
     <div class="stats-bar" id="statsBar" style="display:none">
       <span class="stat">Tampil: <strong id="s-sho">0</strong></span>
       <span class="stat">Total: <strong id="s-tot">0</strong></span>
-      <span class="stat g">Bullish: <strong id="s-bul">0</strong></span>
-      <span class="stat r">Bearish: <strong id="s-bea">0</strong></span>
+      <span class="stat g">Bullish MA: <strong id="s-bul">0</strong></span>
+      <span class="stat r">Bearish MA: <strong id="s-bea">0</strong></span>
       <span class="stat b">↑ EMA4: <strong id="s-abo">0</strong></span>
-      <span class="src-tag" id="s-src" style="display:none"></span>
+      <span class="src-badge" id="s-src" style="display:none"></span>
     </div>
-    <div class="t-scroll">
+    <div class="t-wrap" id="tWrap">
       <table>
         <thead>
           <tr class="grp-row">
-            <th colspan="2"></th>
+            <th class="col-sticky" style="min-width:120px">TICKER</th>
             <th colspan="3" class="gh-price">HARGA</th>
             <th colspan="2" class="gh-ma">MOVING AVERAGE</th>
-            <th colspan="2" class="gh-vol">VOLUME</th>
             <th colspan="5" class="gh-osc">OSCILLATOR</th>
           </tr>
           <tr class="col-row">
-            <th class="nc c-no">NO</th>
-            <th class="nc" style="min-width:130px">TICKER</th>
+            <th class="nc col-sticky" style="min-width:120px">TICKER / NAMA</th>
             <th onclick="sortBy('price')" class="ch-price">HARGA</th>
             <th onclick="sortBy('pct')" class="ch-price">% CHG</th>
             <th onclick="sortBy('pct1today')" class="ch-price">1% TRX</th>
             <th class="nc ch-ma" title="EMA3 EMA5 EMA10 EMA20 SMA50 SMA100 SMA200">MA (7)</th>
-            <th onclick="sortBy('bull')" class="ch-ma">BULL/BEAR</th>
-            <th class="nc ch-vol" title="Vol vs VMA3 VMA5 VMA20 VMA50">VMA (4)</th>
-            <th onclick="sortBy('lastValue')" class="ch-vol">NILAI TRX</th>
+            <th class="nc ch-ma" title="Volume vs VMA3 VMA5 VMA20 VMA50">VMA (4)</th>
             <th onclick="sortBy('rsi')" class="ch-osc">RSI</th>
             <th onclick="sortBy('stochRsi')" class="ch-osc">StochRSI</th>
             <th onclick="sortBy('macdHist')" class="ch-osc">MACD</th>
@@ -379,41 +460,995 @@ tbody td:first-child{padding-left:1rem}
           </tr>
         </thead>
         <tbody id="tBody">
-          <tr><td colspan="14">
-            <div class="t-empty">
-              <div class="ico">📊</div>
-              Memuat data dari repository…<br>
-              <small style="font-size:.7rem;color:var(--text3)">Update otomatis setiap hari kerja 09:00, 12:00 &amp; 17:30 WIB</small>
-            </div>
-          </td></tr>
+          <tr><td colspan="11"><div class="t-empty"><div class="t-empty-ico">📊</div>Memuat data…</div></td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <p style="font-size:.64rem;color:var(--text3);text-align:center;padding-bottom:1.5rem">
+  <p style="font-size:.63rem;color:var(--text3);text-align:center;padding-bottom:1.5rem">
     Data dari Yahoo Finance via GitHub Actions · Bukan rekomendasi investasi
   </p>
 </div>
 <div class="toasts" id="toasts"></div>
 
 <script>
-/* ═══════════════════════════════════════════════
-   CONFIG & CONSTANTS
-═══════════════════════════════════════════════ */
+const TICKER_META = {
+  "AADI":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "AALI":{p:"Utama",i:["ISSI"]},
+  "ABBA":{p:"Pemantauan Khusus",i:[]},
+  "ABDA":{p:"Pemantauan Khusus",i:[]},
+  "ABMM":{p:"Utama",i:["ISSI"]},
+  "ACES":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "ACRO":{p:"Pengembangan",i:[]},
+  "ACST":{p:"Pengembangan",i:["ISSI"]},
+  "ADCP":{p:"Pengembangan",i:["ISSI"]},
+  "ADES":{p:"Pengembangan",i:["ISSI"]},
+  "ADHI":{p:"Utama",i:["BUMN", "ISSI"]},
+  "ADMF":{p:"Pengembangan",i:[]},
+  "ADMG":{p:"Pengembangan",i:["ISSI"]},
+  "ADMR":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "ADRO":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "AEGS":{p:"Akselerasi",i:[]},
+  "AGAR":{p:"Pengembangan",i:["ISSI"]},
+  "AGII":{p:"Pengembangan",i:["ISSI"]},
+  "AGRO":{p:"Utama",i:[]},
+  "AGRS":{p:"Pengembangan",i:[]},
+  "AHAP":{p:"Pengembangan",i:[]},
+  "AIMS":{p:"Pengembangan",i:["ISSI"]},
+  "AISA":{p:"Utama",i:["ISSI"]},
+  "AKKU":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "AKPI":{p:"Pengembangan",i:["ISSI"]},
+  "AKRA":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "AKSI":{p:"Pengembangan",i:["ISSI"]},
+  "ALDO":{p:"Pengembangan",i:["ISSI"]},
+  "ALII":{p:"Utama",i:[]},
+  "ALKA":{p:"Pengembangan",i:["ISSI"]},
+  "ALMI":{p:"Pemantauan Khusus",i:[]},
+  "ALTO":{p:"Pemantauan Khusus",i:[]},
+  "AMAG":{p:"Pengembangan",i:[]},
+  "AMAN":{p:"Pengembangan",i:["ISSI"]},
+  "AMAR":{p:"Pengembangan",i:[]},
+  "AMFG":{p:"Pengembangan",i:["ISSI"]},
+  "AMIN":{p:"Pengembangan",i:["ISSI"]},
+  "AMMN":{p:"Utama",i:["KOMPAS100", "LQ45"]},
+  "AMMS":{p:"Akselerasi",i:[]},
+  "AMOR":{p:"Pengembangan",i:[]},
+  "AMRT":{p:"Utama",i:["KOMPAS100", "LQ45"]},
+  "ANDI":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "ANJT":{p:"Pengembangan",i:["ISSI"]},
+  "ANTM":{p:"Utama",i:["BUMN", "ISSI", "KOMPAS100", "LQ45"]},
+  "APEX":{p:"Pengembangan",i:[]},
+  "APIC":{p:"Pengembangan",i:[]},
+  "APII":{p:"Pengembangan",i:["ISSI"]},
+  "APLI":{p:"Pengembangan",i:["ISSI"]},
+  "APLN":{p:"Utama",i:["ISSI"]},
+  "ARCI":{p:"Pengembangan",i:["ISSI", "KOMPAS100"]},
+  "AREA":{p:"Pengembangan",i:["ISSI"]},
+  "ARGO":{p:"Pengembangan",i:["ISSI"]},
+  "ARII":{p:"Pengembangan",i:["ISSI"]},
+  "ARKA":{p:"Pemantauan Khusus",i:[]},
+  "ARKO":{p:"Pengembangan",i:[]},
+  "ARMY":{p:"Pemantauan Khusus",i:[]},
+  "ARNA":{p:"Utama",i:["ISSI"]},
+  "ARTA":{p:"Pengembangan",i:["ISSI"]},
+  "ARTI":{p:"Pemantauan Khusus",i:[]},
+  "ARTO":{p:"Utama",i:["KOMPAS100"]},
+  "ASBI":{p:"Pengembangan",i:[]},
+  "ASDM":{p:"Pengembangan",i:[]},
+  "ASGR":{p:"Utama",i:["ISSI"]},
+  "ASHA":{p:"Pengembangan",i:["ISSI"]},
+  "ASII":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "ASJT":{p:"Pengembangan",i:[]},
+  "ASLC":{p:"Pengembangan",i:["ISSI"]},
+  "ASLI":{p:"Pengembangan",i:["ISSI"]},
+  "ASMI":{p:"Pemantauan Khusus",i:[]},
+  "ASPI":{p:"Pengembangan",i:["ISSI"]},
+  "ASPR":{p:"Pengembangan",i:[]},
+  "ASRI":{p:"Utama",i:["ISSI"]},
+  "ASRM":{p:"Pengembangan",i:[]},
+  "ASSA":{p:"Utama",i:["ISSI"]},
+  "ATAP":{p:"Pengembangan",i:["ISSI"]},
+  "ATIC":{p:"Pengembangan",i:["ISSI"]},
+  "ATLA":{p:"Pengembangan",i:["ISSI"]},
+  "AUTO":{p:"Utama",i:["ISSI"]},
+  "AVIA":{p:"Utama",i:["ISSI"]},
+  "AWAN":{p:"Pengembangan",i:["ISSI"]},
+  "AXIO":{p:"Pengembangan",i:["ISSI"]},
+  "AYAM":{p:"Pengembangan",i:["ISSI"]},
+  "AYLS":{p:"Pengembangan",i:["ISSI"]},
+  "BABP":{p:"Pengembangan",i:[]},
+  "BABY":{p:"Pengembangan",i:["ISSI"]},
+  "BACA":{p:"Utama",i:[]},
+  "BAIK":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "BAJA":{p:"Pengembangan",i:[]},
+  "BALI":{p:"Utama",i:[]},
+  "BANK":{p:"Pengembangan",i:["ISSI"]},
+  "BAPA":{p:"Pengembangan",i:[]},
+  "BAPI":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "BATA":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "BATR":{p:"Pengembangan",i:["ISSI"]},
+  "BAUT":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "BAYU":{p:"Utama",i:["ISSI"]},
+  "BBCA":{p:"Utama",i:["KOMPAS100", "LQ45"]},
+  "BBHI":{p:"Utama",i:[]},
+  "BBKP":{p:"Pengembangan",i:[]},
+  "BBLD":{p:"Pengembangan",i:[]},
+  "BBMD":{p:"Pengembangan",i:[]},
+  "BBNI":{p:"Utama",i:["KOMPAS100", "LQ45"]},
+  "BBRI":{p:"Utama",i:["KOMPAS100", "LQ45"]},
+  "BBRM":{p:"Pengembangan",i:["ISSI"]},
+  "BBSI":{p:"Utama",i:[]},
+  "BBSS":{p:"Pengembangan",i:["ISSI"]},
+  "BBTN":{p:"Utama",i:["KOMPAS100", "LQ45"]},
+  "BBYB":{p:"Utama",i:["KOMPAS100"]},
+  "BCAP":{p:"Utama",i:[]},
+  "BCIC":{p:"Pengembangan",i:[]},
+  "BCIP":{p:"Pengembangan",i:["ISSI"]},
+  "BDKR":{p:"Utama",i:["ISSI"]},
+  "BDMN":{p:"Utama",i:[]},
+  "BEBS":{p:"Pemantauan Khusus",i:[]},
+  "BEEF":{p:"Pengembangan",i:["ISSI"]},
+  "BEER":{p:"Pengembangan",i:[]},
+  "BEKS":{p:"Pemantauan Khusus",i:[]},
+  "BELI":{p:"Ekonomi Baru",i:["ISSI"]},
+  "BELL":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "BESS":{p:"Pengembangan",i:["ISSI"]},
+  "BEST":{p:"Utama",i:["ISSI"]},
+  "BFIN":{p:"Utama",i:[]},
+  "BGTG":{p:"Utama",i:[]},
+  "BHAT":{p:"Pengembangan",i:[]},
+  "BHIT":{p:"Pemantauan Khusus",i:[]},
+  "BIKA":{p:"Pemantauan Khusus",i:[]},
+  "BIKE":{p:"Pengembangan",i:["ISSI"]},
+  "BIMA":{p:"Pemantauan Khusus",i:[]},
+  "BINA":{p:"Utama",i:[]},
+  "BINO":{p:"Pengembangan",i:["ISSI"]},
+  "BIPI":{p:"Pengembangan",i:[]},
+  "BIPP":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "BIRD":{p:"Utama",i:["ISSI"]},
+  "BISI":{p:"Utama",i:["ISSI"]},
+  "BJBR":{p:"Utama",i:[]},
+  "BJTM":{p:"Utama",i:[]},
+  "BKDP":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "BKSL":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "BKSW":{p:"Pengembangan",i:[]},
+  "BLES":{p:"Pengembangan",i:["ISSI"]},
+  "BLOG":{p:"Utama",i:["ISSI"]},
+  "BLTA":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "BLTZ":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "BLUE":{p:"Pengembangan",i:["ISSI"]},
+  "BMAS":{p:"Pengembangan",i:[]},
+  "BMBL":{p:"Akselerasi",i:[]},
+  "BMHS":{p:"Utama",i:["ISSI"]},
+  "BMRI":{p:"Utama",i:["KOMPAS100", "LQ45"]},
+  "BMSR":{p:"Pengembangan",i:["ISSI"]},
+  "BMTR":{p:"Utama",i:["ISSI"]},
+  "BNBA":{p:"Pengembangan",i:[]},
+  "BNBR":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "BNGA":{p:"Utama",i:[]},
+  "BNII":{p:"Utama",i:[]},
+  "BNLI":{p:"Utama",i:[]},
+  "BOAT":{p:"Pengembangan",i:["ISSI"]},
+  "BOBA":{p:"Pengembangan",i:["ISSI"]},
+  "BOGA":{p:"Pengembangan",i:["ISSI"]},
+  "BOLA":{p:"Utama",i:["ISSI"]},
+  "BOLT":{p:"Pengembangan",i:["ISSI"]},
+  "BOSS":{p:"Pemantauan Khusus",i:[]},
+  "BPFI":{p:"Pengembangan",i:[]},
+  "BPII":{p:"Pengembangan",i:[]},
+  "BPTR":{p:"Pengembangan",i:[]},
+  "BRAM":{p:"Pengembangan",i:["ISSI"]},
+  "BREN":{p:"Utama",i:["KOMPAS100", "LQ45"]},
+  "BRIS":{p:"Utama",i:["BUMN", "ISSI", "KOMPAS100"]},
+  "BRMS":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "BRNA":{p:"Pengembangan",i:["ISSI"]},
+  "BRPT":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "BRRC":{p:"Pengembangan",i:["ISSI"]},
+  "BSBK":{p:"Pengembangan",i:["ISSI"]},
+  "BSDE":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "BSIM":{p:"Utama",i:[]},
+  "BSML":{p:"Pengembangan",i:["ISSI"]},
+  "BSSR":{p:"Pengembangan",i:["ISSI"]},
+  "BSWD":{p:"Pemantauan Khusus",i:[]},
+  "BTEK":{p:"Pemantauan Khusus",i:[]},
+  "BTEL":{p:"Pemantauan Khusus",i:[]},
+  "BTON":{p:"Pengembangan",i:[]},
+  "BTPN":{p:"Utama",i:[]},
+  "BTPS":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "BUAH":{p:"Pengembangan",i:["ISSI"]},
+  "BUDI":{p:"Utama",i:[]},
+  "BUKA":{p:"Ekonomi Baru",i:["KOMPAS100"]},
+  "BUKK":{p:"Utama",i:["ISSI"]},
+  "BULL":{p:"Pengembangan",i:["ISSI", "KOMPAS100"]},
+  "BUMI":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "BUVA":{p:"Pengembangan",i:["ISSI", "KOMPAS100"]},
+  "BVIC":{p:"Utama",i:[]},
+  "BWPT":{p:"Utama",i:[]},
+  "BYAN":{p:"Utama",i:["ISSI"]},
+  "CAKK":{p:"Pengembangan",i:["ISSI"]},
+  "CAMP":{p:"Pengembangan",i:["ISSI"]},
+  "CANI":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "CARE":{p:"Pengembangan",i:["ISSI"]},
+  "CARS":{p:"Utama",i:[]},
+  "CASA":{p:"Pengembangan",i:[]},
+  "CASH":{p:"Akselerasi",i:[]},
+  "CASS":{p:"Utama",i:["ISSI"]},
+  "CBDK":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "CBMF":{p:"Pemantauan Khusus",i:[]},
+  "CBPE":{p:"Pengembangan",i:["ISSI"]},
+  "CBRE":{p:"Pengembangan",i:["ISSI"]},
+  "CBUT":{p:"Pengembangan",i:[]},
+  "CCSI":{p:"Pengembangan",i:["ISSI"]},
+  "CDIA":{p:"Pengembangan",i:[]},
+  "CEKA":{p:"Pengembangan",i:["ISSI"]},
+  "CENT":{p:"Pengembangan",i:[]},
+  "CFIN":{p:"Utama",i:[]},
+  "CGAS":{p:"Pengembangan",i:["ISSI"]},
+  "CHEK":{p:"Pengembangan",i:["ISSI"]},
+  "CHEM":{p:"Pengembangan",i:["ISSI"]},
+  "CHIP":{p:"Akselerasi",i:[]},
+  "CINT":{p:"Pengembangan",i:["ISSI"]},
+  "CITA":{p:"Utama",i:["ISSI"]},
+  "CITY":{p:"Pengembangan",i:["ISSI"]},
+  "CLAY":{p:"Pengembangan",i:[]},
+  "CLEO":{p:"Utama",i:["ISSI"]},
+  "CLPI":{p:"Pengembangan",i:["ISSI"]},
+  "CMNP":{p:"Utama",i:["ISSI"]},
+  "CMNT":{p:"Pengembangan",i:[]},
+  "CMPP":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "CMRY":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "CNKO":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "CNMA":{p:"Pengembangan",i:["ISSI"]},
+  "CNTX":{p:"Pemantauan Khusus",i:[]},
+  "COAL":{p:"Pengembangan",i:["ISSI"]},
+  "COCO":{p:"Pemantauan Khusus",i:[]},
+  "COIN":{p:"Pengembangan",i:[]},
+  "COWL":{p:"Pemantauan Khusus",i:[]},
+  "CPIN":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "CPRI":{p:"Pemantauan Khusus",i:[]},
+  "CPRO":{p:"Pengembangan",i:["ISSI"]},
+  "CRAB":{p:"Pengembangan",i:["ISSI"]},
+  "CRSN":{p:"Pengembangan",i:["ISSI"]},
+  "CSAP":{p:"Pengembangan",i:["ISSI"]},
+  "CSIS":{p:"Pengembangan",i:["ISSI"]},
+  "CSMI":{p:"Pengembangan",i:["ISSI"]},
+  "CSRA":{p:"Utama",i:["ISSI"]},
+  "CTBN":{p:"Pengembangan",i:["ISSI"]},
+  "CTRA":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "CTTH":{p:"Pengembangan",i:[]},
+  "CUAN":{p:"Utama",i:["KOMPAS100"]},
+  "CYBR":{p:"Pengembangan",i:["ISSI"]},
+  "DAAZ":{p:"Utama",i:["ISSI"]},
+  "DADA":{p:"Pengembangan",i:["ISSI"]},
+  "DART":{p:"Pengembangan",i:[]},
+  "DATA":{p:"Pengembangan",i:["ISSI"]},
+  "DAYA":{p:"Pengembangan",i:["ISSI"]},
+  "DCII":{p:"Pengembangan",i:["ISSI"]},
+  "DEAL":{p:"Pemantauan Khusus",i:[]},
+  "DEFI":{p:"Pengembangan",i:["ISSI"]},
+  "DEPO":{p:"Pengembangan",i:["ISSI"]},
+  "DEWA":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "DEWI":{p:"Pengembangan",i:["ISSI"]},
+  "DFAM":{p:"Pengembangan",i:[]},
+  "DGIK":{p:"Pengembangan",i:["ISSI"]},
+  "DGNS":{p:"Pengembangan",i:["ISSI"]},
+  "DGWG":{p:"Utama",i:["ISSI"]},
+  "DIGI":{p:"Pemantauan Khusus",i:[]},
+  "DILD":{p:"Utama",i:["ISSI"]},
+  "DIVA":{p:"Pengembangan",i:["ISSI"]},
+  "DKFT":{p:"Pengembangan",i:["ISSI"]},
+  "DKHH":{p:"Pengembangan",i:["ISSI"]},
+  "DLTA":{p:"Utama",i:[]},
+  "DMAS":{p:"Utama",i:["ISSI"]},
+  "DMMX":{p:"Pengembangan",i:["ISSI"]},
+  "DMND":{p:"Pengembangan",i:["ISSI"]},
+  "DNAR":{p:"Pengembangan",i:[]},
+  "DNET":{p:"Utama",i:[]},
+  "DOID":{p:"Utama",i:[]},
+  "DOOH":{p:"Pengembangan",i:["ISSI"]},
+  "DOSS":{p:"Pengembangan",i:["ISSI"]},
+  "DPNS":{p:"Pengembangan",i:[]},
+  "DPUM":{p:"Pemantauan Khusus",i:[]},
+  "DRMA":{p:"Utama",i:["ISSI"]},
+  "DSFI":{p:"Pengembangan",i:["ISSI"]},
+  "DSNG":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "DSSA":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "DUCK":{p:"Pemantauan Khusus",i:[]},
+  "DUTI":{p:"Pengembangan",i:["ISSI"]},
+  "DVLA":{p:"Pengembangan",i:["ISSI"]},
+  "DWGL":{p:"Pengembangan",i:["ISSI"]},
+  "DYAN":{p:"Pengembangan",i:["ISSI"]},
+  "EAST":{p:"Pengembangan",i:["ISSI"]},
+  "ECII":{p:"Pengembangan",i:["ISSI"]},
+  "EDGE":{p:"Pengembangan",i:["ISSI"]},
+  "EKAD":{p:"Pengembangan",i:["ISSI"]},
+  "ELIT":{p:"Pengembangan",i:["ISSI"]},
+  "ELPI":{p:"Utama",i:["ISSI"]},
+  "ELSA":{p:"Utama",i:["BUMN", "ISSI", "KOMPAS100"]},
+  "ELTY":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "EMAS":{p:"Pengembangan",i:[]},
+  "EMDE":{p:"Pengembangan",i:["ISSI"]},
+  "EMTK":{p:"Utama",i:["KOMPAS100", "LQ45"]},
+  "ENAK":{p:"Pengembangan",i:["ISSI"]},
+  "ENRG":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "ENVY":{p:"Pemantauan Khusus",i:[]},
+  "ENZO":{p:"Pemantauan Khusus",i:[]},
+  "EPAC":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "EPMT":{p:"Pengembangan",i:["ISSI"]},
+  "ERAA":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "ERAL":{p:"Utama",i:["ISSI"]},
+  "ERTX":{p:"Pengembangan",i:[]},
+  "ESIP":{p:"Pengembangan",i:["ISSI"]},
+  "ESSA":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "ESTA":{p:"Pengembangan",i:["ISSI"]},
+  "ESTI":{p:"Pengembangan",i:[]},
+  "ETWA":{p:"Pemantauan Khusus",i:[]},
+  "EURO":{p:"Akselerasi",i:[]},
+  "EXCL":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "FAPA":{p:"Pengembangan",i:[]},
+  "FAST":{p:"Pengembangan",i:["ISSI"]},
+  "FASW":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "FILM":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "FIMP":{p:"Pemantauan Khusus",i:[]},
+  "FIRE":{p:"Pengembangan",i:["ISSI"]},
+  "FISH":{p:"Pengembangan",i:["ISSI"]},
+  "FITT":{p:"Pengembangan",i:["ISSI"]},
+  "FLMC":{p:"Akselerasi",i:[]},
+  "FMII":{p:"Pengembangan",i:["ISSI"]},
+  "FOLK":{p:"Pengembangan",i:["ISSI"]},
+  "FOOD":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "FORE":{p:"Pengembangan",i:["ISSI"]},
+  "FORU":{p:"Pengembangan",i:[]},
+  "FPNI":{p:"Pengembangan",i:["ISSI"]},
+  "FUJI":{p:"Pengembangan",i:[]},
+  "FUTR":{p:"Pengembangan",i:["ISSI"]},
+  "FWCT":{p:"Pengembangan",i:["ISSI"]},
+  "GAMA":{p:"Pemantauan Khusus",i:[]},
+  "GDST":{p:"Pengembangan",i:["ISSI"]},
+  "GDYR":{p:"Pengembangan",i:["ISSI"]},
+  "GEMA":{p:"Pengembangan",i:["ISSI"]},
+  "GEMS":{p:"Utama",i:["ISSI"]},
+  "GGRM":{p:"Utama",i:[]},
+  "GGRP":{p:"Pengembangan",i:["ISSI"]},
+  "GHON":{p:"Pengembangan",i:["ISSI"]},
+  "GIAA":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "GJTL":{p:"Utama",i:["ISSI"]},
+  "GLOB":{p:"Pemantauan Khusus",i:[]},
+  "GLVA":{p:"Pengembangan",i:["ISSI"]},
+  "GMFI":{p:"Pemantauan Khusus",i:[]},
+  "GMTD":{p:"Pengembangan",i:["ISSI"]},
+  "GOLD":{p:"Pengembangan",i:["ISSI"]},
+  "GOLF":{p:"Utama",i:["ISSI"]},
+  "GOLL":{p:"Pemantauan Khusus",i:[]},
+  "GOOD":{p:"Utama",i:["ISSI"]},
+  "GOTO":{p:"Ekonomi Baru",i:["KOMPAS100", "LQ45"]},
+  "GPRA":{p:"Pengembangan",i:["ISSI"]},
+  "GPSO":{p:"Pengembangan",i:["ISSI"]},
+  "GRIA":{p:"Pengembangan",i:["ISSI"]},
+  "GRPH":{p:"Pengembangan",i:["ISSI"]},
+  "GRPM":{p:"Akselerasi",i:[]},
+  "GSMF":{p:"Pengembangan",i:[]},
+  "GTBO":{p:"Pengembangan",i:["ISSI"]},
+  "GTRA":{p:"Pengembangan",i:["ISSI"]},
+  "GTSI":{p:"Utama",i:["ISSI"]},
+  "GULA":{p:"Pengembangan",i:["ISSI"]},
+  "GUNA":{p:"Pengembangan",i:["ISSI"]},
+  "GWSA":{p:"Utama",i:["ISSI"]},
+  "GZCO":{p:"Pengembangan",i:["ISSI"]},
+  "HADE":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "HAIS":{p:"Pengembangan",i:["ISSI"]},
+  "HAJJ":{p:"Akselerasi",i:[]},
+  "HALO":{p:"Pengembangan",i:["ISSI"]},
+  "HATM":{p:"Utama",i:["ISSI"]},
+  "HBAT":{p:"Akselerasi",i:[]},
+  "HDFA":{p:"Pengembangan",i:[]},
+  "HDIT":{p:"Pengembangan",i:["ISSI"]},
+  "HEAL":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "HELI":{p:"Pengembangan",i:[]},
+  "HERO":{p:"Pengembangan",i:["ISSI"]},
+  "HEXA":{p:"Utama",i:["ISSI"]},
+  "HGII":{p:"Pengembangan",i:["ISSI"]},
+  "HILL":{p:"Utama",i:[]},
+  "HITS":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "HKMU":{p:"Pemantauan Khusus",i:[]},
+  "HMSP":{p:"Utama",i:["KOMPAS100"]},
+  "HOKI":{p:"Pengembangan",i:["ISSI"]},
+  "HOME":{p:"Pemantauan Khusus",i:[]},
+  "HOMI":{p:"Pengembangan",i:["ISSI"]},
+  "HOPE":{p:"Pengembangan",i:["ISSI"]},
+  "HOTL":{p:"Pemantauan Khusus",i:[]},
+  "HRME":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "HRTA":{p:"Utama",i:["KOMPAS100"]},
+  "HRUM":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "HUMI":{p:"Pengembangan",i:["ISSI"]},
+  "HYGN":{p:"Pengembangan",i:["ISSI"]},
+  "IATA":{p:"Pengembangan",i:["ISSI"]},
+  "IBFN":{p:"Pemantauan Khusus",i:[]},
+  "IBOS":{p:"Pemantauan Khusus",i:[]},
+  "IBST":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "ICBP":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "ICON":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "IDEA":{p:"Akselerasi",i:[]},
+  "IDPR":{p:"Pengembangan",i:["ISSI"]},
+  "IFII":{p:"Pengembangan",i:["ISSI"]},
+  "IFSH":{p:"Pengembangan",i:["ISSI"]},
+  "IGAR":{p:"Pengembangan",i:["ISSI"]},
+  "IIKP":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "IKAI":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "IKAN":{p:"Pengembangan",i:["ISSI"]},
+  "IKBI":{p:"Pengembangan",i:["ISSI"]},
+  "IKPM":{p:"Pengembangan",i:["ISSI"]},
+  "IMAS":{p:"Utama",i:[]},
+  "IMJS":{p:"Pengembangan",i:[]},
+  "IMPC":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "INAF":{p:"Pemantauan Khusus",i:[]},
+  "INAI":{p:"Pengembangan",i:[]},
+  "INCF":{p:"Pemantauan Khusus",i:[]},
+  "INCI":{p:"Pengembangan",i:["ISSI"]},
+  "INCO":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "INDF":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "INDO":{p:"Pengembangan",i:[]},
+  "INDR":{p:"Pengembangan",i:["ISSI"]},
+  "INDS":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "INDX":{p:"Pengembangan",i:["ISSI"]},
+  "INDY":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "INET":{p:"Pengembangan",i:["ISSI", "KOMPAS100"]},
+  "INKP":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "INOV":{p:"Pengembangan",i:[]},
+  "INPC":{p:"Utama",i:[]},
+  "INPP":{p:"Pengembangan",i:["ISSI"]},
+  "INPS":{p:"Pemantauan Khusus",i:[]},
+  "INRU":{p:"Pengembangan",i:[]},
+  "INTA":{p:"Pemantauan Khusus",i:[]},
+  "INTD":{p:"Pengembangan",i:["ISSI"]},
+  "INTP":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "IOTF":{p:"Pengembangan",i:["ISSI"]},
+  "IPAC":{p:"Akselerasi",i:[]},
+  "IPCC":{p:"Utama",i:["BUMN", "ISSI"]},
+  "IPCM":{p:"Utama",i:["ISSI"]},
+  "IPOL":{p:"Pengembangan",i:["ISSI"]},
+  "IPPE":{p:"Pemantauan Khusus",i:[]},
+  "IPTV":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "IRRA":{p:"Pengembangan",i:["ISSI"]},
+  "IRSX":{p:"Pengembangan",i:["ISSI"]},
+  "ISAP":{p:"Akselerasi",i:[]},
+  "ISAT":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "ISEA":{p:"Pengembangan",i:[]},
+  "ISSP":{p:"Utama",i:["ISSI"]},
+  "ITIC":{p:"Pengembangan",i:[]},
+  "ITMA":{p:"Pengembangan",i:["ISSI"]},
+  "ITMG":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "JARR":{p:"Utama",i:[]},
+  "JAST":{p:"Pengembangan",i:["ISSI"]},
+  "JATI":{p:"Pengembangan",i:["ISSI"]},
+  "JAWA":{p:"Pengembangan",i:["ISSI"]},
+  "JAYA":{p:"Pengembangan",i:["ISSI"]},
+  "JECC":{p:"Pengembangan",i:["ISSI"]},
+  "JGLE":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "JIHD":{p:"Pengembangan",i:["ISSI"]},
+  "JKON":{p:"Utama",i:["BUMN", "ISSI"]},
+  "JMAS":{p:"Pengembangan",i:["ISSI"]},
+  "JPFA":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "JRPT":{p:"Utama",i:["BUMN", "ISSI"]},
+  "JSKY":{p:"Pemantauan Khusus",i:[]},
+  "JSMR":{p:"Utama",i:["BUMN", "ISSI", "KOMPAS100"]},
+  "JSPT":{p:"Pengembangan",i:["ISSI"]},
+  "JTPE":{p:"Utama",i:["ISSI"]},
+  "KAEF":{p:"Pengembangan",i:[]},
+  "KAQI":{p:"Pengembangan",i:["ISSI"]},
+  "KARW":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "KAYU":{p:"Pemantauan Khusus",i:[]},
+  "KBAG":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "KBLI":{p:"Utama",i:["ISSI"]},
+  "KBLM":{p:"Pengembangan",i:["ISSI"]},
+  "KBLV":{p:"Pengembangan",i:[]},
+  "KBRI":{p:"Pemantauan Khusus",i:[]},
+  "KDSI":{p:"Pengembangan",i:["ISSI"]},
+  "KDTN":{p:"Pengembangan",i:["ISSI"]},
+  "KEEN":{p:"Utama",i:["ISSI"]},
+  "KEJU":{p:"Utama",i:["ISSI"]},
+  "KETR":{p:"Pengembangan",i:["ISSI"]},
+  "KIAS":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "KICI":{p:"Pengembangan",i:["ISSI"]},
+  "KIJA":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "KING":{p:"Akselerasi",i:[]},
+  "KINO":{p:"Pengembangan",i:["ISSI"]},
+  "KIOS":{p:"Pengembangan",i:["ISSI"]},
+  "KJEN":{p:"Pengembangan",i:["ISSI"]},
+  "KKES":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "KKGI":{p:"Utama",i:["ISSI"]},
+  "KLAS":{p:"Pengembangan",i:["ISSI"]},
+  "KLBF":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "KLIN":{p:"Akselerasi",i:[]},
+  "KMDS":{p:"Pengembangan",i:["ISSI"]},
+  "KMTR":{p:"Pengembangan",i:[]},
+  "KOBX":{p:"Pengembangan",i:["ISSI"]},
+  "KOCI":{p:"Pengembangan",i:["ISSI"]},
+  "KOIN":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "KOKA":{p:"Pengembangan",i:["ISSI"]},
+  "KONI":{p:"Pengembangan",i:["ISSI"]},
+  "KOPI":{p:"Pengembangan",i:["ISSI"]},
+  "KOTA":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "KPIG":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "KRAS":{p:"Pengembangan",i:[]},
+  "KREN":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "KRYA":{p:"Pengembangan",i:["ISSI"]},
+  "KSIX":{p:"Pengembangan",i:["ISSI"]},
+  "KUAS":{p:"Pengembangan",i:["ISSI"]},
+  "LABA":{p:"Pengembangan",i:["ISSI"]},
+  "LABS":{p:"Pengembangan",i:["ISSI"]},
+  "LAJU":{p:"Pengembangan",i:["ISSI"]},
+  "LAND":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "LAPD":{p:"Pengembangan",i:[]},
+  "LCGP":{p:"Pemantauan Khusus",i:[]},
+  "LCKM":{p:"Pengembangan",i:["ISSI"]},
+  "LEAD":{p:"Pengembangan",i:[]},
+  "LFLO":{p:"Akselerasi",i:[]},
+  "LIFE":{p:"Pengembangan",i:[]},
+  "LINK":{p:"Pengembangan",i:[]},
+  "LION":{p:"Pengembangan",i:["ISSI"]},
+  "LIVE":{p:"Pengembangan",i:["ISSI"]},
+  "LMAS":{p:"Pemantauan Khusus",i:[]},
+  "LMAX":{p:"Akselerasi",i:[]},
+  "LMPI":{p:"Pengembangan",i:["ISSI"]},
+  "LMSH":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "LOPI":{p:"Akselerasi",i:[]},
+  "LPCK":{p:"Pengembangan",i:["ISSI"]},
+  "LPGI":{p:"Pengembangan",i:[]},
+  "LPIN":{p:"Pengembangan",i:["ISSI"]},
+  "LPKR":{p:"Utama",i:["ISSI"]},
+  "LPLI":{p:"Pengembangan",i:["ISSI"]},
+  "LPPF":{p:"Utama",i:["ISSI"]},
+  "LPPS":{p:"Pengembangan",i:[]},
+  "LRNA":{p:"Pengembangan",i:["ISSI"]},
+  "LSIP":{p:"Utama",i:["ISSI"]},
+  "LTLS":{p:"Utama",i:["ISSI"]},
+  "LUCK":{p:"Pengembangan",i:["ISSI"]},
+  "LUCY":{p:"Akselerasi",i:[]},
+  "MABA":{p:"Pemantauan Khusus",i:[]},
+  "MAGP":{p:"Pemantauan Khusus",i:[]},
+  "MAHA":{p:"Utama",i:["ISSI"]},
+  "MAIN":{p:"Utama",i:["ISSI"]},
+  "MANG":{p:"Akselerasi",i:[]},
+  "MAPA":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "MAPB":{p:"Pengembangan",i:["ISSI"]},
+  "MAPI":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "MARI":{p:"Pemantauan Khusus",i:[]},
+  "MARK":{p:"Utama",i:["ISSI"]},
+  "MASB":{p:"Pengembangan",i:[]},
+  "MAXI":{p:"Pengembangan",i:["ISSI"]},
+  "MAYA":{p:"Utama",i:[]},
+  "MBAP":{p:"Pengembangan",i:["ISSI"]},
+  "MBMA":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "MBSS":{p:"Utama",i:[]},
+  "MBTO":{p:"Pengembangan",i:["ISSI"]},
+  "MCAS":{p:"Utama",i:["ISSI"]},
+  "MCOL":{p:"Utama",i:["ISSI"]},
+  "MCOR":{p:"Utama",i:[]},
+  "MDIA":{p:"Pemantauan Khusus",i:[]},
+  "MDIY":{p:"Utama",i:["ISSI"]},
+  "MDKA":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "MDKI":{p:"Pengembangan",i:["ISSI"]},
+  "MDLA":{p:"Utama",i:["ISSI"]},
+  "MDLN":{p:"Pengembangan",i:[]},
+  "MDRN":{p:"Pemantauan Khusus",i:[]},
+  "MEDC":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "MEDS":{p:"Pengembangan",i:["ISSI"]},
+  "MEGA":{p:"Utama",i:[]},
+  "MEJA":{p:"Akselerasi",i:[]},
+  "MENN":{p:"Akselerasi",i:[]},
+  "MERI":{p:"Pengembangan",i:["ISSI"]},
+  "MERK":{p:"Pengembangan",i:["ISSI"]},
+  "META":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "MFMI":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "MGLV":{p:"Akselerasi",i:[]},
+  "MGNA":{p:"Pengembangan",i:["ISSI"]},
+  "MGRO":{p:"Pengembangan",i:[]},
+  "MHKI":{p:"Pengembangan",i:["ISSI"]},
+  "MICE":{p:"Pengembangan",i:["ISSI"]},
+  "MIDI":{p:"Utama",i:["ISSI"]},
+  "MIKA":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "MINA":{p:"Pengembangan",i:["ISSI"]},
+  "MINE":{p:"Utama",i:["ISSI"]},
+  "MIRA":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "MITI":{p:"Pengembangan",i:["ISSI"]},
+  "MKAP":{p:"Pengembangan",i:["ISSI"]},
+  "MKNT":{p:"Pemantauan Khusus",i:[]},
+  "MKPI":{p:"Pengembangan",i:["ISSI"]},
+  "MKTR":{p:"Utama",i:["ISSI"]},
+  "MLBI":{p:"Utama",i:[]},
+  "MLIA":{p:"Utama",i:["ISSI"]},
+  "MLPL":{p:"Utama",i:["ISSI"]},
+  "MLPT":{p:"Pengembangan",i:["ISSI"]},
+  "MMIX":{p:"Pengembangan",i:["ISSI"]},
+  "MMLP":{p:"Utama",i:["ISSI"]},
+  "MNCN":{p:"Utama",i:["ISSI"]},
+  "MOLI":{p:"Pengembangan",i:[]},
+  "MORA":{p:"Utama",i:["ISSI"]},
+  "MPIX":{p:"Pengembangan",i:["ISSI"]},
+  "MPMX":{p:"Utama",i:["ISSI"]},
+  "MPOW":{p:"Pengembangan",i:["ISSI"]},
+  "MPPA":{p:"Pengembangan",i:["ISSI"]},
+  "MPRO":{p:"Pengembangan",i:["ISSI"]},
+  "MPXL":{p:"Pengembangan",i:[]},
+  "MRAT":{p:"Pengembangan",i:["ISSI"]},
+  "MREI":{p:"Utama",i:[]},
+  "MSIE":{p:"Akselerasi",i:[]},
+  "MSIN":{p:"Utama",i:["ISSI"]},
+  "MSJA":{p:"Pengembangan",i:["ISSI"]},
+  "MSKY":{p:"Pengembangan",i:["ISSI"]},
+  "MSTI":{p:"Utama",i:["ISSI"]},
+  "MTDL":{p:"Utama",i:["ISSI"]},
+  "MTEL":{p:"Utama",i:["BUMN", "ISSI", "KOMPAS100"]},
+  "MTFN":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "MTLA":{p:"Utama",i:["ISSI"]},
+  "MTMH":{p:"Utama",i:["ISSI"]},
+  "MTPS":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "MTRA":{p:"Pemantauan Khusus",i:[]},
+  "MTSM":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "MTWI":{p:"Pengembangan",i:[]},
+  "MUTU":{p:"Pengembangan",i:["ISSI"]},
+  "MYOH":{p:"Pengembangan",i:["ISSI"]},
+  "MYOR":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "MYTX":{p:"Pemantauan Khusus",i:[]},
+  "NAIK":{p:"Pengembangan",i:["ISSI"]},
+  "NANO":{p:"Akselerasi",i:[]},
+  "NASA":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "NASI":{p:"Pengembangan",i:["ISSI"]},
+  "NATO":{p:"Pengembangan",i:[]},
+  "NAYZ":{p:"Akselerasi",i:[]},
+  "NCKL":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "NELY":{p:"Pengembangan",i:["ISSI"]},
+  "NEST":{p:"Pengembangan",i:["ISSI"]},
+  "NETV":{p:"Pengembangan",i:["ISSI"]},
+  "NFCX":{p:"Pengembangan",i:["ISSI"]},
+  "NICE":{p:"Pengembangan",i:["ISSI"]},
+  "NICK":{p:"Pengembangan",i:[]},
+  "NICL":{p:"Pengembangan",i:["ISSI"]},
+  "NIKL":{p:"Pengembangan",i:["ISSI"]},
+  "NINE":{p:"Akselerasi",i:[]},
+  "NIRO":{p:"Pengembangan",i:[]},
+  "NISP":{p:"Utama",i:[]},
+  "NOBU":{p:"Pengembangan",i:[]},
+  "NPGF":{p:"Pengembangan",i:["ISSI"]},
+  "NRCA":{p:"Pengembangan",i:["ISSI"]},
+  "NSSS":{p:"Pengembangan",i:[]},
+  "NTBK":{p:"Pengembangan",i:["ISSI"]},
+  "NUSA":{p:"Pemantauan Khusus",i:[]},
+  "NZIA":{p:"Pengembangan",i:["ISSI"]},
+  "OASA":{p:"Pengembangan",i:["ISSI"]},
+  "OBAT":{p:"Pengembangan",i:["ISSI"]},
+  "OBMD":{p:"Pengembangan",i:["ISSI"]},
+  "OCAP":{p:"Pemantauan Khusus",i:[]},
+  "OILS":{p:"Pengembangan",i:["ISSI"]},
+  "OKAS":{p:"Pengembangan",i:["ISSI"]},
+  "OLIV":{p:"Akselerasi",i:[]},
+  "OMED":{p:"Utama",i:["ISSI"]},
+  "OMRE":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "OPMS":{p:"Pengembangan",i:[]},
+  "PACK":{p:"Akselerasi",i:[]},
+  "PADA":{p:"Pengembangan",i:["ISSI"]},
+  "PADI":{p:"Pemantauan Khusus",i:[]},
+  "PALM":{p:"Pengembangan",i:["ISSI"]},
+  "PAMG":{p:"Pengembangan",i:["ISSI"]},
+  "PANI":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "PANR":{p:"Utama",i:["ISSI"]},
+  "PANS":{p:"Utama",i:[]},
+  "PART":{p:"Pengembangan",i:["ISSI"]},
+  "PBID":{p:"Utama",i:["ISSI"]},
+  "PBRX":{p:"Pemantauan Khusus",i:[]},
+  "PBSA":{p:"Pengembangan",i:["ISSI"]},
+  "PCAR":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "PDES":{p:"Pengembangan",i:["ISSI"]},
+  "PDPP":{p:"Pengembangan",i:["ISSI"]},
+  "PEGE":{p:"Pengembangan",i:[]},
+  "PEHA":{p:"Pengembangan",i:["ISSI"]},
+  "PEVE":{p:"Pengembangan",i:["ISSI"]},
+  "PGAS":{p:"Utama",i:["BUMN", "ISSI", "KOMPAS100", "LQ45"]},
+  "PGEO":{p:"Utama",i:["BUMN", "ISSI", "KOMPAS100", "LQ45"]},
+  "PGJO":{p:"Akselerasi",i:[]},
+  "PGLI":{p:"Pengembangan",i:["ISSI"]},
+  "PGUN":{p:"Pengembangan",i:["ISSI"]},
+  "PICO":{p:"Pengembangan",i:["ISSI"]},
+  "PIPA":{p:"Pengembangan",i:["ISSI"]},
+  "PJAA":{p:"Pengembangan",i:["ISSI"]},
+  "PJHB":{p:"Pengembangan",i:["ISSI"]},
+  "PKPK":{p:"Pengembangan",i:["ISSI"]},
+  "PLAN":{p:"Akselerasi",i:[]},
+  "PLAS":{p:"Pemantauan Khusus",i:[]},
+  "PLIN":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "PMJS":{p:"Pengembangan",i:["ISSI"]},
+  "PMMP":{p:"Pemantauan Khusus",i:[]},
+  "PMUI":{p:"Pengembangan",i:["ISSI"]},
+  "PNBN":{p:"Utama",i:[]},
+  "PNBS":{p:"Pengembangan",i:["ISSI"]},
+  "PNGO":{p:"Utama",i:["ISSI"]},
+  "PNIN":{p:"Utama",i:[]},
+  "PNLF":{p:"Utama",i:["KOMPAS100"]},
+  "PNSE":{p:"Pengembangan",i:["ISSI"]},
+  "POLA":{p:"Pemantauan Khusus",i:[]},
+  "POLI":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "POLL":{p:"Pemantauan Khusus",i:[]},
+  "POLU":{p:"Pengembangan",i:["ISSI"]},
+  "POLY":{p:"Pemantauan Khusus",i:[]},
+  "POOL":{p:"Pemantauan Khusus",i:[]},
+  "PORT":{p:"Pengembangan",i:["ISSI"]},
+  "POSA":{p:"Pemantauan Khusus",i:[]},
+  "POWR":{p:"Utama",i:["ISSI"]},
+  "PPGL":{p:"Pemantauan Khusus",i:[]},
+  "PPRE":{p:"Pengembangan",i:["ISSI"]},
+  "PPRI":{p:"Pengembangan",i:["ISSI"]},
+  "PPRO":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "PRAY":{p:"Pengembangan",i:["ISSI"]},
+  "PRDA":{p:"Utama",i:["ISSI"]},
+  "PRIM":{p:"Pengembangan",i:["ISSI"]},
+  "PSAB":{p:"Pengembangan",i:["ISSI", "KOMPAS100"]},
+  "PSAT":{p:"Utama",i:["ISSI"]},
+  "PSDN":{p:"Pengembangan",i:["ISSI"]},
+  "PSGO":{p:"Utama",i:["ISSI"]},
+  "PSKT":{p:"Pengembangan",i:["ISSI"]},
+  "PSSI":{p:"Utama",i:["ISSI"]},
+  "PTBA":{p:"Utama",i:["BUMN", "ISSI", "KOMPAS100", "LQ45"]},
+  "PTDU":{p:"Pemantauan Khusus",i:[]},
+  "PTIS":{p:"Pengembangan",i:["ISSI"]},
+  "PTMP":{p:"Pengembangan",i:["ISSI"]},
+  "PTMR":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "PTPP":{p:"Utama",i:["BUMN", "ISSI"]},
+  "PTPS":{p:"Pengembangan",i:["ISSI"]},
+  "PTPW":{p:"Pengembangan",i:["ISSI"]},
+  "PTRO":{p:"Utama",i:["KOMPAS100"]},
+  "PTSN":{p:"Pengembangan",i:["ISSI"]},
+  "PTSP":{p:"Pengembangan",i:["ISSI"]},
+  "PUDP":{p:"Pengembangan",i:[]},
+  "PURA":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "PURE":{p:"Pemantauan Khusus",i:[]},
+  "PURI":{p:"Pengembangan",i:["ISSI"]},
+  "PWON":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "PYFA":{p:"Pengembangan",i:[]},
+  "PZZA":{p:"Pengembangan",i:["ISSI"]},
+  "RAAM":{p:"Utama",i:["ISSI"]},
+  "RAFI":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "RAJA":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "RALS":{p:"Utama",i:["ISSI"]},
+  "RANC":{p:"Pengembangan",i:["ISSI"]},
+  "RATU":{p:"Pengembangan",i:["ISSI", "KOMPAS100"]},
+  "RBMS":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "RCCC":{p:"Akselerasi",i:[]},
+  "RDTX":{p:"Pengembangan",i:["ISSI"]},
+  "REAL":{p:"Pengembangan",i:[]},
+  "RELF":{p:"Akselerasi",i:[]},
+  "RELI":{p:"Pengembangan",i:[]},
+  "RGAS":{p:"Pengembangan",i:["ISSI"]},
+  "RICY":{p:"Pemantauan Khusus",i:[]},
+  "RIGS":{p:"Pengembangan",i:["ISSI"]},
+  "RIMO":{p:"Pemantauan Khusus",i:[]},
+  "RISE":{p:"Pengembangan",i:["ISSI"]},
+  "RLCO":{p:"Pengembangan",i:[]},
+  "RMKE":{p:"Utama",i:["ISSI"]},
+  "RMKO":{p:"Pengembangan",i:["ISSI"]},
+  "ROCK":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "RODA":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "RONY":{p:"Pengembangan",i:["ISSI"]},
+  "ROTI":{p:"Pengembangan",i:["ISSI"]},
+  "RSCH":{p:"Pengembangan",i:[]},
+  "RSGK":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "RUIS":{p:"Pengembangan",i:["ISSI"]},
+  "RUNS":{p:"Akselerasi",i:[]},
+  "SAFE":{p:"Pengembangan",i:["ISSI"]},
+  "SAGE":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "SAME":{p:"Utama",i:["ISSI"]},
+  "SAMF":{p:"Utama",i:["ISSI"]},
+  "SAPX":{p:"Pengembangan",i:["ISSI"]},
+  "SATU":{p:"Pengembangan",i:["ISSI"]},
+  "SBAT":{p:"Pemantauan Khusus",i:[]},
+  "SBMA":{p:"Pengembangan",i:["ISSI"]},
+  "SCCO":{p:"Pengembangan",i:["ISSI"]},
+  "SCMA":{p:"Utama",i:["KOMPAS100", "LQ45"]},
+  "SCNP":{p:"Pengembangan",i:["ISSI"]},
+  "SCPI":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "SDMU":{p:"Pengembangan",i:[]},
+  "SDPC":{p:"Pengembangan",i:[]},
+  "SDRA":{p:"Pengembangan",i:[]},
+  "SEMA":{p:"Pengembangan",i:["ISSI"]},
+  "SFAN":{p:"Pengembangan",i:[]},
+  "SGER":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "SGRO":{p:"Utama",i:["ISSI"]},
+  "SHID":{p:"Pengembangan",i:["ISSI"]},
+  "SHIP":{p:"Utama",i:["ISSI"]},
+  "SICO":{p:"Pengembangan",i:["ISSI"]},
+  "SIDO":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "SILO":{p:"Utama",i:["ISSI"]},
+  "SIMA":{p:"Pemantauan Khusus",i:[]},
+  "SIMP":{p:"Utama",i:["ISSI"]},
+  "SINI":{p:"Pemantauan Khusus",i:[]},
+  "SIPD":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "SKBM":{p:"Pengembangan",i:["ISSI"]},
+  "SKLT":{p:"Pengembangan",i:["ISSI"]},
+  "SKRN":{p:"Utama",i:["ISSI"]},
+  "SKYB":{p:"Pemantauan Khusus",i:[]},
+  "SLIS":{p:"Pengembangan",i:["ISSI"]},
+  "SMAR":{p:"Utama",i:["ISSI"]},
+  "SMBR":{p:"Utama",i:["BUMN", "ISSI"]},
+  "SMCB":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "SMDM":{p:"Pengembangan",i:["ISSI"]},
+  "SMDR":{p:"Utama",i:["ISSI"]},
+  "SMGA":{p:"Pengembangan",i:["ISSI"]},
+  "SMGR":{p:"Utama",i:["BUMN", "ISSI", "KOMPAS100", "LQ45"]},
+  "SMIL":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "SMKL":{p:"Pengembangan",i:["ISSI"]},
+  "SMKM":{p:"Akselerasi",i:[]},
+  "SMLE":{p:"Pengembangan",i:["ISSI"]},
+  "SMMA":{p:"Utama",i:[]},
+  "SMMT":{p:"Pengembangan",i:["ISSI"]},
+  "SMRA":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "SMRU":{p:"Pemantauan Khusus",i:[]},
+  "SMSM":{p:"Utama",i:["ISSI"]},
+  "SNLK":{p:"Pengembangan",i:["ISSI"]},
+  "SOCI":{p:"Pengembangan",i:["ISSI"]},
+  "SOFA":{p:"Akselerasi",i:[]},
+  "SOHO":{p:"Pengembangan",i:["ISSI"]},
+  "SOLA":{p:"Pengembangan",i:["ISSI"]},
+  "SONA":{p:"Pengembangan",i:["ISSI"]},
+  "SOSS":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "SOTS":{p:"Pengembangan",i:["ISSI"]},
+  "SOUL":{p:"Akselerasi",i:[]},
+  "SPMA":{p:"Pengembangan",i:["ISSI"]},
+  "SPRE":{p:"Akselerasi",i:[]},
+  "SPTO":{p:"Utama",i:["ISSI"]},
+  "SQMI":{p:"Pemantauan Khusus",i:[]},
+  "SRAJ":{p:"Pengembangan",i:[]},
+  "SRIL":{p:"Pemantauan Khusus",i:[]},
+  "SRSN":{p:"Pengembangan",i:[]},
+  "SRTG":{p:"Utama",i:["ISSI"]},
+  "SSIA":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "SSMS":{p:"Utama",i:[]},
+  "SSTM":{p:"Pengembangan",i:["ISSI"]},
+  "STAA":{p:"Utama",i:["ISSI"]},
+  "STAR":{p:"Pemantauan Khusus",i:[]},
+  "STRK":{p:"Pengembangan",i:[]},
+  "STTP":{p:"Pengembangan",i:["ISSI"]},
+  "SUGI":{p:"Pemantauan Khusus",i:[]},
+  "SULI":{p:"Pengembangan",i:["ISSI"]},
+  "SUNI":{p:"Utama",i:["ISSI"]},
+  "SUPA":{p:"Pengembangan",i:[]},
+  "SUPR":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "SURE":{p:"Pengembangan",i:[]},
+  "SURI":{p:"Pengembangan",i:["ISSI"]},
+  "SWAT":{p:"Pemantauan Khusus",i:[]},
+  "SWID":{p:"Pengembangan",i:["ISSI"]},
+  "TALF":{p:"Pengembangan",i:["ISSI"]},
+  "TAMA":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "TAMU":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "TAPG":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "TARA":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "TAXI":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "TAYS":{p:"Pengembangan",i:[]},
+  "TBIG":{p:"Utama",i:[]},
+  "TBLA":{p:"Utama",i:[]},
+  "TBMS":{p:"Pengembangan",i:["ISSI"]},
+  "TCID":{p:"Pengembangan",i:["ISSI"]},
+  "TCPI":{p:"Pengembangan",i:["ISSI", "KOMPAS100"]},
+  "TDPM":{p:"Pemantauan Khusus",i:[]},
+  "TEBE":{p:"Utama",i:["ISSI"]},
+  "TECH":{p:"Pemantauan Khusus",i:[]},
+  "TELE":{p:"Pemantauan Khusus",i:[]},
+  "TFAS":{p:"Pengembangan",i:["ISSI"]},
+  "TFCO":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "TGKA":{p:"Pengembangan",i:["ISSI"]},
+  "TGRA":{p:"Pemantauan Khusus",i:[]},
+  "TGUK":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "TIFA":{p:"Pengembangan",i:[]},
+  "TINS":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "TIRA":{p:"Pengembangan",i:["ISSI"]},
+  "TIRT":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "TKIM":{p:"Utama",i:["ISSI"]},
+  "TLDN":{p:"Pengembangan",i:["ISSI"]},
+  "TLKM":{p:"Utama",i:["BUMN", "ISSI", "KOMPAS100", "LQ45"]},
+  "TMAS":{p:"Utama",i:["ISSI"]},
+  "TMPO":{p:"Pengembangan",i:["ISSI"]},
+  "TNCA":{p:"Pengembangan",i:["ISSI"]},
+  "TOBA":{p:"Utama",i:["ISSI", "KOMPAS100"]},
+  "TOOL":{p:"Pengembangan",i:["ISSI"]},
+  "TOPS":{p:"Pemantauan Khusus",i:[]},
+  "TOSK":{p:"Pengembangan",i:["ISSI"]},
+  "TOTL":{p:"Utama",i:["ISSI"]},
+  "TOTO":{p:"Pengembangan",i:["ISSI"]},
+  "TOWR":{p:"Utama",i:["KOMPAS100", "LQ45"]},
+  "TOYS":{p:"Pemantauan Khusus",i:[]},
+  "TPIA":{p:"Pengembangan",i:["ISSI", "KOMPAS100"]},
+  "TPMA":{p:"Utama",i:["ISSI"]},
+  "TRAM":{p:"Pemantauan Khusus",i:[]},
+  "TRGU":{p:"Utama",i:[]},
+  "TRIL":{p:"Pemantauan Khusus",i:[]},
+  "TRIM":{p:"Utama",i:[]},
+  "TRIN":{p:"Pengembangan",i:[]},
+  "TRIO":{p:"Pemantauan Khusus",i:[]},
+  "TRIS":{p:"Pengembangan",i:["ISSI"]},
+  "TRJA":{p:"Pengembangan",i:["ISSI"]},
+  "TRON":{p:"Pengembangan",i:["ISSI"]},
+  "TRST":{p:"Pengembangan",i:["ISSI"]},
+  "TRUE":{p:"Pengembangan",i:["ISSI"]},
+  "TRUK":{p:"Pengembangan",i:["ISSI"]},
+  "TRUS":{p:"Pengembangan",i:[]},
+  "TSPC":{p:"Utama",i:["ISSI"]},
+  "TUGU":{p:"Utama",i:[]},
+  "TYRE":{p:"Pengembangan",i:["ISSI"]},
+  "UANG":{p:"Pengembangan",i:["ISSI"]},
+  "UCID":{p:"Utama",i:["ISSI"]},
+  "UDNG":{p:"Akselerasi",i:[]},
+  "UFOE":{p:"Pengembangan",i:["ISSI"]},
+  "ULTJ":{p:"Utama",i:["ISSI"]},
+  "UNIC":{p:"Utama",i:["ISSI"]},
+  "UNIQ":{p:"Utama",i:["ISSI"]},
+  "UNIT":{p:"Pengembangan",i:[]},
+  "UNSP":{p:"Pemantauan Khusus",i:[]},
+  "UNTD":{p:"Pengembangan",i:[]},
+  "UNTR":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "UNVR":{p:"Utama",i:["ISSI", "KOMPAS100", "LQ45"]},
+  "URBN":{p:"Pengembangan",i:[]},
+  "UVCR":{p:"Pengembangan",i:["ISSI"]},
+  "VAST":{p:"Pengembangan",i:["ISSI"]},
+  "VERN":{p:"Pengembangan",i:["ISSI"]},
+  "VICI":{p:"Utama",i:["ISSI"]},
+  "VICO":{p:"Utama",i:[]},
+  "VINS":{p:"Pengembangan",i:[]},
+  "VISI":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "VIVA":{p:"Pemantauan Khusus",i:[]},
+  "VKTR":{p:"Pengembangan",i:["ISSI"]},
+  "VOKS":{p:"Pengembangan",i:["ISSI"]},
+  "VRNA":{p:"Pengembangan",i:[]},
+  "VTNY":{p:"Pengembangan",i:[]},
+  "WAPO":{p:"Pengembangan",i:["ISSI"]},
+  "WEGE":{p:"Pengembangan",i:["ISSI"]},
+  "WEHA":{p:"Pengembangan",i:["ISSI"]},
+  "WGSH":{p:"Akselerasi",i:[]},
+  "WICO":{p:"Pemantauan Khusus",i:[]},
+  "WIDI":{p:"Akselerasi",i:[]},
+  "WIFI":{p:"Pengembangan",i:["KOMPAS100"]},
+  "WIIM":{p:"Utama",i:[]},
+  "WIKA":{p:"Pemantauan Khusus",i:[]},
+  "WINE":{p:"Pengembangan",i:[]},
+  "WINR":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "WINS":{p:"Utama",i:["ISSI"]},
+  "WIRG":{p:"Pengembangan",i:["ISSI", "KOMPAS100"]},
+  "WMPP":{p:"Pemantauan Khusus",i:[]},
+  "WMUU":{p:"Pemantauan Khusus",i:["ISSI"]},
+  "WOMF":{p:"Pengembangan",i:[]},
+  "WOOD":{p:"Utama",i:["ISSI"]},
+  "WOWS":{p:"Pengembangan",i:["ISSI"]},
+  "WSBP":{p:"Pemantauan Khusus",i:[]},
+  "WSKT":{p:"Pemantauan Khusus",i:[]},
+  "WTON":{p:"Utama",i:["BUMN", "ISSI"]},
+  "YELO":{p:"Pengembangan",i:["ISSI"]},
+  "YOII":{p:"Pengembangan",i:[]},
+  "YPAS":{p:"Pengembangan",i:["ISSI"]},
+  "YULE":{p:"Pengembangan",i:[]},
+  "YUPI":{p:"Utama",i:["ISSI"]},
+  "ZATA":{p:"Pengembangan",i:["ISSI"]},
+  "ZBRA":{p:"Pemantauan Khusus",i:[]},
+  "ZINC":{p:"Pemantauan Khusus",i:[]},
+  "ZONE":{p:"Pengembangan",i:["ISSI"]},
+  "ZYRX":{p:"Pengembangan",i:["ISSI"]},
+};
+
+/* ══════════════════════════════════════════════
+   CONFIG
+══════════════════════════════════════════════ */
 const DATA_URL = 'data/issi_data.json';
 const SK = 'issi_v5', SKT = 'issi_v5_ts';
 
-/* ═══════════════════════════════════════════════
+/* ══════════════════════════════════════════════
    STATE
-═══════════════════════════════════════════════ */
+══════════════════════════════════════════════ */
 let AD=[], DD=[];
 let maF=new Set(), volF=new Set(), oscF=new Set();
+let idxF=new Set(), papanF=new Set();
 let sCol='pct', sDir=-1, dbOn=false;
 
-/* ═══════════════════════════════════════════════
+/* ══════════════════════════════════════════════
    DARK MODE
-═══════════════════════════════════════════════ */
+══════════════════════════════════════════════ */
 (function(){
   const t=localStorage.getItem('issi_theme')||'light';
   document.documentElement.setAttribute('data-theme',t);
@@ -430,50 +1465,42 @@ function _updDk(t){
   document.getElementById('dkLbl').textContent=t==='dark'?'Light':'Dark';
 }
 
-/* ═══════════════════════════════════════════════
+/* ══════════════════════════════════════════════
    DEBUG
-═══════════════════════════════════════════════ */
-let _dbLines=[];
+══════════════════════════════════════════════ */
+let _db=[];
 function dLog(m,t=''){
-  _dbLines.push({m,t});
-  if(_dbLines.length>60)_dbLines.shift();
+  _db.push({m,t});if(_db.length>60)_db.shift();
   if(!dbOn)return;
   const el=document.getElementById('dbLog');
-  el.innerHTML=_dbLines.slice(-25).map(l=>`<div class="dline ${l.t}">${l.m}</div>`).join('');
+  el.innerHTML=_db.slice(-25).map(l=>`<div class="dl ${l.t}">${l.m}</div>`).join('');
   el.scrollTop=el.scrollHeight;
 }
 function toggleDebug(){
   dbOn=!dbOn;
   document.getElementById('dbPanel').classList.toggle('show',dbOn);
-  document.getElementById('dbBtn').classList.toggle('active',dbOn);
   if(dbOn){
     const el=document.getElementById('dbLog');
-    el.innerHTML=_dbLines.slice(-25).map(l=>`<div class="dline ${l.t}">${l.m}</div>`).join('');
+    el.innerHTML=_db.slice(-25).map(l=>`<div class="dl ${l.t}">${l.m}</div>`).join('');
     el.scrollTop=el.scrollHeight;
   }
 }
 
-/* ═══════════════════════════════════════════════
+/* ══════════════════════════════════════════════
    MATH
-═══════════════════════════════════════════════ */
+══════════════════════════════════════════════ */
 function _ema(a,p){
   if(!a||a.length<p)return null;
-  const k=2/(p+1);
-  let v=a.slice(0,p).reduce((x,y)=>x+y,0)/p;
+  const k=2/(p+1);let v=a.slice(0,p).reduce((x,y)=>x+y,0)/p;
   for(let i=p;i<a.length;i++)v=a[i]*k+v*(1-k);
   return v;
 }
-function _sma(a,p){
-  if(!a||a.length<p)return null;
-  return a.slice(-p).reduce((x,y)=>x+y,0)/p;
-}
+function _sma(a,p){if(!a||a.length<p)return null;return a.slice(-p).reduce((x,y)=>x+y,0)/p}
 function _rsi(a){
   if(!a||a.length<15)return null;
   const s=a.slice(-15);let g=0,l=0;
   for(let i=1;i<s.length;i++){const d=s[i]-s[i-1];if(d>0)g+=d;else l-=d}
-  const ag=g/14,al=l/14;
-  if(al===0)return 100;
-  return 100-100/(1+ag/al);
+  const ag=g/14,al=l/14;return al===0?100:100-100/(1+ag/al);
 }
 function _stochRSI(a){
   if(!a||a.length<33)return null;
@@ -485,36 +1512,21 @@ function _stochRSI(a){
   }
   if(ra.length<14)return null;
   const rec=ra.slice(-14),mn=Math.min(...rec),mx=Math.max(...rec);
-  if(mx===mn)return 50;
-  return((ra[ra.length-1]-mn)/(mx-mn))*100;
+  return mx===mn?50:((ra[ra.length-1]-mn)/(mx-mn))*100;
 }
 function _macd(a){
-  // MACD(12,26,9): returns {line, signal, hist, bull}
   if(!a||a.length<35)return null;
-  const e12=_ema(a,12), e26=_ema(a,26);
-  if(e12===null||e26===null)return null;
-  // Compute rolling MACD line for signal
   const lines=[];
   for(let i=26;i<=a.length;i++){
-    const sl=a.slice(0,i);
-    const m12=_ema(sl,12), m26=_ema(sl,26);
+    const sl=a.slice(0,i),m12=_ema(sl,12),m26=_ema(sl,26);
     if(m12!==null&&m26!==null)lines.push(m12-m26);
   }
   if(lines.length<9)return null;
-  const sig=_ema(lines,9);
-  if(sig===null)return null;
-  const line=lines.at(-1);
-  const hist=line-sig;
-  // Prev hist
+  const sig=_ema(lines,9);if(sig===null)return null;
+  const line=lines.at(-1),hist=line-sig;
   let prevHist=null;
-  if(lines.length>=2){
-    const prevLines=lines.slice(0,-1);
-    const prevSig=_ema(prevLines,9);
-    if(prevSig!==null)prevHist=prevLines.at(-1)-prevSig;
-  }
-  const bull=hist>0;
-  const cross=prevHist!==null&&((prevHist<0&&hist>0)||(prevHist>0&&hist<0));
-  return{line,signal:sig,hist,bull,cross};
+  if(lines.length>=2){const pl=lines.slice(0,-1),ps=_ema(pl,9);if(ps!==null)prevHist=pl.at(-1)-ps}
+  return{line,signal:sig,hist,bull:hist>0,cross:prevHist!==null&&Math.sign(hist)!==Math.sign(prevHist)};
 }
 function _atr(rows){
   if(!rows||rows.length<15)return null;
@@ -526,15 +1538,12 @@ function _atr(rows){
 function _adr(rows){
   if(!rows||rows.length<14)return null;
   const r=rows.slice(-14);
-  return{
-    nom:r.reduce((a,b)=>a+(b.h-b.l),0)/14,
-    pct:r.reduce((a,b)=>a+(b.h-b.l)/b.l,0)/14*100
-  };
+  return{nom:r.reduce((a,b)=>a+(b.h-b.l),0)/14,pct:r.reduce((a,b)=>a+(b.h-b.l)/b.l,0)/14*100};
 }
 
-/* ═══════════════════════════════════════════════
-   PROCESS YAHOO RESULT → STOCK OBJECT
-═══════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   PROCESS YAHOO → STOCK OBJ
+══════════════════════════════════════════════ */
 function processYahoo(ticker,res){
   const meta=res.meta||{};
   const raw=res.indicators?.quote?.[0]||{};
@@ -542,31 +1551,24 @@ function processYahoo(ticker,res){
   const rows=[];
   for(let i=0;i<ts.length;i++){
     const c=raw.close?.[i],h=raw.high?.[i],l=raw.low?.[i],v=raw.volume?.[i];
-    if(c!=null&&h!=null&&l!=null&&v!=null&&!isNaN(c)&&c>0&&h>0&&l>0)
-      rows.push({c,h,l,v});
+    if(c!=null&&h!=null&&l!=null&&v!=null&&!isNaN(c)&&c>0&&h>0&&l>0)rows.push({c,h,l,v});
   }
   if(rows.length<30)return null;
-  const closes=rows.map(x=>x.c), vols=rows.map(x=>x.v);
-  const last=closes.at(-1), prev=closes.at(-2)??last;
+  const closes=rows.map(x=>x.c),vols=rows.map(x=>x.v);
+  const last=closes.at(-1),prev=closes.at(-2)??last;
   const pct=((last-prev)/prev)*100;
-
   const e3=_ema(closes,3),e5=_ema(closes,5),e10=_ema(closes,10),e20=_ema(closes,20);
   const s50=_sma(closes,50),s100=_sma(closes,100),s200=_sma(closes,200);
-  const rsiV=_rsi(closes), srsiV=_stochRSI(closes);
-  const macdV=_macd(closes);
-  const atrV=_atr(rows), adrV=_adr(rows);
-
-  const lastVol=vols.at(-1)??0;
-  const lastValue=lastVol*last;
-  const pct1today=lastValue*0.01;
+  const rsiV=_rsi(closes),srsiV=_stochRSI(closes);
+  const macdV=_macd(closes),atrV=_atr(rows),adrV=_adr(rows);
+  const lastVol=vols.at(-1)??0,lastValue=lastVol*last,pct1today=lastValue*0.01;
   const vm3=_sma(vols,3),vm5=_sma(vols,5),vm20=_sma(vols,20),vm50=_sma(vols,50);
-
   const ms={
-    ema3:e3!==null&&last>e3, ema5:e5!==null&&last>e5,
-    ema10:e10!==null&&last>e10, ema20:e20!==null&&last>e20,
-    sma50:s50!==null&&last>s50, sma100:s100!==null&&last>s100, sma200:s200!==null&&last>s200,
-    vma3:vm3!==null&&lastVol>vm3, vma5:vm5!==null&&lastVol>vm5,
-    vma20:vm20!==null&&lastVol>vm20, vma50:vm50!==null&&lastVol>vm50,
+    ema3:e3!==null&&last>e3,ema5:e5!==null&&last>e5,
+    ema10:e10!==null&&last>e10,ema20:e20!==null&&last>e20,
+    sma50:s50!==null&&last>s50,sma100:s100!==null&&last>s100,sma200:s200!==null&&last>s200,
+    vma3:vm3!==null&&lastVol>vm3,vma5:vm5!==null&&lastVol>vm5,
+    vma20:vm20!==null&&lastVol>vm20,vma50:vm50!==null&&lastVol>vm50,
   };
   const above4=ms.ema3&&ms.ema5&&ms.ema10&&ms.ema20;
   let bull=0,bear=0;
@@ -574,65 +1576,61 @@ function processYahoo(ticker,res){
   if(rsiV!==null){if(rsiV>50)bull++;else bear++;}
   if(srsiV!==null){if(srsiV>50)bull++;else bear++;}
   if(macdV){if(macdV.bull)bull++;else bear++;}
-
   const company=(meta.longName||meta.shortName||'').replace(/\s*\([^)]*\)\s*/g,'').trim()||ticker;
-
+  // Enrich with papan/indeks from TICKER_META
+  const tm=TICKER_META[ticker]||{};
   return{
-    ticker,company,price:last,pct,
-    maStatus:ms,above4,bull,bear,
+    ticker,company,price:last,pct,maStatus:ms,above4,bull,bear,
     rsi:rsiV,stochRsi:srsiV,
-    macdBull:macdV?.bull??null, macdHist:macdV?.hist??null, macdCross:macdV?.cross??false,
+    macdBull:macdV?.bull??null,macdHist:macdV?.hist??null,macdCross:macdV?.cross??false,
     atrV,adrPct:adrV?.pct??null,adrNom:adrV?.nom??null,
-    lastVol,vm20,lastValue,pct1today,
+    lastVol,lastValue,pct1today,
+    papan:tm.p||'',indeks:tm.i||[],
   };
 }
 
-/* ═══════════════════════════════════════════════
-   DATA LOADING (GitHub → cache fallback)
-═══════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   DATA LOADING
+══════════════════════════════════════════════ */
 window.addEventListener('load',async()=>{
-  // Try GitHub JSON first
   try{
-    dLog('Loading from GitHub repo…');
-    const url=DATA_URL+'?_='+Date.now();
-    const res=await fetch(url);
+    dLog('Loading GitHub repo…');
+    const res=await fetch(DATA_URL+'?_='+Date.now());
     if(res.ok){
       const j=await res.json();
       if(j?.data?.length>0){
-        // Cache it
-        try{localStorage.setItem(SK,JSON.stringify(j.data));localStorage.setItem(SKT,j.fetchedAt||Date.now())}catch(_){}
-        _loadData(j.data, new Date(j.fetchedAt||Date.now()).getTime(), 'gh', j.fetchedAtWIB||'—');
-        dLog(`GitHub OK: ${j.data.length} saham`,'ok');
+        // Enrich with papan/indeks metadata
+        const enriched=j.data.map(d=>{const tm=TICKER_META[d.ticker]||{};return{...d,papan:tm.p||d.papan||'',indeks:tm.i||d.indeks||[]}});
+        try{localStorage.setItem(SK,JSON.stringify(enriched));localStorage.setItem(SKT,j.fetchedAt||Date.now())}catch(_){}
+        _loadData(enriched,new Date(j.fetchedAt||Date.now()).getTime(),'gh',j.fetchedAtWIB||'—');
+        dLog(`GitHub OK: ${enriched.length} saham`,'ok');
         return;
       }
     }
   }catch(e){dLog('GitHub gagal: '+e.message,'warn')}
-
-  // Fallback: localStorage cache
   try{
-    const raw=localStorage.getItem(SK), ts=localStorage.getItem(SKT);
+    const raw=localStorage.getItem(SK),ts=localStorage.getItem(SKT);
     if(raw){
       const data=JSON.parse(raw);
       if(data?.length>0){
-        _loadData(data, ts?parseInt(ts):Date.now(), 'cache');
-        dLog(`Cache loaded: ${data.length} saham`,'ok');
+        const enriched=data.map(d=>{const tm=TICKER_META[d.ticker]||{};return{...d,papan:tm.p||d.papan||'',indeks:tm.i||d.indeks||[]}});
+        _loadData(enriched,ts?parseInt(ts):Date.now(),'cache');
+        dLog(`Cache: ${enriched.length} saham`,'ok');
         return;
       }
     }
   }catch(e){dLog('Cache error: '+e.message,'err')}
-
   setDot('');
   document.getElementById('sText').textContent='Data belum tersedia';
-  dLog('Tidak ada data');
 });
 
 function _loadData(data,ts,src,ghLabel){
   AD=data;
   const srcMap={gh:'📦 GitHub',cache:'💾 Cache'};
-  const badge=`<span class="src-tag ${src}">${srcMap[src]||src}</span>`;
+  const badge=`<span class="src-badge ${src}">${srcMap[src]||src}</span>`;
   document.getElementById('sText').textContent=`${AD.length} saham`;
   document.getElementById('tsWrap').style.display='flex';
-  document.getElementById('tsText').textContent=src==='gh'?`Update: ${ghLabel}`:`Cache: ${_ago(ts)}`;
+  document.getElementById('tsText').textContent=src==='gh'?`${ghLabel}`:`Cache: ${_ago(ts)}`;
   document.getElementById('srcWrap').style.display='flex';
   document.getElementById('srcBadge').innerHTML=badge;
   document.getElementById('statsBar').style.display='flex';
@@ -640,26 +1638,33 @@ function _loadData(data,ts,src,ghLabel){
   document.getElementById('s-src').innerHTML=badge;
   setDot('ok');
   _updateStats();applyF();renderT();
-  toast(`${AD.length} saham dimuat (${srcMap[src]||src})`,'in');
+  toast(`${AD.length} saham dimuat`,'in');
 }
 
-/* ═══════════════════════════════════════════════
-   SEARCH (live, with clear button)
-═══════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   SEARCH
+══════════════════════════════════════════════ */
 document.getElementById('sInp').addEventListener('input',function(){
   document.getElementById('sClear').classList.toggle('show',this.value.length>0);
-  applyF(); renderT();
+  applyF();renderT();
 });
 function clearSearch(){
   document.getElementById('sInp').value='';
   document.getElementById('sClear').classList.remove('show');
-  applyF(); renderT();
+  applyF();renderT();
   document.getElementById('sInp').focus();
 }
 
-/* ═══════════════════════════════════════════════
+/* ══════════════════════════════════════════════
+   SCROLL SHADOW FOR STICKY COLUMN
+══════════════════════════════════════════════ */
+document.getElementById('tWrap').addEventListener('scroll',function(){
+  this.classList.toggle('scrolled',this.scrollLeft>4);
+});
+
+/* ══════════════════════════════════════════════
    FILTERS
-═══════════════════════════════════════════════ */
+══════════════════════════════════════════════ */
 function toggleMF(k){maF.has(k)?maF.delete(k):maF.add(k);document.getElementById('mf-'+k).classList.toggle('on',maF.has(k));applyF();renderT()}
 function resetMF(){maF.clear();['ema3','ema5','ema10','ema20','sma50','sma100','sma200'].forEach(k=>document.getElementById('mf-'+k).classList.remove('on'));applyF();renderT()}
 function toggleVF(k){volF.has(k)?volF.delete(k):volF.add(k);document.getElementById('vf-'+k).classList.toggle('on',volF.has(k));applyF();renderT()}
@@ -667,13 +1672,25 @@ function resetVF(){volF.clear();['vma3','vma5','vma20','vma50'].forEach(k=>docum
 function toggleOF(k){oscF.has(k)?oscF.delete(k):oscF.add(k);document.getElementById('of-'+k).classList.toggle('on',oscF.has(k));applyF();renderT()}
 function resetOF(){oscF.clear();['rsi-ob','rsi-os','rsi-bull','srsi-ob','srsi-os','macd-bull','macd-bear'].forEach(k=>document.getElementById('of-'+k).classList.remove('on'));applyF();renderT()}
 
+const IDX_MAP={'issi':'ISSI','lq45':'LQ45','kompas100':'KOMPAS100','bumn':'BUMN'};
+const PAPAN_MAP={'utama':'Utama','pengembangan':'Pengembangan','akselerasi':'Akselerasi','ekonomibaru':'Ekonomi Baru'};
+function toggleIF(k){idxF.has(k)?idxF.delete(k):idxF.add(k);document.getElementById('if-'+k).classList.toggle('on',idxF.has(k));applyF();renderT()}
+function resetIF(){idxF.clear();Object.keys(IDX_MAP).forEach(k=>document.getElementById('if-'+k).classList.remove('on'));applyF();renderT()}
+function togglePF(k){papanF.has(k)?papanF.delete(k):papanF.add(k);document.getElementById('pf-'+k).classList.toggle('on',papanF.has(k));applyF();renderT()}
+function resetPF(){papanF.clear();Object.keys(PAPAN_MAP).forEach(k=>document.getElementById('pf-'+k).classList.remove('on'));applyF();renderT()}
+
 function applyF(){
   const q=document.getElementById('sInp').value.trim().toUpperCase();
   let d=[...AD];
   if(q)d=d.filter(x=>x.ticker.includes(q)||(x.company||'').toUpperCase().includes(q));
+  // Indeks filter (OR within group: match any selected)
+  if(idxF.size>0)d=d.filter(x=>{const idxArr=x.indeks||[];return[...idxF].some(k=>idxArr.includes(IDX_MAP[k]))});
+  // Papan filter (OR)
+  if(papanF.size>0)d=d.filter(x=>[...papanF].some(k=>x.papan===PAPAN_MAP[k]));
+  // MA filters (AND: all selected must pass)
   maF.forEach(k=>{d=d.filter(x=>x.maStatus?.[k]===true)});
   volF.forEach(k=>{d=d.filter(x=>x.maStatus?.[k]===true)});
-  // Oscillator filters
+  // Oscillator
   if(oscF.has('rsi-ob'))   d=d.filter(x=>x.rsi!=null&&x.rsi>70);
   if(oscF.has('rsi-os'))   d=d.filter(x=>x.rsi!=null&&x.rsi<30);
   if(oscF.has('rsi-bull')) d=d.filter(x=>x.rsi!=null&&x.rsi>50);
@@ -681,14 +1698,12 @@ function applyF(){
   if(oscF.has('srsi-os'))  d=d.filter(x=>x.stochRsi!=null&&x.stochRsi<20);
   if(oscF.has('macd-bull'))d=d.filter(x=>x.macdBull===true);
   if(oscF.has('macd-bear'))d=d.filter(x=>x.macdBull===false);
-
   d.sort((a,b)=>{
-    let va=a[sCol]??-Infinity, vb=b[sCol]??-Infinity;
+    let va=a[sCol]??-Infinity,vb=b[sCol]??-Infinity;
     if(sCol==='ticker'){va=a.ticker||'';vb=b.ticker||'';return va.localeCompare(vb)*sDir}
     return(va-vb)*sDir;
   });
-  DD=d;
-  document.getElementById('s-sho').textContent=d.length;
+  DD=d;document.getElementById('s-sho').textContent=d.length;
 }
 function sortBy(c){
   const th=event.currentTarget;
@@ -704,109 +1719,80 @@ function _updateStats(){
   document.getElementById('s-abo').textContent=AD.filter(x=>x.above4).length;
 }
 
-/* ═══════════════════════════════════════════════
+/* ══════════════════════════════════════════════
    FORMAT
-═══════════════════════════════════════════════ */
-// Format numbers: Rb = ribu, Jt = juta, M = miliar, T = triliun
+══════════════════════════════════════════════ */
 function _fmt(n){
   if(n==null||isNaN(n)||n===0)return'—';
-  const abs=Math.abs(n);
-  if(abs>=1e12)return(n/1e12).toFixed(2)+' T';
-  if(abs>=1e9) return(n/1e9).toFixed(2)+' M';
-  if(abs>=1e6) return(n/1e6).toFixed(1)+' Jt';
-  if(abs>=1e3) return(n/1e3).toFixed(1)+' Rb';
+  const a=Math.abs(n);
+  if(a>=1e12)return(n/1e12).toFixed(2)+' T';
+  if(a>=1e9) return(n/1e9).toFixed(2)+' M';
+  if(a>=1e6) return(n/1e6).toFixed(1)+' Jt';
+  if(a>=1e3) return(n/1e3).toFixed(1)+' Rb';
   return n.toFixed(0);
 }
-function _price(n){
-  if(n==null||isNaN(n))return'—';
-  if(n>=1000)return Math.round(n).toLocaleString('id-ID');
-  return n.toFixed(n>=10?0:2);
-}
+function _price(n){if(n==null||isNaN(n))return'—';if(n>=1000)return Math.round(n).toLocaleString('id-ID');return n.toFixed(n>=10?0:2)}
 function _pct(n){if(n==null||isNaN(n))return'—';return(n>=0?'+':'')+n.toFixed(2)+'%'}
 function _dec(n,d=1){if(n==null||isNaN(n))return'—';return n.toFixed(d)}
-function _rsiColor(v){
-  if(v==null)return'var(--text3)';
-  if(v>70)return'var(--red)';
-  if(v<30)return'var(--green)';
-  if(v>55)return'var(--green)';
-  if(v<45)return'var(--red)';
-  return'var(--text2)';
-}
+function _rsiC(v){if(v==null)return'var(--text3)';if(v>70)return'var(--red)';if(v<30)return'var(--green)';if(v>55)return'var(--green)';if(v<45)return'var(--red)';return'var(--text2)'}
 
-const MA_KEYS =['ema3','ema5','ema10','ema20','sma50','sma100','sma200'];
-const MA_LBLS =['E3','E5','E10','E20','S50','S1','S2'];
-const VOL_KEYS=['vma3','vma5','vma20','vma50'];
-const VOL_LBLS=['V3','V5','V20','V50'];
+const MAK=['ema3','ema5','ema10','ema20','sma50','sma100','sma200'];
+const MAL=['E3','E5','E10','E20','S50','S1','S2'];
+const VK =['vma3','vma5','vma20','vma50'];
+const VL =['V3','V5','V20','V50'];
 
-/* ═══════════════════════════════════════════════
-   RENDER TABLE
-═══════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   RENDER
+══════════════════════════════════════════════ */
 function renderT(){
   const tb=document.getElementById('tBody');
   if(!DD.length){
-    tb.innerHTML=`<tr><td colspan="14"><div class="t-empty"><div class="ico">∅</div>Tidak ada data sesuai filter</div></td></tr>`;
+    tb.innerHTML=`<tr><td colspan="11"><div class="t-empty"><div class="t-empty-ico">∅</div>Tidak ada data sesuai filter</div></td></tr>`;
     return;
   }
-
-  tb.innerHTML=DD.map((d,i)=>{
+  tb.innerHTML=DD.map(d=>{
     const tvUrl=`https://www.tradingview.com/chart/?symbol=IDX%3A${d.ticker}`;
-
     // MA pips
-    const maPips=MA_KEYS.map((k,ki)=>{
+    const maPips=MAK.map((k,i)=>{
       const v=d.maStatus?.[k];
-      const cls=v===true?'on-g':v===false?'off-r':'na';
-      return`<span class="pip ${cls}" title="${k.toUpperCase()}">${MA_LBLS[ki]}</span>`;
+      return`<span class="pip ${v===true?'on-g':v===false?'off-r':'na'}" title="${k.toUpperCase()}">${MAL[i]}</span>`;
     }).join('');
-
     // Vol pips
-    const vPips=VOL_KEYS.map((k,ki)=>{
+    const vPips=VK.map((k,i)=>{
       const v=d.maStatus?.[k];
-      const cls=v===true?'on-b':v===false?'off-r':'na';
-      return`<span class="pip ${cls}" title="Vol vs ${k.toUpperCase()}">${VOL_LBLS[ki]}</span>`;
+      return`<span class="pip ${v===true?'on-b':v===false?'off-r':'na'}" title="Vol vs ${k.toUpperCase()}">${VL[i]}</span>`;
     }).join('');
-
-    // RSI gauge
-    const rCv=_rsiColor(d.rsi), sCv=_rsiColor(d.stochRsi);
+    // RSI
+    const rCv=_rsiC(d.rsi),sCv=_rsiC(d.stochRsi);
     const rP=d.rsi!=null?Math.min(100,Math.max(0,d.rsi)):0;
     const sP=d.stochRsi!=null?Math.min(100,Math.max(0,d.stochRsi)):0;
-
-    // MACD badge
+    // MACD
     let macdHtml='<span class="macd-badge macd-neu">N/A</span>';
     if(d.macdBull!==null){
       const cls=d.macdBull?'macd-bull':'macd-bear';
       const lbl=d.macdBull?'▲ Bull':'▼ Bear';
       const cross=d.macdCross?'✦ ':'';
-      macdHtml=`<span class="macd-badge ${cls}" title="Histogram: ${d.macdHist!=null?d.macdHist.toFixed(2):'—'}">${cross}${lbl}</span>`;
+      macdHtml=`<span class="macd-badge ${cls}" title="Hist: ${d.macdHist!=null?d.macdHist.toFixed(2):'—'}">${cross}${lbl}</span>`;
     }
-
-    // Bull/bear bar
-    const bTotal=d.bull+d.bear||1;
-    const bPct=Math.round(d.bull/bTotal*100);
-    const bullCls=d.bull>d.bear?'up':d.bull<d.bear?'dn':'nu';
-
+    // Ticker meta badges
+    const papanBadge=d.papan?`<span class="badge-papan">${d.papan}</span>`:'';
+    const idxBadges=(d.indeks||[]).filter(x=>x!=='ISSI').map(x=>`<span class="badge-idx">${x}</span>`).join('');
+    const metaRow=(papanBadge||idxBadges)?`<div class="c-meta">${papanBadge}${idxBadges}</div>`:'';
     // ADR
     const adrCls=d.adrPct!=null?(d.adrPct>4?'up':d.adrPct<1.5?'nu':''):'';
-
     const pU=d.pct>=0;
 
     return`<tr>
-<td class="c-no">${i+1}</td>
-<td>
+<td class="col-sticky">
   <div class="c-tk"><a href="${tvUrl}" target="_blank" rel="noopener">${d.ticker}</a></div>
   <div class="c-co" title="${d.company||''}">${d.company||'—'}</div>
+  ${metaRow}
 </td>
 <td class="bd-price c-num lg">${_price(d.price)}</td>
 <td class="bd-price c-num ${pU?'up':'dn'}">${_pct(d.pct)}</td>
 <td class="bd-price c-num" style="color:var(--accent)">${_fmt(d.pct1today)}</td>
 <td class="bd-ma"><div class="pips">${maPips}</div></td>
-<td class="bd-ma">
-  <div class="gauge">
-    <div class="g-track"><div class="g-fill" style="width:${bPct}%;background:var(--green)"></div></div>
-    <span class="g-val ${bullCls}">${d.bull}↑ ${d.bear}↓</span>
-  </div>
-</td>
-<td class="bd-vol"><div class="pips">${vPips}</div></td>
-<td class="bd-vol c-num">${_fmt(d.lastValue)}</td>
+<td class="bd-ma"><div class="pips">${vPips}</div></td>
 <td class="bd-osc">
   <div class="gauge">
     <div class="g-track"><div class="g-fill" style="width:${rP}%;background:${rCv}"></div></div>
@@ -831,28 +1817,16 @@ function renderT(){
   }).join('');
 }
 
-/* ═══════════════════════════════════════════════
+/* ══════════════════════════════════════════════
    UTILS
-═══════════════════════════════════════════════ */
-function setDot(s){
-  const d=document.getElementById('sDot');
-  d.className='dot';
-  if(s==='ok')d.classList.add('ok');
-  if(s==='spin')d.classList.add('spin');
-}
-function _ago(ts){
-  const d=Date.now()-ts, h=Math.floor(d/3600000), m=Math.floor((d%3600000)/60000);
-  if(h>=24)return Math.floor(h/24)+'h lalu';
-  if(h>0)return h+'j '+m+'m lalu';
-  return m+'m lalu';
-}
+══════════════════════════════════════════════ */
+function setDot(s){const d=document.getElementById('sDot');d.className='dot';if(s==='ok')d.classList.add('ok');if(s==='spin')d.classList.add('spin')}
+function _ago(ts){const d=Date.now()-ts,h=Math.floor(d/3600000),m=Math.floor((d%3600000)/60000);if(h>=24)return Math.floor(h/24)+'h lalu';if(h>0)return h+'j '+m+'m lalu';return m+'m lalu'}
 function toast(m,t='in'){
-  const el=document.createElement('div');
-  el.className=`toast ${t}`;
-  el.textContent=m;
+  const el=document.createElement('div');el.className=`toast ${t}`;el.textContent=m;
   document.getElementById('toasts').appendChild(el);
   requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));
-  setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),350)},3200);
+  setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),300)},3000);
 }
 </script>
 </body>
