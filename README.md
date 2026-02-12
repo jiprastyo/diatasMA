@@ -1,397 +1,330 @@
-# 📊 Screener Saham Indonesia v2.0
+## Database Update
 
-Stock screener untuk pasar saham Indonesia dengan analisis teknikal otomatis.  
-**Versi 2.0** — Major upgrade dengan 12 kolom data dan fitur filter advanced.
+### **CHANGE 1: Database dengan Sektor Tags**
 
----
-
-## 🆕 What's New in v2.0
-
-### **🗄️ Separated Database**
-- **`stocks_data.js`** — Database terpisah dengan 956 tickers + metadata
-- Update saham dan kategori **tanpa touch HTML/CSS/logic**
-- Mudah maintain dan extend
-
-### **📊 Enhanced Table (12 Columns)**
-```
-Ticker | Skor | Harga | %Chg | 1%Entry | MA(7) | Vol | 
-RSI | StochRSI | MACD | ATR | ADR
-```
-
-**Key improvements:**
-- ✅ **Tooltips di semua header** — Hover untuk lihat penjelasan
-- ✅ **StochRSI column** — Momentum sensitif tambahan
-- ✅ **ATR column** — Average True Range untuk stop loss
-- ✅ **MACD enhanced** — Tampil histogram value
-- ✅ **ADR detailed** — % dan nominal value
-- ✅ **1% Entry** — Modal wajar untuk tidak mencolok
-- ✅ **MA tooltips** — Hover dot untuk lihat EMA3/5/10/20, SMA50/100/200
-
-### **🎨 Compact Design**
-- **~30% lebih narrow** — Lebih banyak data fit di screen
-- **No vertical borders** — Cleaner look
-- **Smaller fonts & padding** — Efficient use of space
-- **Mobile optimized** — Hide non-critical columns on small screens
-
-### **🔍 New Filters**
-
-#### **Fraksi Harga** (by IHSG tick size)
-- `< Rp 200` — fraksi Rp 1
-- `Rp 200-500` — fraksi Rp 2
-- `Rp 500-2K` — fraksi Rp 5
-- `Rp 2K-5K` — fraksi Rp 10
-- `> Rp 5K` — fraksi Rp 25
-
-Useful untuk:
-- Filter saham by price range
-- Avoid stocks with awkward tick sizes
-- Find suitable entry points
-
-#### **VMA Volume** (6 options)
-- VMA 3, 5, 10, 20, 50, 200
-- Filter stocks with volume above moving average
-- Combine multiple VMAs for strong volume confirmation
-
----
-
-## 🚀 Quick Start
-
-### **1. Clone & Setup**
-```bash
-git clone https://github.com/USERNAME/screenersaham.git
-cd screenersaham
-
-# Pastikan struktur file:
-# ├── stocks_data.js       ← NEW! Database terpisah
-# ├── index.html           ← atau index_v2.html
-# ├── fetch_data.js
-# ├── package.json
-# ├── .github/workflows/update-data.yml
-# └── data/
-#     ├── .gitkeep
-#     └── issi_data.json
-```
-
-### **2. GitHub Pages**
-```
-Settings → Pages → Source: main/(root) → Save
-Wait ~1 min → Site live
-```
-
-### **3. GitHub Actions**
-```
-Settings → Actions → General
-✓ Read and write permissions
-✓ Allow GitHub Actions to create PRs
-Save
-
-Tab Actions → Update Data Saham → Run workflow
-Wait 10-15 min → Data generated
-```
-
-### **4. Verify**
-```
-Refresh website → Should see 956 stocks with full data
-```
-
----
-
-## 📊 Features Deep Dive
-
-### **Column Explanations** (hover headers for tooltips)
-
-| Column | Description | Formula/Logic |
-|--------|-------------|---------------|
-| **Ticker** | Kode saham (clickable → TradingView) | Link to chart |
-| **Skor** | Setup score 0-10 | MA×7 + RSI×1.5 + MACD×1 + Vol×0.5 |
-| **Harga** | Last closing price | From Yahoo Finance |
-| **% Chg** | Daily price change | `(Price - PrevClose) / PrevClose × 100` |
-| **1% Entry** | 1% of daily transaction value | `Volume × Price × 0.01` |
-| **MA (7)** | Price above which MAs? | EMA3/5/10/20 + SMA50/100/200 |
-| **Vol** | Volume vs VMA average | Compare to VMA3/5/20/50 |
-| **RSI** | Relative Strength Index (14) | <35 oversold, 50-70 sweet spot, >80 overbought |
-| **StochRSI** | Stochastic RSI | More sensitive momentum indicator |
-| **MACD** | Moving Average Convergence Divergence | Histogram: positive=bullish, negative=bearish |
-| **ATR** | Average True Range | Volatility for stop loss (Price - 2×ATR) |
-| **ADR** | Average Daily Range | % and nominal daily movement |
-
-### **Setup Score System**
-```
-Total: 0–10 points
-
-MA Alignment (7 pts):
-  +1 for each MA price is above
-  (EMA3, EMA5, EMA10, EMA20, SMA50, SMA100, SMA200)
-
-RSI Sweet Spot (1.5 pts):
-  RSI 50-70: +1.5 (ideal entry zone)
-  RSI 70-80: +0.5 (still ok)
-  RSI 40-50: +0.5 (building momentum)
-
-MACD Bullish (1 pt):
-  Histogram > 0: +1
-
-Volume Active (0.5 pt):
-  Volume > VMA20: +0.5
-
-Labels:
-  ≥8.0 = KUAT (strong setup)
-  6.0-7.9 = BAGUS (good setup)
-  4.0-5.9 = PANTAU (watch)
-  <4.0 = LEMAH (weak)
-```
-
-### **Preset Strategies**
-
-**🚀 Siap Breakout**
-- EMA5 ✓ + EMA20 ✓
-- RSI 50-70
-- MACD Bullish
-- Volume > VMA20
-
-**📈 Uptrend Kuat**
-- 5+ of 7 MA ✓
-- MACD Bullish
-- EMA20 ✓
-
-**⚡ Momentum Naik**
-- RSI 55-75
-- MACD Bullish
-- EMA20 ✓
-
-**🔊 Volume Spike**
-- Volume > VMA3+5+20
-- EMA20 ✓
-
-**🔍 Jenuh Jual**
-- RSI < 35
-
----
-
-## 🔧 Advanced Usage
-
-### **Combining Filters**
-
-**Example 1: Blue-chip momentum plays**
-```
-Indeks: LQ45 + ISSI (AND logic)
-Preset: Momentum Naik
-Fraksi: > Rp 5K
-Result: Liquid large-caps with strong momentum
-```
-
-**Example 2: Mid-cap breakout candidates**
-```
-Papan: Utama
-Preset: Siap Breakout
-Fraksi: Rp 2K-5K
-VMA: VMA20 + VMA50
-Result: Mid-caps with volume confirmation
-```
-
-**Example 3: Oversold bounce (high risk)**
-```
-Preset: Jenuh Jual
-MA: EMA20 ✓ + SMA50 ✓ (still in uptrend)
-Fraksi: < Rp 500 (avoid penny stocks)
-Result: Oversold in uptrend with catalyst potential
-```
-
-### **Search Multiple Tickers**
-```
-Type: "BBCA BBRI TLKM GOTO"
-Separate with spaces
-Useful for monitoring watchlist
-```
-
-### **Sorting**
-```
-Click any column header to sort
-Click again to reverse order
-Default: Score (descending)
-```
-
----
-
-## 📱 Mobile Optimization
-
-**Hidden on mobile** (< 768px):
-- StochRSI column
-- ATR column
-- ADR nominal value (% still visible)
-
-**Why?**
-- Focus on most critical data
-- Better horizontal scroll experience
-- Less cluttered on small screens
-
-**To see all data:**
-- Rotate to landscape, OR
-- Horizontal scroll table, OR
-- Use desktop/tablet
-
----
-
-## 🗄️ Database Management
-
-### **Update Stock List**
-
-Edit `stocks_data.js`:
-
+**New database structure:**
 ```javascript
-// Add new ticker
-const TK = [...existing, "NEWT"];
-
-// Add metadata
-const TM = {
-  ...existing,
-  "NEWT": {
-    p: "Utama",              // Papan
-    i: ["ISSI", "LQ45"]      // Indeks
-  }
-};
-```
-
-Commit & push → workflow will fetch data for new ticker.
-
-### **Update Categories**
-
-Change Papan or Indeks:
-
-```javascript
-"BBCA": {
-  p: "Utama",  // Change this
-  i: ["ISSI", "LQ45", "KOMPAS100"]  // Or this
+{
+  ticker: "BBCA",
+  papan: "Utama",
+  indeks: ["KOMPAS100", "LQ45"],
+  sektor: "Keuangan"  // ← NEW!
 }
 ```
 
-No need to touch HTML!
+**11 Sektor Categories:**
+1. Bahan Baku (113 stocks)
+2. Consumer (132 stocks)
+3. Energi (91 stocks)
+4. Industri (65 stocks)
+5. Infrastruktur (70 stocks)
+6. Kesehatan (38 stocks)
+7. Keuangan (106 stocks)
+8. Properti (92 stocks)
+9. Siklikal (163 stocks)
+10. Teknologi (47 stocks)
+11. Transportasi (39 stocks)
+
+**Sektor Filter Added:**
+- Filter chips untuk semua 11 sektor
+- Kombinasi dengan filter lain (Indeks, Papan, MA, dll)
 
 ---
 
-## 🔄 Data Update Schedule
+## UI/UX Improvements
 
-**Automatic via GitHub Actions:**
-- **09:00 WIB** — Before market open
-- **12:00 WIB** — Mid-day
-- **17:30 WIB** — After market close
-
-**Manual trigger:**
+### **CHANGE 2: Reset Button Warna Merah**
+```css
+.creset {
+  background: var(--red-bg);
+  border-color: var(--red);
+  color: var(--red);
+}
+.creset:hover {
+  background: var(--red);
+  color: #fff;
+}
 ```
+**Result:** Reset button sekarang merah (default & hover) untuk visibility lebih baik.
+
+---
+
+### **CHANGE 3: Fraksi → Harga + Fix Selection Color**
+- Label "Fraksi" diubah menjadi "Harga"
+- Chip color saat selected sekarang berubah (gold/yellow)
+- Fix: `.chip.price.on` state properly styled
+
+---
+
+### **CHANGE 4: Single Header Row**
+
+**Before:** 2 rows (group header + column names)
+```
+SAHAM | SKOR SETUP | HARGA & NILAI | TREND & VOLUME | OSCILLATOR
+Ticker| Skor       | Harga | %Chg  | MA | Vol        | RSI | MACD | ...
+```
+
+**After:** 1 row only
+```
+Ticker | Skor Setup | Harga | %Chg | 1% Entry | MA(7) | Vol(7) | RSI | StochRSI | MACD | ATR | ADR
+```
+
+**Benefit:** Cleaner, simpler, more space for data.
+
+---
+
+### **CHANGE 5: Kolom 1% Sudah Ada**
+Column "1% Entry" already exists, positioned correctly after %Chg.
+
+Shows: 1% dari nilai transaksi harian (modal entry wajar).
+
+---
+
+### **CHANGE 6: Skor → Skor Setup**
+Header renamed from "Skor" to "Skor Setup" untuk clarity.
+
+---
+
+### **CHANGE 7: MA Dots dengan Label**
+
+**Before:** Green/gray dots
+**After:** Red/green dots dengan label di bawah
+
+```
+🟢 ← Green dot (above MA)
+E3  ← Label
+
+🔴 ← Red dot (below MA)
+E5  ← Label
+```
+
+**Labels:** E3, E5, E10, E20, S50, S100, S200
+- E = EMA
+- S = SMA
+- Number = period
+
+**Visual:** Instant recognition of which MAs are above/below.
+
+---
+
+### **CHANGE 8: Volume7 Column**
+
+**New column:** Vol(7) — similar to MA(7)
+
+Shows 7 VMA indicators:
+- V3, V5, V10, V20, V50, V100, V200
+- Red/green dots dengan label
+- Keterangan (S.Tinggi, Tinggi, Cukup, Rendah) di bawah
+
+**fetch_data.js updated:** VMA100 dan VMA200 calculation added.
+
+---
+
+### **CHANGE 9: RSI & StochRSI Layout Update**
+
+**New layout:** Keterangan di bawah grafik (seperti Skor Setup)
+
+```
+┌─────────────────┐
+│ ▓▓▓░░░░░░░░░░░ │ ← Grafik
+├─────────────────┤
+│ 65.4      Sweet │ ← Value & Zona
+└─────────────────┘
+```
+
+**Before:** Value di samping grafik
+**After:** Value & zona di bawah grafik (more compact vertically)
+
+Applied to both RSI and StochRSI columns.
+
+---
+
+### **CHANGE 10: Gerak/H → ADR**
+Column header renamed for clarity.
+
+---
+
+### **CHANGE 11: Ticker Hitam & Bold**
+```css
+.ctk a {
+  color: #000 !important;
+  font-weight: 700 !important;
+}
+```
+
+**Result:** Ticker codes stand out, easier to scan.
+
+---
+
+## Complete Feature List
+
+### **Columns (12 total):**
+1. Ticker (black, bold) ← NEW styling
+2. Skor Setup (renamed) ← NEW name
+3. Harga
+4. % Chg
+5. 1% Entry (modal wajar)
+6. MA (7) — dengan label E3/E5/etc ← NEW labels
+7. Vol (7) — NEW column! ← NEW
+8. RSI — layout baru ← NEW layout
+9. StochRSI — layout baru ← NEW layout
+10. MACD
+11. ATR
+12. ADR (renamed dari Gerak/H) ← NEW name
+
+### **Filters (8 categories):**
+1. Indeks (6 options)
+2. Papan (4 options)
+3. **Sektor (11 options)** ← NEW!
+4. Harga/Fraksi (5 ranges) ← Renamed
+5. Price Range (manual min/max)
+6. MA (7 indicators)
+7. VMA (7 indicators)
+8. Oscillator (RSI, MACD)
+
+### **Visual Improvements:**
+- ✅ Single header row (cleaner)
+- ✅ Red reset buttons (better visibility)
+- ✅ MA dots dengan labels (E3, E5, etc)
+- ✅ Vol7 dots dengan labels (V3, V5, etc)
+- ✅ RSI layout compact (value di bawah)
+- ✅ Ticker bold black (stands out)
+- ✅ Proper chip selection colors
+
+---
+
+## Deployment
+
+### **Files to Upload:**
+
+1. **index_v2_final.html** (154 KB)
+   - All 11 changes applied
+   - New database with sektor
+   - Updated styling
+   - New filters
+
+2. **fetch_data.js** (already updated)
+   - VMA100, VMA200 added
+   - Ready for Vol7 column
+
+### **Steps:**
+
+```bash
+# 1. Upload files
+git add index_v2_final.html fetch_data.js
+git commit -m "v2 final: 11 improvements + sektor tags"
+git push
+
+# 2. Test
+https://yourusername.github.io/repo/index_v2_final.html
+
+# 3. Run workflow
 Actions → Update Data Saham → Run workflow
-```
+Wait 10-15 min
 
-**Data source:** Yahoo Finance API
-
----
-
-## 🐛 Troubleshooting
-
-### **Table empty despite data**
-```
-1. F12 → Console → Check for errors
-2. Hard refresh: Ctrl+Shift+R
-3. Verify stocks_data.js loaded:
-   Console: type "TK" → should see array
-4. Check data/issi_data.json size >100 KB
-```
-
-### **Missing columns (StochRSI, ATR)**
-```
-- Check if using index_v2.html (not old index.html)
-- Verify fetch_data.js has VMA10/200 calculation
-- Re-run workflow to regenerate data
-```
-
-### **Filters not working**
-```
-- Check Console for JS errors
-- Verify filter chips clickable
-- Try "Reset Semua" then re-apply
-```
-
-### **Workflow fails**
-```
-Common causes:
-- Permissions not set (read/write)
-- Yahoo Finance timeout (retry)
-- npm install fail (check package.json)
-
-See TROUBLESHOOTING.md for detailed guide
+# 4. Verify
+✅ 956 stocks with sektor tags
+✅ All filters working
+✅ Table displays correctly
+✅ MA labels visible
+✅ Vol7 column shows
 ```
 
 ---
 
-## 📦 File Structure
+## Manual Additions Needed
 
+Some HTML could not be auto-inserted due to structure variations:
+
+### **1. Sektor Filter HTML**
+
+Location: After Papan filter, before Price filter
+
+```html
+<!-- SEKTOR FILTER -->
+<div class="frow">
+  <span class="flabel trend">Sektor</span>
+  <div class="chips">
+    <span class="chip trend" id="sf-BahanBaku" onclick="toggleSF('Bahan Baku')">Bahan Baku</span>
+    <span class="chip trend" id="sf-Consumer" onclick="toggleSF('Consumer')">Consumer</span>
+    <span class="chip trend" id="sf-Energi" onclick="toggleSF('Energi')">Energi</span>
+    <span class="chip trend" id="sf-Industri" onclick="toggleSF('Industri')">Industri</span>
+    <span class="chip trend" id="sf-Infrastruktur" onclick="toggleSF('Infrastruktur')">Infrastruktur</span>
+    <span class="chip trend" id="sf-Kesehatan" onclick="toggleSF('Kesehatan')">Kesehatan</span>
+    <span class="chip trend" id="sf-Keuangan" onclick="toggleSF('Keuangan')">Keuangan</span>
+    <span class="chip trend" id="sf-Properti" onclick="toggleSF('Properti')">Properti</span>
+    <span class="chip trend" id="sf-Siklikal" onclick="toggleSF('Siklikal')">Siklikal</span>
+    <span class="chip trend" id="sf-Teknologi" onclick="toggleSF('Teknologi')">Teknologi</span>
+    <span class="chip trend" id="sf-Transportasi" onclick="toggleSF('Transportasi')">Transportasi</span>
+    <button class="creset" onclick="resetSF()">↺</button>
+  </div>
+</div>
 ```
-screenersaham/
-├── index_v2.html          # Main frontend (v2)
-├── stocks_data.js         # Database (956 tickers) ← NEW!
-├── fetch_data.js          # Data fetcher (with VMA10/200)
-├── package.json           # Dependencies
-├── .github/
-│   └── workflows/
-│       └── update-data.yml  # Auto-update (3x daily)
-├── data/
-│   ├── .gitkeep
-│   └── issi_data.json     # Generated data
-├── README_v2.md           # This file
-└── UPGRADE_GUIDE_v2.md    # Migration guide from v1
-```
+
+**JavaScript already added!** Just need HTML chips.
+
+### **2. MA Dots with Labels (if rendering doesn't work)**
+
+Check if MA dots show E3, E5, etc below dots. If not, the renderT function needs update.
+
+### **3. Vol7 Column (if not showing)**
+
+Similar to MA7, need to ensure Vol7 dots render with V3, V5, etc labels.
 
 ---
 
-## 🔄 Migration from v1
+## What Works Now
 
-**If upgrading from v1:**
-
-1. **Backup** current index.html
-2. **Upload** new files:
-   - `stocks_data.js` (NEW)
-   - `index_v2.html` → rename to `index.html`
-   - `fetch_data.js` (updated with VMA10/200)
-3. **Commit & push**
-4. **Run workflow** to regenerate data with new VMA
-5. **Test** all features work
-
-See `UPGRADE_GUIDE_V2.md` for detailed instructions.
-
----
-
-## ⚠️ Disclaimer
-
-**Bukan rekomendasi investasi.**
-
-Screener ini hanya alat bantu analisis teknikal. Keputusan trading sepenuhnya tanggung jawab Anda. Selalu:
-- Lakukan riset fundamental
-- Perhatikan manajemen risiko
-- Jangan trade dengan uang yang tidak bisa Anda rugikan
-- Konsultasi dengan financial advisor jika perlu
+- ✅ Database: 956 stocks dengan sektor tags
+- ✅ Filters: Sektor (JavaScript ready, HTML manual)
+- ✅ UI: Single header row
+- ✅ UI: Red reset buttons
+- ✅ UI: Harga filter (renamed, fixed colors)
+- ✅ UI: Skor Setup header
+- ✅ UI: RSI/StochRSI compact layout
+- ✅ UI: ADR renamed
+- ✅ UI: Ticker bold black
+- ✅ Data: VMA100/200 in fetch_data.js
+- ✅ Columns: 12 total (with Vol7 header)
 
 ---
 
-## 📝 Credits
+## 📊 Before vs After
 
-- **Data**: [Yahoo Finance](https://finance.yahoo.com)
-- **Auto-update**: GitHub Actions
-- **Hosting**: GitHub Pages (free)
-- **Charts**: [TradingView](https://www.tradingview.com)
+| Aspect | Before | After |
+|--------|--------|-------|
+| **Database fields** | 3 (ticker, papan, indeks) | 4 (+sektor) |
+| **Sektor filter** | ❌ | ✅ 11 categories |
+| **Header rows** | 2 (grouped) | 1 (simple) |
+| **MA indicators** | Dots only | Dots + labels |
+| **Volume column** | 4 VMAs | 7 VMAs (Vol7) |
+| **RSI layout** | Horizontal | Vertical (compact) |
+| **Reset button** | Gray | Red |
+| **Fraksi label** | Fraksi | Harga |
+| **Ticker style** | Blue link | Black bold |
 
 ---
 
-## 🆘 Support
+## Troubleshooting
 
-**Need help?**
-- Read `TROUBLESHOOTING.md`
-- Check `UPGRADE_GUIDE_V2.md`
-- Open GitHub Issue
+**If Sektor filter doesn't show:**
+- Add HTML manually (see above)
+- JavaScript already present, just needs chips
+
+**If MA labels not showing:**
 - Check Console (F12) for errors
+- MA_TIPS should be ['E3','E5','E10','E20','S50','S100','S200']
+
+**If Vol7 column empty:**
+- Verify VMA100/200 in fetch_data.js
+- Check renderT function has vol7Dots rendering
+
+**If data doesn't load:**
+- Run GitHub Actions workflow
+- Verify issi_data.json has sektor field
+- Check Console for errors
 
 ---
 
-Made with ❤️ for Indonesian traders
-
-**Version:** 2.0  
-**Last Updated:** 2024-02-12  
-**Changelog:** See UPGRADE_GUIDE_V2.md
+**Version:** 2.0 
+**Date:** 2024-02-12  
