@@ -631,7 +631,21 @@ thead th { padding: 0.38rem 0.45rem; }
         <button class="creset" onclick="resetMF()">↺</button>
       </div>
     </div>
-
+     
+<!-- VMA VOLUME FILTER -->
+<div class="frow">
+  <span class="flabel vol">VMA</span>
+  <div class="chips">
+    <span class="chip vol" id="vf-vma3" onclick="toggleVF('vma3')">VMA3</span>
+    <span class="chip vol" id="vf-vma5" onclick="toggleVF('vma5')">VMA5</span>
+    <span class="chip vol" id="vf-vma10" onclick="toggleVF('vma10')">VMA10</span>
+    <span class="chip vol" id="vf-vma20" onclick="toggleVF('vma20')">VMA20</span>
+    <span class="chip vol" id="vf-vma50" onclick="toggleVF('vma50')">VMA50</span>
+    <span class="chip vol" id="vf-vma200" onclick="toggleVF('vma200')">VMA200</span>
+    <button class="creset" onclick="resetVF()">↺</button>
+  </div>
+</div>
+     
     <!-- ROW 5: OSCILLATOR FILTER (power user) -->
     <div class="frow" style="border-bottom:none">
       <span class="flabel osc">Osilator</span>
