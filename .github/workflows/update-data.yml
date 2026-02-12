@@ -1,39 +1,27 @@
 name: Update Data Saham
-
 on:
   schedule:
-    # 09:00 WIB = 02:00 UTC — awal sesi 1
-    - cron: '0 2 * * 1-5'
-    # 12:00 WIB = 05:00 UTC — jeda sesi
-    - cron: '0 5 * * 1-5'
-    # 17:30 WIB = 10:30 UTC — post-closing
-    - cron: '30 10 * * 1-5'
+    - cron: '0 2 * * *'    # 09:00 WIB (02:00 UTC)
+    - cron: '0 5 * * *'    # 12:00 WIB (05:00 UTC)
+    - cron: '0 10 * * *'   # 17:30 WIB (10:30 UTC)
   workflow_dispatch:
 
 jobs:
-  fetch-data:
+  update:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
-
-      - name: Install dependencies
-        run: npm install node-fetch@3
-
-      - name: Fetch data saham
-        run: node fetch_data.js
-
-      - name: Commit & push
+      - run: npm install node-fetch@3
+      - run: node fetch_data.js
+      - name: Commit
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
           git add data/issi_data.json
-          git diff --staged --quiet || git commit -m "data: update $(TZ='Asia/Jakarta' date +'%Y-%m-%d %H:%M WIB')"
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update data $(TZ=Asia/Jakarta date '+%Y-%m-%d %H:%M WIB')"
           git push
