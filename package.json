@@ -1,7 +1,7 @@
 {
   "name": "screenersaham",
   "version": "1.0.0",
-  "description": "Screener Saham Indonesia",
+  "description": "Skriner",
   "type": "module",
   "scripts": {
     "fetch": "node fetch_data.js"
