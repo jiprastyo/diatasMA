@@ -618,25 +618,6 @@ thead th { padding: 0.38rem 0.45rem; }
       </div>
     </div>
 
-    <!-- SEKTOR FILTER -->
-    <div class="frow">
-      <span class="flabel trend">Sektor</span>
-      <div class="chips">
-        <span class="chip trend" id="sf-BahanBaku" onclick="toggleSF('Bahan Baku')">Bahan Baku</span>
-        <span class="chip trend" id="sf-Consumer" onclick="toggleSF('Consumer')">Consumer</span>
-        <span class="chip trend" id="sf-Energi" onclick="toggleSF('Energi')">Energi</span>
-        <span class="chip trend" id="sf-Industri" onclick="toggleSF('Industri')">Industri</span>
-        <span class="chip trend" id="sf-Infrastruktur" onclick="toggleSF('Infrastruktur')">Infrastruktur</span>
-        <span class="chip trend" id="sf-Kesehatan" onclick="toggleSF('Kesehatan')">Kesehatan</span>
-        <span class="chip trend" id="sf-Keuangan" onclick="toggleSF('Keuangan')">Keuangan</span>
-        <span class="chip trend" id="sf-Properti" onclick="toggleSF('Properti')">Properti</span>
-        <span class="chip trend" id="sf-Siklikal" onclick="toggleSF('Siklikal')">Siklikal</span>
-        <span class="chip trend" id="sf-Teknologi" onclick="toggleSF('Teknologi')">Teknologi</span>
-        <span class="chip trend" id="sf-Transportasi" onclick="toggleSF('Transportasi')">Transportasi</span>
-        <button class="creset" onclick="resetSF()">↺</button>
-      </div>
-    </div>
-     
     <!-- ROW 4: MA FILTER (power user) -->
     
     <!-- FRAKSI PRICE FILTER -->
@@ -700,7 +681,7 @@ thead th { padding: 0.38rem 0.45rem; }
             <th onclick="sortBy('score')" title="Skor setup 0–10: MA×7 + RSI×1.5 + MACD×1 + Vol×0.5">Skor Setup</th>
             <th onclick="sortBy('price')" title="Harga penutupan terakhir">Harga</th>
             <th onclick="sortBy('pct')" title="Perubahan harga hari ini (%)">% Chg</th>
-            <th onclick="sortBy('pct1today')" title="1% dari nilai transaksi harian">1% Entry</th>
+            <th onclick="sortBy('pct1today')" title="1% dari nilai transaksi hari ini untuk entry position">1% Transaksi Harian</th>
             <th class="nc" title="Harga di atas MA mana? (E3/E5/E10/E20, S50/S100/S200)">MA (7)</th>
             <th class="nc" title="Volume hari ini vs VMA (V3/V5/V10/V20/V50/V100/V200)">Vol (7)</th>
             <th onclick="sortBy('rsi')" title="RSI(14): <35 jenuh jual, 50-70 sweet spot, >80 jenuh beli">RSI</th>
@@ -7165,7 +7146,7 @@ function _enrich(data){
   return data.map(d=>{
     const tm=TM[d.ticker]||{};
     const score=calcScore(d);
-    return {...d, papan:tm.p||d.papan||'',indeks:tm.i||d.indeks||[],score};
+    return {...d, papan:tm.p||d.papan||'',indeks:tm.i||d.indeks||[],sektor:tm.s||'',score};
   });
 }
 
@@ -7586,11 +7567,14 @@ function renderT(){
 </td>
 <td class="bd-price">
   <div class="price-cell">
-    <div class="cnum lg">${_price(d.price)}</div>
+    <div class="cnum lg">\${_price(d.price)}</div>
   </div>
 </td>
 <td class="bd-price">
-  <span class="pct-badge ${pU?'up':d.pct===0?'nu':'dn'}">${_pct(d.pct)}</span>
+  <span class="pct-badge \${pU?'up':d.pct===0?'nu':'dn'}">\${_pct(d.pct)}</span>
+</td>
+<td class="bd-price">
+  <div class="cnum">\${_fmt(d.pct1today)}</div>
 </td>
 <td class="bd-trend">
   <div class="ma-dots">
