@@ -618,24 +618,6 @@ thead th { padding: 0.38rem 0.45rem; }
       </div>
     </div>
 
-    <!-- SEKTOR FILTER -->
-    <div class="frow">
-      <span class="flabel trend">Sektor</span>
-      <div class="chips">
-        <span class="chip trend" id="sf-BahanBaku" onclick="toggleSF('Bahan Baku')">Bahan Baku</span>
-        <span class="chip trend" id="sf-Consumer" onclick="toggleSF('Consumer')">Consumer</span>
-        <span class="chip trend" id="sf-Energi" onclick="toggleSF('Energi')">Energi</span>
-        <span class="chip trend" id="sf-Industri" onclick="toggleSF('Industri')">Industri</span>
-        <span class="chip trend" id="sf-Infrastruktur" onclick="toggleSF('Infrastruktur')">Infrastruktur</span>
-        <span class="chip trend" id="sf-Kesehatan" onclick="toggleSF('Kesehatan')">Kesehatan</span>
-        <span class="chip trend" id="sf-Keuangan" onclick="toggleSF('Keuangan')">Keuangan</span>
-        <span class="chip trend" id="sf-Properti" onclick="toggleSF('Properti')">Properti</span>
-        <span class="chip trend" id="sf-Siklikal" onclick="toggleSF('Siklikal')">Siklikal</span>
-        <span class="chip trend" id="sf-Teknologi" onclick="toggleSF('Teknologi')">Teknologi</span>
-        <span class="chip trend" id="sf-Transportasi" onclick="toggleSF('Transportasi')">Transportasi</span>
-        <button class="creset" onclick="resetSF()">↺</button>
-      </div>
-    </div>     
     <!-- ROW 4: MA FILTER (power user) -->
     
     <!-- FRAKSI PRICE FILTER -->
@@ -7585,14 +7567,14 @@ function renderT(){
 </td>
 <td class="bd-price">
   <div class="price-cell">
-    <div class="cnum lg">\${_price(d.price)}</div>
+    <div class="cnum lg">${_price(d.price)}</div>
   </div>
 </td>
 <td class="bd-price">
-  <span class="pct-badge \${pU?'up':d.pct===0?'nu':'dn'}">\${_pct(d.pct)}</span>
+  <span class="pct-badge ${pU?'up':d.pct===0?'nu':'dn'}">${_pct(d.pct)}</span>
 </td>
 <td class="bd-price">
-  <div class="cnum">\${_fmt(d.pct1today)}</div>
+  <div class="cnum">${_fmt(d.pct1today)}</div>
 </td>
 <td class="bd-trend">
   <div class="ma-dots">
@@ -7608,19 +7590,19 @@ function renderT(){
 </td>
 <td class="bd-osc">
   <div class="rsi-wrap" style="flex-direction:column;gap:2px">
-    <div class="rsi-track"><div class="rsi-fill" style="width:\${rP}%;background:\${rCv}"></div></div>
+    <div class="rsi-track"><div class="rsi-fill" style="width:${rP}%;background:${rCv}"></div></div>
     <div style="display:flex;justify-content:space-between;width:100%">
-      <span class="rsi-val" style="color:\${rCv}">\${_dec(d.rsi)}</span>
-      <span class="rsi-zone-label" style="color:\${rCv};font-size:0.58rem">\${rZone}</span>
+      <span class="rsi-val" style="color:${rCv}">${_dec(d.rsi)}</span>
+      <span class="rsi-zone-label" style="color:${rCv};font-size:0.58rem">${rZone}</span>
     </div>
   </div>
 </td>
 <td class="bd-osc hide-mobile">
   <div class="rsi-wrap" style="flex-direction:column;gap:2px">
-    <div class="rsi-track"><div class="rsi-fill" style="width:\${srsiP}%;background:\${srsiColor}"></div></div>
+    <div class="rsi-track"><div class="rsi-fill" style="width:${srsiP}%;background:${srsiColor}"></div></div>
     <div style="display:flex;justify-content:space-between;width:100%">
-      <span class="rsi-val" style="color:\${srsiColor}">\${_dec(d.stochRsi)}</span>
-      <span class="rsi-zone-label" style="color:\${srsiColor};font-size:0.58rem">\${srsiZone}</span>
+      <span class="rsi-val" style="color:${srsiColor}">${_dec(d.stochRsi)}</span>
+      <span class="rsi-zone-label" style="color:${srsiColor};font-size:0.58rem">${srsiZone}</span>
     </div>
   </div>
 </td>
