@@ -398,6 +398,9 @@ tbody td:first-child{padding-left:.9rem;text-align:left}
 .pct-badge.dn{background:var(--red-bg);color:var(--red)}
 .pct-badge.nu{background:var(--surface3);color:var(--text3)}
 
+/* ── STACKED CELLS (two indicators in one column) ── */
+.stacked-cell{display:flex;flex-direction:column;gap:4px}
+
 /* ── TREND CELL (MA squares with labels) ──── */
 .ma-squares{display:flex;gap:2px;justify-content:flex-end;align-items:center;flex-wrap:nowrap}
 .ma-sq{
@@ -418,19 +421,23 @@ tbody td:first-child{padding-left:.9rem;text-align:left}
   font-size:.5rem;font-weight:700;font-family:var(--mono);letter-spacing:-.01em;
   padding:0 .15rem;line-height:1;
 }
-.vol-sq.on{background:var(--blue-bg);color:var(--blue)}
+.vol-sq.on{background:var(--green-bg);color:var(--green)}
 .vol-sq.off{background:var(--red-bg);color:var(--red)}
 
-/* ── RSI / STOCHRSI CELL — proper column alignment ── */
-.osc-cell{
-  display:flex;flex-direction:column;align-items:center;gap:3px;
-  min-width:58px;
-}
-.osc-track{width:36px;height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;flex-shrink:0}
+/* ── RSI / STOCHRSI CELL — stacked layout ── */
+.osc-cell{display:flex;flex-direction:column;align-items:stretch;gap:2px}
+.osc-track{width:100%;height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;flex-shrink:0}
 .osc-fill{height:100%;border-radius:2px}
-.osc-row{display:flex;align-items:center;justify-content:center;gap:.25rem}
-.osc-val{font-family:var(--mono);font-size:.72rem;font-weight:600;text-align:center}
-.osc-zone{font-size:.56rem;font-weight:600;letter-spacing:.02em}
+.osc-row{display:flex;align-items:center;gap:.2rem}
+.osc-label{font-size:.5rem;font-weight:600;color:var(--text3);min-width:1.8rem}
+.osc-val{font-family:var(--mono);font-size:.68rem;font-weight:600}
+.osc-zone{font-size:.52rem;font-weight:700;letter-spacing:.02em}
+
+/* ── ATR / ADR STACKED ────────────────────── */
+.atr-row{display:flex;align-items:center;gap:.25rem;white-space:nowrap}
+.atr-label{font-size:.5rem;font-weight:600;color:var(--text3);min-width:1.6rem}
+.atr-val{font-family:var(--mono);font-size:.68rem;font-weight:600}
+.atr-sl{font-size:.54rem;color:var(--text3)}
 
 /* ── MACD CELL ─────────────────────────────── */
 .macd-b{
@@ -728,21 +735,18 @@ thead th { padding: 0.42rem 0.5rem; }
         <thead>
           <tr class="crow">
             <th class="nc csticky" title="Kode saham (klik untuk buka chart di TradingView)">Ticker</th>
-            <th onclick="sortBy('score')" title="Skor setup 0–10: MA×7 + RSI×1.5 + MACD×1 + Vol×0.5">Skor Setup</th>
+            <th onclick="sortBy('score')" title="Skor setup 0–10: MA×7 + RSI×1.5 + MACD×1 + Vol×0.5">Skor</th>
             <th onclick="sortBy('price')" title="Harga penutupan terakhir">Harga</th>
             <th onclick="sortBy('pct')" title="Perubahan harga hari ini (%)">% Chg</th>
-            <th onclick="sortBy('pct1today')" title="1% dari nilai transaksi hari ini untuk entry position">1% Transaksi Harian</th>
-            <th class="nc" title="Harga di atas MA mana? (E3/E5/E10/E20, S50/S100/S200)">MA (7)</th>
-            <th class="nc" title="Volume hari ini vs VMA (V3/V5/V10/V20/V50/V100/V200)">Vol (7)</th>
-            <th onclick="sortBy('rsi')" title="RSI(14): <35 jenuh jual, 50-70 sweet spot, >80 jenuh beli">RSI</th>
-            <th onclick="sortBy('stochRsi')" class="hide-mobile" title="Stochastic RSI: momentum sensitif">StochRSI</th>
+            <th onclick="sortBy('pct1today')" title="1% dari nilai transaksi hari ini">1% Transaksi</th>
+            <th class="nc" title="MA(7): Harga vs EMA/SMA — Vol(7): Volume vs VMA">MA / Vol</th>
+            <th onclick="sortBy('rsi')" title="RSI(14) dan Stochastic RSI">RSI / StochRSI</th>
             <th onclick="sortBy('macdHist')" title="MACD histogram">MACD</th>
-            <th onclick="sortBy('atrV')" title="Average True Range untuk stop loss">ATR</th>
-            <th onclick="sortBy('adrPct')" title="Average Daily Range: gerak harian rata-rata">ADR</th>
+            <th onclick="sortBy('atrV')" title="ATR (stop loss) dan ADR (range harian)">ATR / ADR</th>
           </tr>
         </thead>
         <tbody id="tBody">
-          <tr><td colspan="12"><div class="tempty"><div class="tempty-ico">📊</div><div class="tempty-txt">Memuat data…</div></div></td></tr>
+          <tr><td colspan="9"><div class="tempty"><div class="tempty-ico">📊</div><div class="tempty-txt">Memuat data…</div></div></td></tr>
         </tbody>
       </table>
     </div>
@@ -787,7 +791,7 @@ thead th { padding: 0.42rem 0.5rem; }
         <ul class="help-ul">
           <li><strong>MA (7):</strong> Jumlah MA yang price di atasnya. 7 titik hijau = bullish sempurna (price di atas semua MA). Semakin banyak hijau = trend semakin kuat.</li>
           <li><strong>Volume:</strong> Bar menunjukkan volume hari ini vs rata-rata (VMA3/5/20/50). <strong>Sangat Tinggi</strong> = semua 4 VMA terkalahkan (unusual activity) | <strong>Tinggi</strong> = 3 VMA | <strong>Cukup</strong> = 2 VMA | <strong>Rendah</strong> = 0–1 VMA.</li>
-          <li><strong>RSI:</strong> Relative Strength Index (14 periode). <strong>JS (Jenuh Jual, <20)</strong> = oversold extreme | <strong>OK (50–70)</strong> = sweet spot entry zone | <strong>OB (70–80)</strong> = overbought tapi masih bisa lanjut | <strong>JB (>80)</strong> = jenuh beli extreme.</li>
+          <li><strong>RSI:</strong> Relative Strength Index (14 periode). <strong>OS (Oversold, &lt;35)</strong> = jenuh jual | <strong>OK (50–70)</strong> = sweet spot entry zone | <strong>OB (Overbought, 70–80)</strong> = jenuh beli tapi masih bisa lanjut | <strong>OB (&gt;80)</strong> = overbought extreme.</li>
           <li><strong>MACD:</strong> ▲ Bull = histogram positif (momentum naik) | ▼ Bear = histogram negatif (momentum turun) | ✦ = baru saja crossing (fresh signal).</li>
           <li><strong>Gerak/H (ADR%):</strong> Average Daily Range % — rata-rata pergerakan harian dalam 14 hari terakhir. <strong>Aktif (≥5%)</strong> = volatil, banyak peluang | <strong>Normal (2.5–5%)</strong> | <strong>Lesu (<1.5%)</strong> = kurang gerak, susah profit.</li>
           <li><strong>1% Trx:</strong> 1% dari nilai transaksi hari terakhir (Volume × Price × 0.01). Berguna untuk estimasi modal minimal atau target profit 1%.</li>
@@ -813,7 +817,7 @@ thead th { padding: 0.42rem 0.5rem; }
 
       <div class="help-section">
         <div class="help-h">⚠️ Catatan Penting</div>
-        <div class="help-p"><strong>Data update 3x/hari:</strong> 09:00, 12:00, 17:30 WIB via GitHub Actions. Data diambil dari Yahoo Finance.</div>
+        <div class="help-p"><strong>Data update 3x/hari:</strong> 09:10, 12:10, 17:30 WIB via GitHub Actions. Data diambil dari Yahoo Finance.</div>
         <div class="help-p"><strong>Bukan rekomendasi investasi.</strong> Screener ini hanya alat bantu analisis teknikal. Keputusan trading sepenuhnya tanggung jawab Anda. Selalu lakukan riset fundamental, perhatikan manajemen risiko, dan jangan trade dengan uang yang tidak bisa Anda rugikan.</div>
       </div>
 
@@ -1365,7 +1369,7 @@ function _fraksiFloor(p){
   return rounded.toLocaleString('id-ID');
 }
 function _rsiColor(v){if(v==null)return'var(--text3)';if(v>80||v<20)return'var(--red)';if(v>=50&&v<=70)return'var(--green)';if(v>70)return'var(--amber)';if(v<35)return'var(--teal)';return'var(--text2)'}
-function _rsiZoneLabel(v){if(v==null)return'';if(v>80)return'JB';if(v>70)return'OB';if(v>=50&&v<=70)return'OK';if(v>=35)return'–';return'JS'}
+function _rsiZoneLabel(v){if(v==null)return'';if(v>80)return'OB';if(v>70)return'OB';if(v>=50&&v<=70)return'OK';if(v>=35)return'–';return'OS'}
 
 const MA_KEYS=['ema3','ema5','ema10','ema20','sma50','sma100','sma200'];
 const MA_LABELS=['E3','E5','E10','E20','S50','S1','S2'];
@@ -1382,7 +1386,7 @@ function renderT(){
   if(!tb){console.error('ERROR: tBody element not found!');return;}
   if(!DD){console.error('ERROR: DD is undefined!');DD=[];return;}
   if(!DD.length){
-    tb.innerHTML=`<tr><td colspan="12"><div class="tempty">
+    tb.innerHTML=`<tr><td colspan="9"><div class="tempty">
       <div class="tempty-ico">🔍</div>
       <div class="tempty-txt">Tidak ada saham yang cocok</div>
       <div class="tempty-sub">Coba longgarkan filter atau ganti preset</div>
@@ -1427,7 +1431,7 @@ function renderT(){
     const srsi=d.stochRsi;
     const srsiColor=srsi==null?'var(--text3)':srsi>80?'var(--red)':srsi<20?'var(--teal)':'var(--text2)';
     const srsiP=srsi!=null?Math.min(100,Math.max(0,srsi)):0;
-    const srsiZone=srsi==null?'':srsi>80?'JB':srsi<20?'JS':'';
+    const srsiZone=srsi==null?'':srsi>80?'OB':srsi<20?'OS':'';
 
     // MACD badge
     let macdHtml='<span class="macd-b macd-neu">—</span>';
@@ -1473,46 +1477,50 @@ function renderT(){
   <div class="cnum">${_fmt(d.pct1today)}</div>
 </td>
 <td class="bd-trend">
-  <div class="ma-squares">
-    <span class="trend-score">${maDotCount}/7</span>
-    ${maSquares}
-  </div>
-</td>
-<td class="bd-trend">
-  <div class="vol-squares">
-    <span class="trend-score">${volDotCount}/7</span>
-    ${volSquares}
-  </div>
-</td>
-<td class="bd-osc">
-  <div class="osc-cell">
-    <div class="osc-track"><div class="osc-fill" style="width:${rP}%;background:${rCv}"></div></div>
-    <div class="osc-row">
-      <span class="osc-val" style="color:${rCv}">${_dec(d.rsi)}</span>
-      <span class="osc-zone" style="color:${rCv}">${rZone}</span>
+  <div class="stacked-cell">
+    <div class="ma-squares">
+      <span class="trend-score">${maDotCount}/7</span>
+      ${maSquares}
+    </div>
+    <div class="vol-squares">
+      <span class="trend-score">${volDotCount}/7</span>
+      ${volSquares}
     </div>
   </div>
 </td>
-<td class="bd-osc hide-mobile">
-  <div class="osc-cell">
-    <div class="osc-track"><div class="osc-fill" style="width:${srsiP}%;background:${srsiColor}"></div></div>
-    <div class="osc-row">
-      <span class="osc-val" style="color:${srsiColor}">${_dec(d.stochRsi)}</span>
-      <span class="osc-zone" style="color:${srsiColor}">${srsiZone}</span>
+<td class="bd-osc">
+  <div class="stacked-cell">
+    <div class="osc-cell">
+      <div class="osc-row">
+        <span class="osc-label">RSI</span>
+        <span class="osc-val" style="color:${rCv}">${_dec(d.rsi)}</span>
+        <span class="osc-zone" style="color:${rCv}">${rZone}</span>
+      </div>
+      <div class="osc-track"><div class="osc-fill" style="width:${rP}%;background:${rCv}"></div></div>
+    </div>
+    <div class="osc-cell">
+      <div class="osc-row">
+        <span class="osc-label">Stoch</span>
+        <span class="osc-val" style="color:${srsiColor}">${_dec(d.stochRsi)}</span>
+        <span class="osc-zone" style="color:${srsiColor}">${srsiZone}</span>
+      </div>
+      <div class="osc-track"><div class="osc-fill" style="width:${srsiP}%;background:${srsiColor}"></div></div>
     </div>
   </div>
 </td>
 <td class="bd-osc">${macdHtml}</td>
 <td class="bd-osc">
-  <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
-    <span style="font-size:0.7rem;font-weight:600">${_dec(d.atrV)}</span>
-    <span style="font-size:0.56rem;color:var(--text3)" title="Stop Loss (2×ATR)">SL ${_fraksiFloor(d.price-(d.atrV||0)*2)}</span>
-  </div>
-</td>
-<td class="bd-osc">
-  <div class="adr-wrap">
-    <span class="adr-pct" style="color:${adrColor}">${_dec(adrPct,2)}%</span>
-    <span class="adr-label">${adrLbl}</span>
+  <div class="stacked-cell">
+    <div class="atr-row">
+      <span class="atr-label">ATR</span>
+      <span class="atr-val">${_dec(d.atrV)}</span>
+      <span class="atr-sl">SL ${_fraksiFloor(d.price-(d.atrV||0)*2)}</span>
+    </div>
+    <div class="atr-row">
+      <span class="atr-label">ADR</span>
+      <span class="adr-pct" style="color:${adrColor}">${_dec(adrPct,2)}%</span>
+      <span class="adr-label">${adrLbl}</span>
+    </div>
   </div>
 </td>
 </tr>`;
