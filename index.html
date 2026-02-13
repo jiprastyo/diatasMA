@@ -161,7 +161,14 @@ a{color:inherit;text-decoration:none}
   background:var(--surface2);
 }
 .af-label{color:var(--text3);font-weight:600;flex-shrink:0}
-.af-tags{display:flex;flex-wrap:wrap;gap:.25rem}
+.af-tags{display:flex;flex-wrap:wrap;gap:.25rem;flex:1}
+.af-reset{
+  padding:.15rem .5rem;border-radius:20px;border:1px dashed var(--border2);
+  background:transparent;color:var(--text3);font-family:var(--font);
+  font-size:.58rem;font-weight:600;cursor:pointer;white-space:nowrap;
+  transition:all .12s;flex-shrink:0;
+}
+.af-reset:hover{background:var(--red-bg);color:var(--red);border-color:var(--red)}
 .af-tag{
   display:inline-flex;align-items:center;padding:.12rem .4rem;
   border-radius:20px;font-size:.58rem;font-weight:600;
@@ -254,23 +261,13 @@ a{color:inherit;text-decoration:none}
 .chip.osc:hover,.chip.osc.on{border-color:var(--purple);color:var(--purple);background:var(--purple-bg)}
 .chip.sektor:hover,.chip.sektor.on{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
 
-/* PRESET chips — larger, bolder, most important */
-.preset-chips{display:flex;flex-wrap:wrap;gap:.35rem;flex:1}
-.pchip{
-  display:inline-flex;align-items:center;gap:.3rem;
-  padding:.3rem .7rem;border-radius:var(--rx);border:1.5px solid var(--border);
-  background:var(--surface);color:var(--text2);font-family:var(--font);
-  font-size:.75rem;font-weight:600;cursor:pointer;transition:all .15s;
-  user-select:none;line-height:1.35;white-space:nowrap;letter-spacing:.01em;
-}
-.pchip:hover{background:var(--surface2);border-color:var(--border2)}
-.pchip .pico{font-size:.8rem;line-height:1}
-.pchip.p0:hover,.pchip.p0.on{border-color:var(--green);color:var(--green);background:var(--green-bg);box-shadow:0 0 0 1px var(--green-bg)}
-.pchip.p1:hover,.pchip.p1.on{border-color:var(--gold);color:var(--gold);background:var(--gold-bg);box-shadow:0 0 0 1px var(--gold-bg)}
-.pchip.p2:hover,.pchip.p2.on{border-color:var(--teal);color:var(--teal);background:var(--teal-bg);box-shadow:0 0 0 1px var(--teal-bg)}
-.pchip.p3:hover,.pchip.p3.on{border-color:var(--blue);color:var(--blue);background:var(--blue-bg);box-shadow:0 0 0 1px var(--blue-bg)}
-.pchip.p4:hover,.pchip.p4.on{border-color:var(--purple);color:var(--purple);background:var(--purple-bg);box-shadow:0 0 0 1px var(--purple-bg)}
-.pchip.p5:hover,.pchip.p5.on{border-color:var(--amber);color:var(--amber);background:var(--amber-bg);box-shadow:0 0 0 1px var(--amber-bg)}
+/* PRESET chip colors — same base as .chip, just colored */
+.chip.p0:hover,.chip.p0.on{border-color:var(--green);color:var(--green);background:var(--green-bg)}
+.chip.p1:hover,.chip.p1.on{border-color:var(--gold);color:var(--gold);background:var(--gold-bg)}
+.chip.p2:hover,.chip.p2.on{border-color:var(--teal);color:var(--teal);background:var(--teal-bg)}
+.chip.p3:hover,.chip.p3.on{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
+.chip.p4:hover,.chip.p4.on{border-color:var(--purple);color:var(--purple);background:var(--purple-bg)}
+.chip.p5:hover,.chip.p5.on{border-color:var(--amber);color:var(--amber);background:var(--amber-bg)}
 
 /* reset button */
 .creset{
@@ -393,11 +390,11 @@ tbody td:first-child{padding-left:.9rem;text-align:left}
 .price-cell{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
 .pct-badge{
   display:inline-flex;align-items:center;font-family:var(--mono);
-  font-size:.64rem;font-weight:600;padding:.06rem .32rem;border-radius:3px;
+  font-size:.64rem;font-weight:600;padding:0;border-radius:0;
 }
-.pct-badge.up{background:var(--green-bg);color:var(--green)}
-.pct-badge.dn{background:var(--red-bg);color:var(--red)}
-.pct-badge.nu{background:var(--surface3);color:var(--text3)}
+.pct-badge.up{color:var(--green)}
+.pct-badge.dn{color:var(--red)}
+.pct-badge.nu{color:var(--text3)}
 
 /* ── STACKED CELLS (two indicators in one column) ── */
 .stacked-cell{display:flex;flex-direction:column;gap:4px}
@@ -430,13 +427,13 @@ tbody td:first-child{padding-left:.9rem;text-align:left}
 .osc-cell{display:flex;flex-direction:column;align-items:stretch;gap:2px}
 .osc-track{width:100%;height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;flex-shrink:0}
 .osc-fill{height:100%;border-radius:2px}
-.osc-row{display:flex;align-items:center;gap:.2rem}
+.osc-row{display:flex;align-items:center;justify-content:center;gap:.2rem}
 .osc-label{font-size:.5rem;font-weight:600;color:var(--text3);min-width:1.8rem}
 .osc-val{font-family:var(--mono);font-size:.68rem;font-weight:600}
 .osc-zone{font-size:.52rem;font-weight:700;letter-spacing:.02em}
 
 /* ── ATR / ADR STACKED ────────────────────── */
-.atr-row{display:flex;align-items:center;gap:.25rem;white-space:nowrap}
+.atr-row{display:flex;align-items:center;justify-content:center;gap:.25rem;white-space:nowrap}
 .atr-label{font-size:.5rem;font-weight:600;color:var(--text3);min-width:1.6rem}
 .atr-val{font-family:var(--mono);font-size:.68rem;font-weight:600}
 .atr-sl{font-size:.54rem;color:var(--text3)}
@@ -576,7 +573,7 @@ thead th { padding: 0.42rem 0.5rem; }
     <div class="disclaimer-text">
       Situs ini adalah alat bantu pribadi, dan bukan rekomendasi investasi/trading saham bagi pengguna.<br>
       Risiko investasi/trading dari penggunaan tools ini adalah sepenuhnya tanggung jawab pengguna.<br>
-      Data berasal dari Yahoo Finance, dan di-update setiap hari pada 10:10 WIB, 12:10 WIB, 17:30 WIB.
+      Data berasal dari Yahoo Finance, dan di-update setiap hari Senin–Kamis pada 10:10, 12:10, 17:30 WIB dan Jumat pada 10:10, 11:40, 17:30 WIB.
     </div>
   </div>
 
@@ -605,33 +602,21 @@ thead th { padding: 0.42rem 0.5rem; }
   <!-- FILTERS -->
   <div class="card"><div class="frows">
 
-    <!-- ROW 1: PRESET SETUPS — most important, top of filter -->
+    <!-- PRESET STRATEGI -->
     <div class="frow">
       <span class="flabel preset">Preset Strategi</span>
-      <div class="preset-chips">
-        <button class="pchip p0" id="ps-trendkuat" onclick="togglePreset('trendkuat')">
-          Trend Kuat
-        </button>
-        <button class="pchip p1" id="ps-breakout" onclick="togglePreset('breakout')">
-          Siap Breakout
-        </button>
-        <button class="pchip p2" id="ps-momentum" onclick="togglePreset('momentum')">
-          Momentum
-        </button>
-        <button class="pchip p3" id="ps-volakum" onclick="togglePreset('volakum')">
-          Akumulasi Vol
-        </button>
-        <button class="pchip p4" id="ps-oversold" onclick="togglePreset('oversold')">
-          Jenuh Jual
-        </button>
-        <button class="pchip p5" id="ps-goldcross" onclick="togglePreset('goldcross')">
-          Golden Cross
-        </button>
+      <div class="chips">
+        <button class="chip p0" id="ps-trendkuat" onclick="togglePreset('trendkuat')">Trend Kuat</button>
+        <button class="chip p1" id="ps-breakout" onclick="togglePreset('breakout')">Siap Breakout</button>
+        <button class="chip p2" id="ps-momentum" onclick="togglePreset('momentum')">Momentum</button>
+        <button class="chip p3" id="ps-volakum" onclick="togglePreset('volakum')">Akumulasi Vol</button>
+        <button class="chip p4" id="ps-oversold" onclick="togglePreset('oversold')">Jenuh Jual</button>
+        <button class="chip p5" id="ps-goldcross" onclick="togglePreset('goldcross')">Golden Cross</button>
         <button class="creset" onclick="resetAll()">↺ Reset Semua</button>
       </div>
     </div>
 
-    <!-- ROW 2: INDEX FILTER -->
+    <!-- NON-TEKNIKAL: Indeks -->
     <div class="frow">
       <span class="flabel idx">Indeks</span>
       <div class="chips">
@@ -643,7 +628,7 @@ thead th { padding: 0.42rem 0.5rem; }
       </div>
     </div>
 
-    <!-- ROW 3: PAPAN FILTER -->
+    <!-- NON-TEKNIKAL: Papan -->
     <div class="frow">
       <span class="flabel papan">Papan</span>
       <div class="chips">
@@ -656,10 +641,7 @@ thead th { padding: 0.42rem 0.5rem; }
       </div>
     </div>
 
-    <!-- ROW 4: MA FILTER (power user) -->
-    
-    <!-- FRAKSI PRICE FILTER -->
-    <!-- SEKTOR FILTER — uses data-sektor for reliable matching -->
+    <!-- NON-TEKNIKAL: Sektor -->
     <div class="frow">
       <span class="flabel sektor">Sektor</span>
       <div class="chips" id="sektorChips">
@@ -678,19 +660,21 @@ thead th { padding: 0.42rem 0.5rem; }
       </div>
     </div>
 
+    <!-- NON-TEKNIKAL: Harga -->
     <div class="frow">
       <span class="flabel price">Harga</span>
       <div class="chips">
-        <span class="chip price" id="frak-1" onclick="toggleFrak('1')" title="< Rp 200">< 200</span>
-        <span class="chip price" id="frak-2" onclick="toggleFrak('2')" title="Rp 200-500">200-500</span>
-        <span class="chip price" id="frak-5" onclick="toggleFrak('5')" title="Rp 500-2K">500-2K</span>
-        <span class="chip price" id="frak-10" onclick="toggleFrak('10')" title="Rp 2K-5K">2K-5K</span>
-        <span class="chip price" id="frak-25" onclick="toggleFrak('25')" title="> Rp 5K">> 5K</span>
+        <span class="chip price" id="frak-1" onclick="toggleFrak('1')" title="< Rp 200">&lt; 200</span>
+        <span class="chip price" id="frak-2" onclick="toggleFrak('2')" title="Rp 200-500">200–500</span>
+        <span class="chip price" id="frak-5" onclick="toggleFrak('5')" title="Rp 500-2K">500–2K</span>
+        <span class="chip price" id="frak-10" onclick="toggleFrak('10')" title="Rp 2K-5K">2K–5K</span>
+        <span class="chip price" id="frak-25" onclick="toggleFrak('25')" title="> Rp 5K">&gt; 5K</span>
         <button class="creset" onclick="resetFrak()">↺</button>
       </div>
     </div>
 
-<div class="frow">
+    <!-- TEKNIKAL: MA -->
+    <div class="frow">
       <span class="flabel ma">MA</span>
       <div class="chips">
         <span class="chip ma" id="mf-ema3"   onclick="toggleMF('ema3')">EMA 3</span>
@@ -704,20 +688,7 @@ thead th { padding: 0.42rem 0.5rem; }
       </div>
     </div>
 
-    <!-- ROW 5: OSCILLATOR FILTER (power user) -->
-    <div class="frow">
-      <span class="flabel osc">Osilator</span>
-      <div class="chips">
-        <span class="chip osc" id="of-rsi-sweet"  onclick="toggleOF('rsi-sweet')"  title="RSI 50–70: zona sweet spot untuk entry long">RSI Sweet Spot (50–70)</span>
-        <span class="chip osc" id="of-rsi-os"     onclick="toggleOF('rsi-os')"     title="RSI di bawah 35: potensi rebound dari jenuh jual">RSI Oversold (&lt;35)</span>
-        <span class="chip osc" id="of-rsi-bull"   onclick="toggleOF('rsi-bull')"   title="RSI di atas 50: momentum bullish aktif">RSI Bullish (&gt;50)</span>
-        <span class="chip osc" id="of-macd-bull"  onclick="toggleOF('macd-bull')"  title="Histogram MACD positif: momentum naik">MACD Bullish</span>
-        <span class="chip osc" id="of-macd-cross" onclick="toggleOF('macd-cross')" title="MACD baru saja crossing ke atas sinyal">MACD Baru Bullish</span>
-        <button class="creset" onclick="resetOF()">↺</button>
-      </div>
-    </div>
-
-    <!-- ROW 6: VMA VOLUME FILTER -->
+    <!-- TEKNIKAL: VMA -->
     <div class="frow">
       <span class="flabel vol">VMA</span>
       <div class="chips">
@@ -731,31 +702,41 @@ thead th { padding: 0.42rem 0.5rem; }
       </div>
     </div>
 
-    <!-- ROW 7: RSI RANGE FILTER -->
+    <!-- TEKNIKAL: MACD -->
+    <div class="frow">
+      <span class="flabel osc">MACD</span>
+      <div class="chips">
+        <span class="chip osc" id="of-macd-bull"  onclick="toggleOF('macd-bull')"  title="Histogram MACD positif: momentum naik">MACD Bullish</span>
+        <span class="chip osc" id="of-macd-cross" onclick="toggleOF('macd-cross')" title="MACD baru saja crossing ke atas sinyal">MACD Cross Bullish</span>
+        <button class="creset" onclick="resetOF()">↺</button>
+      </div>
+    </div>
+
+    <!-- TEKNIKAL: RSI -->
     <div class="frow">
       <span class="flabel osc">RSI</span>
       <div class="chips">
-        <span class="chip osc" id="rf-os"    onclick="toggleRSIF('os')"    title="RSI < 30: oversold extreme">OS (&lt;30)</span>
-        <span class="chip osc" id="rf-weak"  onclick="toggleRSIF('weak')"  title="RSI 30–50: lemah">Lemah (30–50)</span>
-        <span class="chip osc" id="rf-sweet" onclick="toggleRSIF('sweet')" title="RSI 50–70: sweet spot">Sweet (50–70)</span>
+        <span class="chip osc" id="rf-os"     onclick="toggleRSIF('os')"     title="RSI < 30: oversold extreme">OS (&lt;30)</span>
+        <span class="chip osc" id="rf-weak"   onclick="toggleRSIF('weak')"   title="RSI 30–50: lemah">Lemah (30–50)</span>
+        <span class="chip osc" id="rf-sweet"  onclick="toggleRSIF('sweet')"  title="RSI 50–70: sweet spot">Sweet (50–70)</span>
         <span class="chip osc" id="rf-strong" onclick="toggleRSIF('strong')" title="RSI 70–80: kuat">Kuat (70–80)</span>
-        <span class="chip osc" id="rf-ob"    onclick="toggleRSIF('ob')"    title="RSI > 80: overbought">OB (&gt;80)</span>
+        <span class="chip osc" id="rf-ob"     onclick="toggleRSIF('ob')"     title="RSI > 80: overbought">OB (&gt;80)</span>
         <button class="creset" onclick="resetRSIF()">↺</button>
       </div>
     </div>
 
-    <!-- ROW 8: STOCH RSI RANGE FILTER -->
+    <!-- TEKNIKAL: StochRSI -->
     <div class="frow">
       <span class="flabel osc">Stoch RSI</span>
       <div class="chips">
-        <span class="chip osc" id="srf-os"   onclick="toggleSRSIF('os')"   title="StochRSI < 20: oversold">OS (&lt;20)</span>
-        <span class="chip osc" id="srf-mid"  onclick="toggleSRSIF('mid')"  title="StochRSI 20–80: netral">Netral (20–80)</span>
-        <span class="chip osc" id="srf-ob"   onclick="toggleSRSIF('ob')"   title="StochRSI > 80: overbought">OB (&gt;80)</span>
+        <span class="chip osc" id="srf-os"  onclick="toggleSRSIF('os')"  title="StochRSI < 20: oversold">OS (&lt;20)</span>
+        <span class="chip osc" id="srf-mid" onclick="toggleSRSIF('mid')" title="StochRSI 20–80: netral">Netral (20–80)</span>
+        <span class="chip osc" id="srf-ob"  onclick="toggleSRSIF('ob')"  title="StochRSI > 80: overbought">OB (&gt;80)</span>
         <button class="creset" onclick="resetSRSIF()">↺</button>
       </div>
     </div>
 
-    <!-- ROW 9: ATR/ADR FILTER -->
+    <!-- TEKNIKAL: ADR -->
     <div class="frow" style="border-bottom:none">
       <span class="flabel ma">ADR</span>
       <div class="chips">
@@ -773,6 +754,7 @@ thead th { padding: 0.42rem 0.5rem; }
     <div class="active-filters" id="activeFilters" style="display:none">
       <span class="af-label">Filter aktif:</span>
       <div class="af-tags" id="afTags"></div>
+      <button class="af-reset" onclick="resetAll()">↺ Reset</button>
     </div>
     <div class="stats" id="statsBar" style="display:none">
       <span class="st">Tampil: <b id="s-sho">0</b></span>
@@ -869,7 +851,7 @@ thead th { padding: 0.42rem 0.5rem; }
 
       <div class="help-section">
         <div class="help-h">⚠️ Catatan Penting</div>
-        <div class="help-p"><strong>Data update 3x/hari:</strong> 10:10, 12:10, 17:30 WIB via GitHub Actions. Data diambil dari Yahoo Finance.</div>
+        <div class="help-p"><strong>Data update 3x/hari:</strong> Senin–Kamis 10:10, 12:10, 17:30 WIB | Jumat 10:10, 11:40, 17:30 WIB via GitHub Actions. Data diambil dari Yahoo Finance.</div>
         <div class="help-p"><strong>Bukan rekomendasi investasi.</strong> Screener ini hanya alat bantu analisis teknikal. Keputusan trading sepenuhnya tanggung jawab Anda. Selalu lakukan riset fundamental, perhatikan manajemen risiko, dan jangan trade dengan uang yang tidak bisa Anda rugikan.</div>
       </div>
 
@@ -1171,7 +1153,7 @@ function toggleOF(k){oscF.has(k)?oscF.delete(k):oscF.add(k);document.getElementB
 function resetIF(){idxF.clear();Object.keys(IDX_MAP).forEach(k=>document.getElementById('if-'+k).classList.remove('on'));applyF();renderT()}
 function resetPF(){papanF.clear();Object.keys(PAPAN_MAP).forEach(k=>document.getElementById('pf-'+k).classList.remove('on'));applyF();renderT()}
 function resetMF(){maF.clear();['ema3','ema5','ema10','ema20','sma50','sma100','sma200'].forEach(k=>document.getElementById('mf-'+k).classList.remove('on'));applyF();renderT()}
-function resetOF(){oscF.clear();['rsi-sweet','rsi-os','rsi-bull','macd-bull','macd-cross'].forEach(k=>document.getElementById('of-'+k).classList.remove('on'));applyF();renderT()}
+function resetOF(){oscF.clear();['macd-bull','macd-cross'].forEach(k=>document.getElementById('of-'+k).classList.remove('on'));applyF();renderT()}
 
 function resetPrice(){document.getElementById('priceMin').value='';document.getElementById('priceMax').value='';applyF();renderT()}
 
@@ -1373,10 +1355,7 @@ function applyF(){
   // VMA volume filter
   vmaF.forEach(k=>{d=d.filter(x=>x.maStatus?.[k]===true)});
 
-  // Oscillator
-  if(oscF.has('rsi-sweet')) d=d.filter(x=>x.rsi!=null&&x.rsi>=50&&x.rsi<=70);
-  if(oscF.has('rsi-os'))    d=d.filter(x=>x.rsi!=null&&x.rsi<35);
-  if(oscF.has('rsi-bull'))  d=d.filter(x=>x.rsi!=null&&x.rsi>50);
+  // MACD filter
   if(oscF.has('macd-bull')) d=d.filter(x=>x.macdBull===true);
   if(oscF.has('macd-cross'))d=d.filter(x=>x.macdCross===true);
 
@@ -1462,8 +1441,8 @@ function _updateActiveFilters(){
     const i=VOL_KEYS.indexOf(k);
     tags.push({label:'Vol: '+(i>=0?VOL_TIPS[i]:k),cls:'vol'});
   });
-  // Oscillator
-  const oscNames={'rsi-sweet':'RSI 50–70','rsi-os':'RSI <35','rsi-bull':'RSI >50','macd-bull':'MACD Bull','macd-cross':'MACD Cross'};
+  // MACD
+  const oscNames={'macd-bull':'MACD Bull','macd-cross':'MACD Cross'};
   oscF.forEach(k=>tags.push({label:oscNames[k]||k,cls:'osc'}));
   // Fraksi
   const frakNames={'1':'< Rp 200','2':'Rp 200–500','5':'Rp 500–2.000','10':'Rp 2.000–5.000','25':'> Rp 5.000'};
@@ -1643,7 +1622,7 @@ function renderT(){
 </td>
 <td class="bd-price">
   <div class="stacked-cell">
-    <div class="cnum">${_fmt(d.pct1today)}</div>
+    <div class="cnum lg">${_fmt(d.pct1today)}</div>
     <div class="cnum lot-info">${_fmtLot(d.pct1today,d.price)}</div>
   </div>
 </td>
@@ -1659,7 +1638,7 @@ function renderT(){
     </div>
   </div>
 </td>
-<td class="bd-osc">${macdHtml}</td>
+<td class="bd-osc" style="text-align:center">${macdHtml}</td>
 <td class="bd-osc">
   <div class="stacked-cell">
     <div class="osc-cell">
