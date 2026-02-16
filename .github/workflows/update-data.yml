@@ -2,12 +2,11 @@ name: Update Data Saham
 
 on:
   schedule:
-    # Senin–Kamis: 10:10, 12:10, 17:30 WIB | Jumat: 10:10, 11:40, 17:30 WIB
-    - cron: '10 3 * * 1-5'   # 10:10 WIB (Sen–Jum)
-    - cron: '10 5 * * 1-4'   # 12:10 WIB (Sen–Kam)
-    - cron: '40 4 * * 5'     # 11:40 WIB (Jumat)
-    - cron: '30 10 * * 1-5'  # 17:30 WIB (Sen–Jum)
-  workflow_dispatch:          # Allow manual trigger
+    # Senin–Kamis: 12:10, 17:30 WIB | Jumat: 11:40, 17:30 WIB
+    - cron: "10 5 * * 1-4" # 12:10 WIB (Sen–Kam)
+    - cron: "40 4 * * 5" # 11:40 WIB (Jumat)
+    - cron: "30 10 * * 1-5" # 17:30 WIB (Sen–Jum)
+  workflow_dispatch: # Allow manual trigger
 
 # Prevent duplicate runs
 concurrency:
@@ -32,10 +31,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install dependencies
-        run: npm ci || npm install
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --no-audit --no-fund
+          else
+            echo "No package-lock.json found; installing with pinned versions from package.json"
+            npm install --no-audit --no-fund
+          fi
 
       - name: Fetch stock data (attempt 1)
         id: fetch1
@@ -66,7 +71,7 @@ jobs:
           fi
           echo "Data file created successfully"
           ls -lh data/issi_data.json
-          node -e "const d=JSON.parse(require('fs').readFileSync('data/issi_data.json','utf8')); console.log('Stocks:', d.count || d.data?.length || 0)"
+          node -e "const fs=require('fs'); const d=JSON.parse(fs.readFileSync('data/issi_data.json','utf8')); const expected=Number(d.expectedCount||956); const count=Number(d.count||0); const tf1d=Number(d?.timeframes?.['1d']?.length||0); const hasLegacyData=Array.isArray(d?.data); const dataLen=hasLegacyData?Number(d.data.length):0; const failed=Number(d.failedCount||0); const minCount=Math.ceil(expected*0.9); if (count < minCount) { throw new Error('Coverage too low: ' + count + '/' + expected + ' (min ' + minCount + ')'); } if (tf1d !== count) { throw new Error('timeframes.1d length mismatch: ' + tf1d + ' vs count ' + count); } if (hasLegacyData && dataLen !== count) { throw new Error('data length mismatch: ' + dataLen + ' vs count ' + count); } console.log('Stocks:', count, '| Expected:', expected, '| Failed:', failed, '| LegacyData:', hasLegacyData);"
 
       - name: Commit and push changes
         run: |
@@ -86,7 +91,7 @@ jobs:
   # Keepalive: prevent GitHub from disabling scheduled workflows after 60 days of repo inactivity
   keepalive:
     runs-on: ubuntu-latest
-    if: github.event.schedule == '10 3 * * 1-5'
+    if: github.event.schedule == '10 5 * * 1-4'
     permissions:
       actions: write
     steps:
