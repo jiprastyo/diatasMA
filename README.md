@@ -1,330 +1,411 @@
-## Database Update
-
-### **CHANGE 1: Database dengan Sektor Tags**
-
-**New database structure:**
-```javascript
-{
-  ticker: "BBCA",
-  papan: "Utama",
-  indeks: ["KOMPAS100", "LQ45"],
-  sektor: "Keuangan"  // ← NEW!
-}
-```
+<u><b>Dokumentasi Non-Teknis Istilah dan Formula Screener Saham</b></u>
 
-**11 Sektor Categories:**
-1. Bahan Baku (113 stocks)
-2. Consumer (132 stocks)
-3. Energi (91 stocks)
-4. Industri (65 stocks)
-5. Infrastruktur (70 stocks)
-6. Kesehatan (38 stocks)
-7. Keuangan (106 stocks)
-8. Properti (92 stocks)
-9. Siklikal (163 stocks)
-10. Teknologi (47 stocks)
-11. Transportasi (39 stocks)
+Dokumen ini menjelaskan istilah yang dipakai di aplikasi screener, arti indikator teknikal, cara hitung formula yang digunakan sistem, dan penjelasan preset strategi.
 
-**Sektor Filter Added:**
-- Filter chips untuk semua 11 sektor
-- Kombinasi dengan filter lain (Indeks, Papan, MA, dll)
+<u><b>Pernyataan Pribadi dan Disclaimer</b></u>
 
----
+- Screener ini saya buat sebagai alat bantu pribadi, bukan rekomendasi pemilihan saham.
+- Isi dokumen ini menggambarkan kerangka pikir pribadi saya saat melakukan screening, bukan ajakan agar pengguna mengikuti sistem saya.
+- Siapa pun yang memakai output screener ini untuk keputusan investasi atau trading bertanggung jawab penuh atas keputusan dan risikonya sendiri.
+- Pengguna perlu memahami bahwa investasi dan trading memiliki risiko nyata, termasuk kemungkinan kehilangan sebagian atau seluruh modal.
+- Sumber data utama berasal dari Yahoo Finance (pihak ketiga), bukan feed resmi bursa, sehingga data dapat mengalami keterlambatan, perbedaan penyesuaian, atau ketidaklengkapan.
+- Metode pengambilan data memiliki keterbatasan teknis: bergantung pada endpoint publik dan jaringan, ada timeout permintaan, ada kemungkinan sebagian ticker gagal terambil, dan data mingguan dibentuk dari agregasi data harian (bukan feed mingguan native), sehingga hasil bisa berbeda tipis dari platform lain.
+- Proses update juga bergantung pada job terjadwal; jika job gagal atau tertunda, data yang tampil bisa belum merefleksikan kondisi pasar terbaru.
 
-## UI/UX Improvements
+<u><b>Tujuan Dokumen</b></u>
 
-### **CHANGE 2: Reset Button Warna Merah**
-```css
-.creset {
-  background: var(--red-bg);
-  border-color: var(--red);
-  color: var(--red);
-}
-.creset:hover {
-  background: var(--red);
-  color: #fff;
-}
-```
-**Result:** Reset button sekarang merah (default & hover) untuk visibility lebih baik.
+- Membantu pengguna non-IT memahami kolom, filter, dan preset di screener.
+- Menjelaskan bagaimana angka utama dihitung agar interpretasi data lebih konsisten.
+- Menjadi acuan internal tim saat membaca hasil screening.
 
----
+<u><b>Istilah Utama di Tampilan Aplikasi</b></u>
 
-### **CHANGE 3: Fraksi → Harga + Fix Selection Color**
-- Label "Fraksi" diubah menjadi "Harga"
-- Chip color saat selected sekarang berubah (gold/yellow)
-- Fix: `.chip.price.on` state properly styled
+<b>Ticker</b>
 
----
+Kode saham emiten (contoh: BBCA, BBRI).
 
-### **CHANGE 4: Single Header Row**
+<b>Company</b>
 
-**Before:** 2 rows (group header + column names)
-```
-SAHAM | SKOR SETUP | HARGA & NILAI | TREND & VOLUME | OSCILLATOR
-Ticker| Skor       | Harga | %Chg  | MA | Vol        | RSI | MACD | ...
-```
+Nama perusahaan emiten.
 
-**After:** 1 row only
-```
-Ticker | Skor Setup | Harga | %Chg | 1% Entry | MA(7) | Vol(7) | RSI | StochRSI | MACD | ATR | ADR
-```
+<b>Harga / Chg</b>
 
-**Benefit:** Cleaner, simpler, more space for data.
+Harga penutupan terakhir dan perubahan harian.
 
----
+Formula:
 
-### **CHANGE 5: Kolom 1% Sudah Ada**
-Column "1% Entry" already exists, positioned correctly after %Chg.
+`%Chg = ((Harga_Terakhir - Harga_Sebelumnya) / Harga_Sebelumnya) x 100%`
 
-Shows: 1% dari nilai transaksi harian (modal entry wajar).
+<b>Papan</b>
 
----
+Klasifikasi papan emiten yang tersedia di filter:
 
-### **CHANGE 6: Skor → Skor Setup**
-Header renamed from "Skor" to "Skor Setup" untuk clarity.
+- Utama
+- Pengembangan
+- Akselerasi
+- Ekonomi Baru
+- Pemantauan Khusus
 
----
+<b>Sektor</b>
 
-### **CHANGE 7: MA Dots dengan Label**
+Kategori sektor yang tersedia di filter:
 
-**Before:** Green/gray dots
-**After:** Red/green dots dengan label di bawah
-
-```
-🟢 ← Green dot (above MA)
-E3  ← Label
+- Bahan Baku
+- Consumer
+- Energi
+- Industri
+- Infrastruktur
+- Kesehatan
+- Keuangan
+- Properti
+- Siklikal
+- Teknologi
+- Transportasi
 
-🔴 ← Red dot (below MA)
-E5  ← Label
-```
+<b>Indeks</b>
 
-**Labels:** E3, E5, E10, E20, S50, S100, S200
-- E = EMA
-- S = SMA
-- Number = period
+Filter indeks yang tersedia:
 
-**Visual:** Instant recognition of which MAs are above/below.
+- ISSI
+- LQ45
+- KOMPAS100
+- BUMN
 
----
+<b>Timeframe</b>
 
-### **CHANGE 8: Volume7 Column**
+- 1D: data harian
+- 1W: data mingguan (agregasi data harian)
 
-**New column:** Vol(7) — similar to MA(7)
+<u><b>Penjelasan Kolom Tabel</b></u>
 
-Shows 7 VMA indicators:
-- V3, V5, V10, V20, V50, V100, V200
-- Red/green dots dengan label
-- Keterangan (S.Tinggi, Tinggi, Cukup, Rendah) di bawah
+<b>MA / Vol</b>
 
-**fetch_data.js updated:** VMA100 dan VMA200 calculation added.
+Kolom ini menampilkan status harga dan volume terhadap rata-rata bergerak.
 
----
+- MA:
+  - E3, E5, E10, E20 = EMA 3, 5, 10, 20
+  - S50, S1, S2 = SMA 50, 100, 200
+- Vol:
+  - V3, V5, V10, V20, V50, V1, V2 = VMA 3, 5, 10, 20, 50, 100, 200
 
-### **CHANGE 9: RSI & StochRSI Layout Update**
+Makna praktis:
 
-**New layout:** Keterangan di bawah grafik (seperti Skor Setup)
+- Semakin banyak MA aktif, tren harga cenderung lebih kuat.
+- Semakin banyak VMA ditembus, aktivitas volume cenderung lebih tinggi.
 
-```
-┌─────────────────┐
-│ ▓▓▓░░░░░░░░░░░ │ ← Grafik
-├─────────────────┤
-│ 65.4      Sweet │ ← Value & Zona
-└─────────────────┘
-```
-
-**Before:** Value di samping grafik
-**After:** Value & zona di bawah grafik (more compact vertically)
+<b>1% Transaksi 1D</b>
 
-Applied to both RSI and StochRSI columns.
+Satu persen dari nilai transaksi hari terakhir.
 
----
+`1%Trx1D = (Volume_Hari_Ini x Harga_Hari_Ini) x 0.01`
 
-### **CHANGE 10: Gerak/H → ADR**
-Column header renamed for clarity.
+<b>1% Transaksi 20D</b>
 
----
+Satu persen dari rata-rata nilai transaksi 20 hari terakhir.
 
-### **CHANGE 11: Ticker Hitam & Bold**
-```css
-.ctk a {
-  color: #000 !important;
-  font-weight: 700 !important;
-}
-```
-
-**Result:** Ticker codes stand out, easier to scan.
-
----
-
-## Complete Feature List
-
-### **Columns (12 total):**
-1. Ticker (black, bold) ← NEW styling
-2. Skor Setup (renamed) ← NEW name
-3. Harga
-4. % Chg
-5. 1% Entry (modal wajar)
-6. MA (7) — dengan label E3/E5/etc ← NEW labels
-7. Vol (7) — NEW column! ← NEW
-8. RSI — layout baru ← NEW layout
-9. StochRSI — layout baru ← NEW layout
-10. MACD
-11. ATR
-12. ADR (renamed dari Gerak/H) ← NEW name
+`AvgValue20 = rata-rata(Volume x Harga) 20 hari`
 
-### **Filters (8 categories):**
-1. Indeks (6 options)
-2. Papan (4 options)
-3. **Sektor (11 options)** ← NEW!
-4. Harga/Fraksi (5 ranges) ← Renamed
-5. Price Range (manual min/max)
-6. MA (7 indicators)
-7. VMA (7 indicators)
-8. Oscillator (RSI, MACD)
+`1%Trx20D = AvgValue20 x 0.01`
 
-### **Visual Improvements:**
-- ✅ Single header row (cleaner)
-- ✅ Red reset buttons (better visibility)
-- ✅ MA dots dengan labels (E3, E5, etc)
-- ✅ Vol7 dots dengan labels (V3, V5, etc)
-- ✅ RSI layout compact (value di bawah)
-- ✅ Ticker bold black (stands out)
-- ✅ Proper chip selection colors
+<b>RSI / StochRSI</b>
 
----
+- RSI menunjukkan kekuatan momentum harga (0 sampai 100).
+- StochRSI menunjukkan posisi RSI saat ini terhadap rentang RSI terbaru (0 sampai 100).
 
-## Deployment
+Zona yang dipakai aplikasi:
 
-### **Files to Upload:**
-
-1. **index_v2_final.html** (154 KB)
-   - All 11 changes applied
-   - New database with sektor
-   - Updated styling
-   - New filters
-
-2. **fetch_data.js** (already updated)
-   - VMA100, VMA200 added
-   - Ready for Vol7 column
-
-### **Steps:**
-
-```bash
-# 1. Upload files
-git add index_v2_final.html fetch_data.js
-git commit -m "v2 final: 11 improvements + sektor tags"
-git push
-
-# 2. Test
-https://yourusername.github.io/repo/index_v2_final.html
-
-# 3. Run workflow
-Actions → Update Data Saham → Run workflow
-Wait 10-15 min
-
-# 4. Verify
-✅ 956 stocks with sektor tags
-✅ All filters working
-✅ Table displays correctly
-✅ MA labels visible
-✅ Vol7 column shows
-```
-
----
-
-## Manual Additions Needed
-
-Some HTML could not be auto-inserted due to structure variations:
-
-### **1. Sektor Filter HTML**
-
-Location: After Papan filter, before Price filter
-
-```html
-<!-- SEKTOR FILTER -->
-<div class="frow">
-  <span class="flabel trend">Sektor</span>
-  <div class="chips">
-    <span class="chip trend" id="sf-BahanBaku" onclick="toggleSF('Bahan Baku')">Bahan Baku</span>
-    <span class="chip trend" id="sf-Consumer" onclick="toggleSF('Consumer')">Consumer</span>
-    <span class="chip trend" id="sf-Energi" onclick="toggleSF('Energi')">Energi</span>
-    <span class="chip trend" id="sf-Industri" onclick="toggleSF('Industri')">Industri</span>
-    <span class="chip trend" id="sf-Infrastruktur" onclick="toggleSF('Infrastruktur')">Infrastruktur</span>
-    <span class="chip trend" id="sf-Kesehatan" onclick="toggleSF('Kesehatan')">Kesehatan</span>
-    <span class="chip trend" id="sf-Keuangan" onclick="toggleSF('Keuangan')">Keuangan</span>
-    <span class="chip trend" id="sf-Properti" onclick="toggleSF('Properti')">Properti</span>
-    <span class="chip trend" id="sf-Siklikal" onclick="toggleSF('Siklikal')">Siklikal</span>
-    <span class="chip trend" id="sf-Teknologi" onclick="toggleSF('Teknologi')">Teknologi</span>
-    <span class="chip trend" id="sf-Transportasi" onclick="toggleSF('Transportasi')">Transportasi</span>
-    <button class="creset" onclick="resetSF()">↺</button>
-  </div>
-</div>
-```
-
-**JavaScript already added!** Just need HTML chips.
-
-### **2. MA Dots with Labels (if rendering doesn't work)**
-
-Check if MA dots show E3, E5, etc below dots. If not, the renderT function needs update.
-
-### **3. Vol7 Column (if not showing)**
-
-Similar to MA7, need to ensure Vol7 dots render with V3, V5, etc labels.
-
----
-
-## What Works Now
-
-- ✅ Database: 956 stocks dengan sektor tags
-- ✅ Filters: Sektor (JavaScript ready, HTML manual)
-- ✅ UI: Single header row
-- ✅ UI: Red reset buttons
-- ✅ UI: Harga filter (renamed, fixed colors)
-- ✅ UI: Skor Setup header
-- ✅ UI: RSI/StochRSI compact layout
-- ✅ UI: ADR renamed
-- ✅ UI: Ticker bold black
-- ✅ Data: VMA100/200 in fetch_data.js
-- ✅ Columns: 12 total (with Vol7 header)
-
----
-
-## 📊 Before vs After
-
-| Aspect | Before | After |
-|--------|--------|-------|
-| **Database fields** | 3 (ticker, papan, indeks) | 4 (+sektor) |
-| **Sektor filter** | ❌ | ✅ 11 categories |
-| **Header rows** | 2 (grouped) | 1 (simple) |
-| **MA indicators** | Dots only | Dots + labels |
-| **Volume column** | 4 VMAs | 7 VMAs (Vol7) |
-| **RSI layout** | Horizontal | Vertical (compact) |
-| **Reset button** | Gray | Red |
-| **Fraksi label** | Fraksi | Harga |
-| **Ticker style** | Blue link | Black bold |
-
----
-
-## Troubleshooting
-
-**If Sektor filter doesn't show:**
-- Add HTML manually (see above)
-- JavaScript already present, just needs chips
-
-**If MA labels not showing:**
-- Check Console (F12) for errors
-- MA_TIPS should be ['E3','E5','E10','E20','S50','S100','S200']
-
-**If Vol7 column empty:**
-- Verify VMA100/200 in fetch_data.js
-- Check renderT function has vol7Dots rendering
-
-**If data doesn't load:**
-- Run GitHub Actions workflow
-- Verify issi_data.json has sektor field
-- Check Console for errors
-
----
-
-**Version:** 2.0 
-**Date:** 2024-02-12  
+- RSI:
+  - <30: Oversold
+  - 30 sampai <50: Lemah
+  - 50 sampai 70: Sweet
+  - >70 sampai 80: Kuat
+  - >80: Overbought
+- StochRSI:
+  - <20: Oversold
+  - 20 sampai 80: Netral
+  - >80: Overbought
+
+<b>ATR / ADR</b>
+
+- ATR mengukur volatilitas nominal harian.
+- ADR mengukur rata-rata rentang gerak harian.
+- Aplikasi mengelompokkan volatilitas menjadi:
+  - Lesu: <1.5%
+  - Normal: 1.5% sampai <5%
+  - Aktif: >=5%
+
+<b>MACD</b>
+
+- MACD Bull: histogram positif
+- MACD Bear: histogram negatif
+- MACD Cross: tanda histogram berubah dari periode sebelumnya
+
+<b>Skor</b>
+
+Skor setup komposit 0 sampai 10 untuk merangkum kekuatan teknikal.
+
+<u><b>Formula Indikator yang Dipakai Aplikasi</b></u>
+
+<b>EMA</b>
+
+`k = 2 / (p + 1)`
+
+`EMA_awal = rata-rata p data awal`
+
+`EMA_baru = Harga_sekarang x k + EMA_sebelumnya x (1 - k)`
+
+<b>SMA</b>
+
+`SMA = rata-rata p data terakhir`
+
+<b>RSI (14)</b>
+
+Aplikasi memakai 15 data penutupan terakhir untuk menghasilkan RSI 14.
+
+`AvgGain = total kenaikan / 14`
+
+`AvgLoss = total penurunan / 14`
+
+Jika `AvgLoss = 0`, RSI = 100.
+
+Jika tidak:
+
+`RS = AvgGain / AvgLoss`
+
+`RSI = 100 - (100 / (1 + RS))`
+
+<b>StochRSI</b>
+
+`StochRSI = ((RSI_terakhir - RSI_min14) / (RSI_max14 - RSI_min14)) x 100`
+
+Jika `RSI_max14 = RSI_min14`, aplikasi mengembalikan 50.
+
+<b>MACD (12,26,9)</b>
+
+`MACD_Line = EMA12 - EMA26`
+
+`Signal = EMA9(MACD_Line)`
+
+`Histogram = MACD_Line - Signal`
+
+Turunan status:
+
+- `macdBull = Histogram > 0`
+- `macdCross = tanda(Histogram) berubah vs periode sebelumnya`
+
+<b>ATR (14)</b>
+
+`TR = max(High-Low, abs(High-Close_prev), abs(Low-Close_prev))`
+
+`ATR14 = rata-rata 14 TR terakhir`
+
+<b>ADR (14)</b>
+
+`ADR_nom = rata-rata(High-Low) 14 hari`
+
+`ADR_pct = rata-rata((High-Low)/Low) 14 hari x 100`
+
+<b>ATR% untuk klasifikasi volatilitas</b>
+
+`ATR_pct = (ATR / Harga) x 100`
+
+<b>Konversi Nilai ke Lot</b>
+
+`Lembar = Nilai_Uang / Harga`
+
+`Lot = floor(Lembar / 100)`
+
+Catatan: 1 lot = 100 lembar.
+
+<b>Fraksi Harga (pembulatan tick)</b>
+
+- Harga <200: tick 1
+- 200 sampai <500: tick 2
+- 500 sampai <2000: tick 5
+- 2000 sampai <5000: tick 10
+- >=5000: tick 25
+
+`Harga_Fraksi_Bawah = floor(Harga / tick) x tick`
+
+<b>Estimasi SL pada kolom ATR</b>
+
+`SL = pembulatan fraksi dari (Harga - 2 x ATR)`
+
+<u><b>Formula Skor Setup (0 sampai 10)</b></u>
+
+`Skor = Poin_MA + Poin_RSI + Poin_MACD + Poin_Volume`
+
+Skor dibatasi maksimum 10 dan dibulatkan 1 desimal.
+
+<b>Komponen Poin MA (maks 7)</b>
+
++1 poin untuk setiap kondisi benar:
+
+- Harga > EMA3
+- Harga > EMA5
+- Harga > EMA10
+- Harga > EMA20
+- Harga > SMA50
+- Harga > SMA100
+- Harga > SMA200
+
+<b>Komponen Poin RSI (maks 1.5)</b>
+
+- RSI 50 sampai 70: +1.5
+- RSI >70 sampai 80: +0.5
+- RSI >=40 sampai <50: +0.5
+
+<b>Komponen Poin MACD (maks 1)</b>
+
+- Jika `macdBull = true`: +1
+
+<b>Komponen Poin Volume (maks 0.5)</b>
+
+- Jika `Volume > VMA20`: +0.5
+
+<b>Label Skor</b>
+
+- >=8: KUAT
+- >=6 sampai <8: BAGUS
+- >=4 sampai <6: PANTAU
+- <4: LEMAH
+
+<u><b>Logika Filter di Aplikasi</b></u>
+
+- Preset aktif bekerja sebagai filter utama.
+- Indeks menggunakan mode AND (saham harus memenuhi semua indeks yang dipilih).
+- Papan, sektor, rentang harga, rentang RSI, rentang StochRSI, rentang ATR, rentang ADR menggunakan OR dalam satu grup.
+- MA dan VMA memakai AND antar item yang dipilih.
+- Min/Max harga manual membatasi harga absolut.
+
+<u><b>Preset Strategi di Aplikasi dan Penjelasan Tambahan</b></u>
+
+<b>1) Trend Kuat</b>
+
+Aturan di aplikasi:
+
+- Minimal 5 dari 7 MA aktif
+- EMA20 aktif
+- SMA50 aktif
+- MACD Bull
+- RSI 45 sampai 80
+
+Penjelasan tambahan:
+
+Preset ini sejalan dengan ide <i>trend template</i> ala Minervini, yaitu memilih saham yang sudah menunjukkan struktur uptrend matang (harga di atas MA penting, posisi relatif kuat, dan umumnya dekat area high tahunan). Tujuan utamanya bukan menangkap saham murah, melainkan memilih saham yang sudah terbukti memimpin.
+
+<b>2) Siap Breakout</b>
+
+Aturan di aplikasi:
+
+- EMA3, EMA5, EMA10, EMA20 aktif
+- RSI 50 sampai 70
+- MACD Bull
+- Salah satu dari VMA3 atau VMA5 atau VMA20 aktif
+
+Penjelasan tambahan:
+
+Preset ini mewakili pendekatan breakout berbasis momentum ala O'Neil/CAN SLIM: fokus pada saham pemimpin yang keluar dari basis harga dengan dukungan volume. Dalam praktik umum breakout, kualitas sinyal biasanya lebih baik jika breakout disertai peningkatan volume, entry dekat area pivot, dan disiplin risiko yang ketat.
+
+<b>3) Momentum</b>
+
+Aturan di aplikasi:
+
+- EMA10 aktif
+- EMA20 aktif
+- RSI 50 sampai 75
+- MACD Bull
+
+Penjelasan tambahan:
+
+Preset ini konsisten dengan gagasan Elder Impulse: menggabungkan arah tren dan percepatan momentum. Secara konsep klasik Elder, tren dibaca dari kemiringan EMA dan momentum dari perubahan MACD histogram. Artinya, setup momentum yang baik menuntut keduanya mengarah selaras.
+
+<b>4) Akumulasi Vol</b>
+
+Aturan di aplikasi:
+
+- Minimal 4 dari 7 VMA aktif
+- EMA20 aktif
+
+Penjelasan tambahan:
+
+Preset ini menangkap indikasi akumulasi, yaitu saat partisipasi beli meningkat dan volume menguat lebih luas dari rata-rata normal. Dalam literatur stage analysis, fase awal transisi dari dasar ke uptrend sering ditandai oleh aktivitas akumulasi dan volume yang semakin dominan, terutama menjelang breakout yang valid.
+
+<b>5) Jenuh Jual</b>
+
+Aturan di aplikasi:
+
+- RSI <35
+
+Penjelasan tambahan:
+
+Preset ini bersifat kontra-tren jangka pendek (mencari potensi pantulan). Secara teori RSI klasik, area oversold sering berada di bawah 30. Namun pada tren turun kuat, RSI dapat bertahan lama di area lemah, sehingga sinyal oversold perlu konfirmasi tambahan (misalnya support, pembalikan candle, atau perbaikan volume).
+
+<b>6) Golden Cross</b>
+
+Aturan di aplikasi:
+
+- EMA10 aktif
+- EMA20 aktif
+- Belum di atas SMA200
+- MACD Bull
+- Ada MACD Cross
+
+Penjelasan tambahan:
+
+Preset ini adalah versi cepat untuk mendeteksi fase transisi bullish awal. Dalam definisi klasik, golden cross biasanya memakai MA pendek (contoh 50) yang menembus MA panjang (contoh 200). Sinyal ini sering dipakai sebagai konfirmasi perubahan rezim tren, tetapi tetap bisa memberikan sinyal palsu saat pasar sideways.
+
+<u><b>Catatan Implementasi Preset</b></u>
+
+- Preset di aplikasi adalah rule-based filter praktis, bukan salinan identik seluruh rule strategi asli.
+- Rule dibuat agar cepat dipakai pada alur screening harian.
+- Hasil preset tetap perlu validasi chart dan manajemen risiko sebelum keputusan trading.
+
+<u><b>Versi Ringkas untuk User Umum</b></u>
+
+<b>Cara saya membaca cepat tabel</b>
+
+- Saya biasanya melihat <b>Skor</b> lebih dulu: >=8 kandidat paling kuat, 6 sampai <8 tren masih sehat, 4 sampai <6 tahap pantau, <4 belum prioritas.
+- Setelah itu saya cek <b>MA / Vol</b>: makin banyak indikator aktif, biasanya tren dan minat pasar makin baik.
+- Lalu saya lihat <b>MACD</b> dan <b>RSI</b>: MACD Bull + RSI 50 sampai 70 biasanya menunjukkan momentum lebih seimbang; RSI >80 bisa lanjut naik tetapi risiko pullback juga meningkat.
+- Berikutnya saya lihat <b>ATR / ADR</b>: Lesu berarti gerak kecil, Normal berarti gerak wajar, Aktif berarti gerak besar sehingga peluang dan risiko sama-sama meningkat.
+- Terakhir saya cocokkan <b>1% Transaksi 1D/20D</b> untuk menilai apakah ukuran modal saya sesuai likuiditas saham.
+
+<b>Kapan saya memakai preset tertentu</b>
+
+- <b>Trend Kuat</b>: saat saya ingin fokus ke saham yang sudah stabil naik.
+- <b>Siap Breakout</b>: saat saya mencari kandidat menembus resistance dengan dukungan momentum.
+- <b>Momentum</b>: saat saya mencari saham yang sedang lanjut naik, bukan yang baru mulai.
+- <b>Akumulasi Vol</b>: saat saya mencari tanda minat beli yang mulai menguat.
+- <b>Jenuh Jual</b>: saat saya mencari peluang pantulan jangka pendek.
+- <b>Golden Cross</b>: saat saya mencari fase awal perubahan tren naik.
+
+<b>Alur harian sederhana yang biasanya saya pakai</b>
+
+- Saya mulai dari preset sesuai tujuan saya (tren lanjut atau rebound).
+- Saya perkecil universe pakai papan, sektor, dan indeks.
+- Saya pakai filter harga untuk menyesuaikan tipe saham dan ukuran modal.
+- Saya memprioritaskan saham dengan kombinasi skor lebih tinggi, MACD Bull, MA aktif yang konsisten, dan likuiditas cukup (1% transaksi memadai).
+- Sebelum eksekusi, saya tetap validasi ulang di chart.
+
+<b>Batasan penting</b>
+
+- Hasil screener adalah daftar kandidat, bukan sinyal beli otomatis.
+- Keputusan tetap perlu level entry, stop loss, dan batas risiko per transaksi.
+- Jika sinyal teknikal bertentangan, prioritaskan manajemen risiko daripada memaksakan entry.
+
+<u><b>Rujukan Eksternal untuk Penjelasan Preset</b></u>
+
+- Minervini trend template dan kriteria uptrend: [ChartMill](https://www.chartmill.com/documentation/stock-screener/technical-analysis-trading-strategies/496-Mark-Minervini-Trend-Template-A-Step-by-Step-Guide-for-Beginners)
+- Prinsip CAN SLIM (ringkasan kerangka O'Neil): [Investopedia CANSLIM](https://www.investopedia.com/terms/c/canslim.asp)
+- Konsep buy zone 5% dan disiplin 7%-8% (metodologi IBD): [Investor's Business Daily](https://www.investors.com/how-to-invest/investors-corner/buy-zone-nvidia-stock/)
+- Elder Impulse System (EMA + MACD Histogram): [StockCharts ChartSchool](https://chartschool.stockcharts.com/table-of-contents/chart-analysis/chart-types/elder-impulse-system)
+- Stage Analysis (Stage 1 sampai Stage 4): [Investopedia Stage Analysis](https://www.investopedia.com/articles/investing/070715/trading-stage-analysis.asp)
+- Golden Cross dan interpretasi crossover MA: [StockCharts Golden Cross](https://chartschool.stockcharts.com/table-of-contents/trading-strategies-and-models/trading-strategies/moving-average-trading-strategies/trading-using-the-golden-cross)
+- Konfirmasi breakout dengan volume: [StockCharts PVO](https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/percentage-volume-oscillator-pvo)
+- RSI dan batas overbought/oversold: [Fidelity RSI](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/RSI)
+- StochRSI dan formula: [Fidelity StochRSI](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/stochrsi)
+
+<u><b>Disclaimer</b></u>
+
+Dokumen ini untuk edukasi penggunaan screener. Konten ini bukan rekomendasi beli atau jual efek. Keputusan investasi dan risiko sepenuhnya tanggung jawab pengguna.
