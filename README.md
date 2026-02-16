@@ -1,44 +1,71 @@
-<u><b>Dokumentasi Non-Teknis Istilah dan Formula Screener Saham</b></u>
+<h1 align="center">Screener Saham Pribadi</h1>
+<p align="center"><em>Dokumentasi Istilah, Formula, dan Kerangka Pikir</em></p>
 
-Dokumen ini menjelaskan istilah yang dipakai di aplikasi screener, arti indikator teknikal, cara hitung formula yang digunakan sistem, dan penjelasan preset strategi.
+---
 
-<u><b>Pernyataan Pribadi dan Disclaimer</b></u>
+## Daftar Isi
 
-- Screener ini saya buat sebagai alat bantu pribadi, bukan rekomendasi pemilihan saham.
-- Isi dokumen ini menggambarkan kerangka pikir pribadi saya saat melakukan screening, bukan ajakan agar pengguna mengikuti sistem saya.
-- Siapa pun yang memakai output screener ini untuk keputusan investasi atau trading bertanggung jawab penuh atas keputusan dan risikonya sendiri.
-- Pengguna perlu memahami bahwa investasi dan trading memiliki risiko nyata, termasuk kemungkinan kehilangan sebagian atau seluruh modal.
-- Sumber data utama berasal dari Yahoo Finance (pihak ketiga), bukan feed resmi bursa, sehingga data dapat mengalami keterlambatan, perbedaan penyesuaian, atau ketidaklengkapan.
-- Metode pengambilan data memiliki keterbatasan teknis: bergantung pada endpoint publik dan jaringan, ada timeout permintaan, ada kemungkinan sebagian ticker gagal terambil, dan data mingguan dibentuk dari agregasi data harian (bukan feed mingguan native), sehingga hasil bisa berbeda tipis dari platform lain.
-- Proses update juga bergantung pada job terjadwal; jika job gagal atau tertunda, data yang tampil bisa belum merefleksikan kondisi pasar terbaru.
+1. [Prolog](#prolog)
+2. [Bab 1 - Tujuan Dokumen](#bab-1---tujuan-dokumen)
+3. [Bab 2 - Istilah Utama di Aplikasi](#bab-2---istilah-utama-di-aplikasi)
+4. [Bab 3 - Penjelasan Kolom dan Filter](#bab-3---penjelasan-kolom-dan-filter)
+5. [Bab 4 - Formula Indikator](#bab-4---formula-indikator)
+6. [Bab 5 - Formula Skor Setup](#bab-5---formula-skor-setup)
+7. [Bab 6 - Preset Strategi](#bab-6---preset-strategi)
+8. [Bab 7 - Versi Ringkas untuk User Umum](#bab-7---versi-ringkas-untuk-user-umum)
+9. [Bab 8 - Keterbatasan Data dan Metode](#bab-8---keterbatasan-data-dan-metode)
+10. [Lampiran Referensi](#lampiran-referensi)
+11. [Penutup](#penutup)
 
-<u><b>Tujuan Dokumen</b></u>
+---
 
-- Membantu pengguna non-IT memahami kolom, filter, dan preset di screener.
-- Menjelaskan bagaimana angka utama dihitung agar interpretasi data lebih konsisten.
-- Menjadi acuan internal tim saat membaca hasil screening.
+## Prolog
 
-<u><b>Istilah Utama di Tampilan Aplikasi</b></u>
+> Screener ini saya buat sebagai alat bantu pribadi.
 
-<b>Ticker</b>
+Dokumen ini bukan rekomendasi pemilihan saham, bukan sinyal beli, dan bukan ajakan untuk mengikuti sistem saya.
 
-Kode saham emiten (contoh: BBCA, BBRI).
+Setiap orang yang menggunakan output screener ini untuk keputusan investasi atau trading bertanggung jawab penuh atas keputusan dan risikonya sendiri.
 
-<b>Company</b>
+Pengguna wajib memahami bahwa investasi dan trading memiliki risiko nyata, termasuk kemungkinan kehilangan sebagian atau seluruh modal.
+
+---
+
+## Bab 1 - Tujuan Dokumen
+
+Dokumen ini disusun untuk tiga tujuan utama:
+
+- Menjelaskan istilah yang tampil di screener dalam bahasa non-teknis.
+- Menjelaskan cara hitung indikator dan skor yang dipakai aplikasi.
+- Menjelaskan kerangka pikir pribadi saya saat memakai screener, tanpa mengarahkan pengguna untuk meniru keputusan.
+
+---
+
+## Bab 2 - Istilah Utama di Aplikasi
+
+### 2.1 Identitas Saham
+
+**Ticker**
+
+Kode saham emiten, misalnya `BBCA`, `BBRI`, `TLKM`.
+
+**Company**
 
 Nama perusahaan emiten.
 
-<b>Harga / Chg</b>
+**Harga / Chg**
 
 Harga penutupan terakhir dan perubahan harian.
 
 Formula:
 
-`%Chg = ((Harga_Terakhir - Harga_Sebelumnya) / Harga_Sebelumnya) x 100%`
+```text
+%Chg = ((Harga_Terakhir - Harga_Sebelumnya) / Harga_Sebelumnya) x 100%
+```
 
-<b>Papan</b>
+### 2.2 Klasifikasi Emiten
 
-Klasifikasi papan emiten yang tersedia di filter:
+**Papan**
 
 - Utama
 - Pengembangan
@@ -46,9 +73,7 @@ Klasifikasi papan emiten yang tersedia di filter:
 - Ekonomi Baru
 - Pemantauan Khusus
 
-<b>Sektor</b>
-
-Kategori sektor yang tersedia di filter:
+**Sektor**
 
 - Bahan Baku
 - Consumer
@@ -62,162 +87,175 @@ Kategori sektor yang tersedia di filter:
 - Teknologi
 - Transportasi
 
-<b>Indeks</b>
-
-Filter indeks yang tersedia:
+**Indeks (yang tersedia di filter)**
 
 - ISSI
 - LQ45
 - KOMPAS100
 - BUMN
 
-<b>Timeframe</b>
+### 2.3 Timeframe
 
-- 1D: data harian
-- 1W: data mingguan (agregasi data harian)
+- `1D`: data harian.
+- `1W`: data mingguan (dibentuk dari agregasi data harian).
 
-<u><b>Penjelasan Kolom Tabel</b></u>
+---
 
-<b>MA / Vol</b>
+## Bab 3 - Penjelasan Kolom dan Filter
 
-Kolom ini menampilkan status harga dan volume terhadap rata-rata bergerak.
+### 3.1 Kolom MA / Vol
 
-- MA:
-  - E3, E5, E10, E20 = EMA 3, 5, 10, 20
-  - S50, S1, S2 = SMA 50, 100, 200
-- Vol:
-  - V3, V5, V10, V20, V50, V1, V2 = VMA 3, 5, 10, 20, 50, 100, 200
+Kolom ini memperlihatkan apakah harga dan volume saat ini berada di atas rata-ratanya.
 
-Makna praktis:
+**MA labels**
 
-- Semakin banyak MA aktif, tren harga cenderung lebih kuat.
-- Semakin banyak VMA ditembus, aktivitas volume cenderung lebih tinggi.
+- `E3`, `E5`, `E10`, `E20` = EMA 3, 5, 10, 20
+- `S50`, `S1`, `S2` = SMA 50, 100, 200
 
-<b>1% Transaksi 1D</b>
+**Vol labels**
 
-Satu persen dari nilai transaksi hari terakhir.
+- `V3`, `V5`, `V10`, `V20`, `V50`, `V1`, `V2` = VMA 3, 5, 10, 20, 50, 100, 200
 
-`1%Trx1D = (Volume_Hari_Ini x Harga_Hari_Ini) x 0.01`
+Interpretasi umum:
 
-<b>1% Transaksi 20D</b>
+- Makin banyak MA aktif, tren harga cenderung lebih kuat.
+- Makin banyak VMA ditembus, aktivitas transaksi cenderung lebih tinggi.
 
-Satu persen dari rata-rata nilai transaksi 20 hari terakhir.
+### 3.2 Kolom 1% Transaksi
 
-`AvgValue20 = rata-rata(Volume x Harga) 20 hari`
+**1% Transaksi 1D**
 
-`1%Trx20D = AvgValue20 x 0.01`
+```text
+1%Trx1D = (Volume_Hari_Ini x Harga_Hari_Ini) x 0.01
+```
 
-<b>RSI / StochRSI</b>
+**1% Transaksi 20D**
 
-- RSI menunjukkan kekuatan momentum harga (0 sampai 100).
-- StochRSI menunjukkan posisi RSI saat ini terhadap rentang RSI terbaru (0 sampai 100).
+```text
+AvgValue20 = rata-rata(Volume x Harga) 20 hari
+1%Trx20D = AvgValue20 x 0.01
+```
 
-Zona yang dipakai aplikasi:
+Fungsi praktis: membantu menilai apakah ukuran modal sesuai dengan likuiditas saham.
 
-- RSI:
-  - <30: Oversold
-  - 30 sampai <50: Lemah
-  - 50 sampai 70: Sweet
-  - >70 sampai 80: Kuat
-  - >80: Overbought
-- StochRSI:
-  - <20: Oversold
-  - 20 sampai 80: Netral
-  - >80: Overbought
+### 3.3 Kolom RSI / StochRSI
 
-<b>ATR / ADR</b>
+**RSI**
 
-- ATR mengukur volatilitas nominal harian.
-- ADR mengukur rata-rata rentang gerak harian.
-- Aplikasi mengelompokkan volatilitas menjadi:
-  - Lesu: <1.5%
-  - Normal: 1.5% sampai <5%
-  - Aktif: >=5%
+- `<30`: Oversold
+- `30 sampai <50`: Lemah
+- `50 sampai 70`: Sweet
+- `>70 sampai 80`: Kuat
+- `>80`: Overbought
 
-<b>MACD</b>
+**StochRSI**
 
-- MACD Bull: histogram positif
-- MACD Bear: histogram negatif
-- MACD Cross: tanda histogram berubah dari periode sebelumnya
+- `<20`: Oversold
+- `20 sampai 80`: Netral
+- `>80`: Overbought
 
-<b>Skor</b>
+### 3.4 Kolom ATR / ADR
 
-Skor setup komposit 0 sampai 10 untuk merangkum kekuatan teknikal.
+- `ATR`: volatilitas nominal harian.
+- `ADR`: rata-rata rentang gerak harian.
 
-<u><b>Formula Indikator yang Dipakai Aplikasi</b></u>
+Kategori aktivitas volatilitas di aplikasi:
 
-<b>EMA</b>
+- `Lesu`: <1.5%
+- `Normal`: 1.5% sampai <5%
+- `Aktif`: >=5%
 
-`k = 2 / (p + 1)`
+### 3.5 Kolom MACD
 
-`EMA_awal = rata-rata p data awal`
+- `MACD Bull`: histogram positif.
+- `MACD Bear`: histogram negatif.
+- `MACD Cross`: tanda histogram berubah dari periode sebelumnya.
 
-`EMA_baru = Harga_sekarang x k + EMA_sebelumnya x (1 - k)`
+### 3.6 Logika Filter
 
-<b>SMA</b>
+- Preset aktif menjadi filter utama.
+- Indeks memakai mode **AND** (harus memenuhi semua indeks yang dipilih).
+- Papan, sektor, rentang harga, rentang RSI, rentang StochRSI, rentang ATR, rentang ADR memakai **OR** di dalam grup masing-masing.
+- MA dan VMA memakai **AND** antar item yang dipilih.
+- Min/Max harga manual membatasi harga absolut.
 
-`SMA = rata-rata p data terakhir`
+---
 
-<b>RSI (14)</b>
+## Bab 4 - Formula Indikator
 
-Aplikasi memakai 15 data penutupan terakhir untuk menghasilkan RSI 14.
+### 4.1 EMA
 
-`AvgGain = total kenaikan / 14`
+```text
+k = 2 / (p + 1)
+EMA_awal = rata-rata p data awal
+EMA_baru = Harga_sekarang x k + EMA_sebelumnya x (1 - k)
+```
 
-`AvgLoss = total penurunan / 14`
+### 4.2 SMA
 
-Jika `AvgLoss = 0`, RSI = 100.
+```text
+SMA = rata-rata p data terakhir
+```
 
-Jika tidak:
+### 4.3 RSI (14)
 
-`RS = AvgGain / AvgLoss`
+Implementasi aplikasi memakai 15 data penutupan terakhir untuk menghasilkan RSI 14.
 
-`RSI = 100 - (100 / (1 + RS))`
+```text
+AvgGain = total kenaikan / 14
+AvgLoss = total penurunan / 14
+Jika AvgLoss = 0, RSI = 100
+RS = AvgGain / AvgLoss
+RSI = 100 - (100 / (1 + RS))
+```
 
-<b>StochRSI</b>
+### 4.4 StochRSI
 
-`StochRSI = ((RSI_terakhir - RSI_min14) / (RSI_max14 - RSI_min14)) x 100`
+```text
+StochRSI = ((RSI_terakhir - RSI_min14) / (RSI_max14 - RSI_min14)) x 100
+Jika RSI_max14 = RSI_min14, nilai dikembalikan 50
+```
 
-Jika `RSI_max14 = RSI_min14`, aplikasi mengembalikan 50.
+### 4.5 MACD (12,26,9)
 
-<b>MACD (12,26,9)</b>
+```text
+MACD_Line = EMA12 - EMA26
+Signal = EMA9(MACD_Line)
+Histogram = MACD_Line - Signal
+macdBull = Histogram > 0
+macdCross = tanda(Histogram) berubah vs periode sebelumnya
+```
 
-`MACD_Line = EMA12 - EMA26`
+### 4.6 ATR (14)
 
-`Signal = EMA9(MACD_Line)`
+```text
+TR = max(High-Low, abs(High-Close_prev), abs(Low-Close_prev))
+ATR14 = rata-rata 14 TR terakhir
+```
 
-`Histogram = MACD_Line - Signal`
+### 4.7 ADR (14)
 
-Turunan status:
+```text
+ADR_nom = rata-rata(High-Low) 14 hari
+ADR_pct = rata-rata((High-Low)/Low) 14 hari x 100
+```
 
-- `macdBull = Histogram > 0`
-- `macdCross = tanda(Histogram) berubah vs periode sebelumnya`
+### 4.8 ATR% untuk Klasifikasi Volatilitas
 
-<b>ATR (14)</b>
+```text
+ATR_pct = (ATR / Harga) x 100
+```
 
-`TR = max(High-Low, abs(High-Close_prev), abs(Low-Close_prev))`
+### 4.9 Konversi Nilai ke Lot
 
-`ATR14 = rata-rata 14 TR terakhir`
-
-<b>ADR (14)</b>
-
-`ADR_nom = rata-rata(High-Low) 14 hari`
-
-`ADR_pct = rata-rata((High-Low)/Low) 14 hari x 100`
-
-<b>ATR% untuk klasifikasi volatilitas</b>
-
-`ATR_pct = (ATR / Harga) x 100`
-
-<b>Konversi Nilai ke Lot</b>
-
-`Lembar = Nilai_Uang / Harga`
-
-`Lot = floor(Lembar / 100)`
+```text
+Lembar = Nilai_Uang / Harga
+Lot = floor(Lembar / 100)
+```
 
 Catatan: 1 lot = 100 lembar.
 
-<b>Fraksi Harga (pembulatan tick)</b>
+### 4.10 Fraksi Harga (Tick Size)
 
 - Harga <200: tick 1
 - 200 sampai <500: tick 2
@@ -225,19 +263,29 @@ Catatan: 1 lot = 100 lembar.
 - 2000 sampai <5000: tick 10
 - >=5000: tick 25
 
-`Harga_Fraksi_Bawah = floor(Harga / tick) x tick`
+```text
+Harga_Fraksi_Bawah = floor(Harga / tick) x tick
+```
 
-<b>Estimasi SL pada kolom ATR</b>
+### 4.11 Estimasi SL pada Kolom ATR
 
-`SL = pembulatan fraksi dari (Harga - 2 x ATR)`
+```text
+SL = pembulatan fraksi dari (Harga - 2 x ATR)
+```
 
-<u><b>Formula Skor Setup (0 sampai 10)</b></u>
+---
 
-`Skor = Poin_MA + Poin_RSI + Poin_MACD + Poin_Volume`
+## Bab 5 - Formula Skor Setup
+
+Skor setup adalah skor komposit `0 sampai 10`.
+
+```text
+Skor = Poin_MA + Poin_RSI + Poin_MACD + Poin_Volume
+```
 
 Skor dibatasi maksimum 10 dan dibulatkan 1 desimal.
 
-<b>Komponen Poin MA (maks 7)</b>
+### 5.1 Komponen MA (maks 7)
 
 +1 poin untuk setiap kondisi benar:
 
@@ -249,40 +297,36 @@ Skor dibatasi maksimum 10 dan dibulatkan 1 desimal.
 - Harga > SMA100
 - Harga > SMA200
 
-<b>Komponen Poin RSI (maks 1.5)</b>
+### 5.2 Komponen RSI (maks 1.5)
 
 - RSI 50 sampai 70: +1.5
 - RSI >70 sampai 80: +0.5
 - RSI >=40 sampai <50: +0.5
 
-<b>Komponen Poin MACD (maks 1)</b>
+### 5.3 Komponen MACD (maks 1)
 
 - Jika `macdBull = true`: +1
 
-<b>Komponen Poin Volume (maks 0.5)</b>
+### 5.4 Komponen Volume (maks 0.5)
 
 - Jika `Volume > VMA20`: +0.5
 
-<b>Label Skor</b>
+### 5.5 Label Skor
 
-- >=8: KUAT
-- >=6 sampai <8: BAGUS
-- >=4 sampai <6: PANTAU
-- <4: LEMAH
+- `>=8`: KUAT
+- `>=6 sampai <8`: BAGUS
+- `>=4 sampai <6`: PANTAU
+- `<4`: LEMAH
 
-<u><b>Logika Filter di Aplikasi</b></u>
+---
 
-- Preset aktif bekerja sebagai filter utama.
-- Indeks menggunakan mode AND (saham harus memenuhi semua indeks yang dipilih).
-- Papan, sektor, rentang harga, rentang RSI, rentang StochRSI, rentang ATR, rentang ADR menggunakan OR dalam satu grup.
-- MA dan VMA memakai AND antar item yang dipilih.
-- Min/Max harga manual membatasi harga absolut.
+## Bab 6 - Preset Strategi
 
-<u><b>Preset Strategi di Aplikasi dan Penjelasan Tambahan</b></u>
+Bagian ini menjelaskan rule preset di aplikasi, lalu konteks teori yang saya pakai sebagai referensi berpikir.
 
-<b>1) Trend Kuat</b>
+### 6.1 Trend Kuat
 
-Aturan di aplikasi:
+**Rule di aplikasi**
 
 - Minimal 5 dari 7 MA aktif
 - EMA20 aktif
@@ -290,60 +334,60 @@ Aturan di aplikasi:
 - MACD Bull
 - RSI 45 sampai 80
 
-Penjelasan tambahan:
+**Konteks berpikir pribadi**
 
-Preset ini sejalan dengan ide <i>trend template</i> ala Minervini, yaitu memilih saham yang sudah menunjukkan struktur uptrend matang (harga di atas MA penting, posisi relatif kuat, dan umumnya dekat area high tahunan). Tujuan utamanya bukan menangkap saham murah, melainkan memilih saham yang sudah terbukti memimpin.
+Saya memakainya untuk fokus ke saham yang sudah menunjukkan struktur uptrend relatif matang, selaras dengan konsep *trend template* Minervini.
 
-<b>2) Siap Breakout</b>
+### 6.2 Siap Breakout
 
-Aturan di aplikasi:
+**Rule di aplikasi**
 
 - EMA3, EMA5, EMA10, EMA20 aktif
 - RSI 50 sampai 70
 - MACD Bull
 - Salah satu dari VMA3 atau VMA5 atau VMA20 aktif
 
-Penjelasan tambahan:
+**Konteks berpikir pribadi**
 
-Preset ini mewakili pendekatan breakout berbasis momentum ala O'Neil/CAN SLIM: fokus pada saham pemimpin yang keluar dari basis harga dengan dukungan volume. Dalam praktik umum breakout, kualitas sinyal biasanya lebih baik jika breakout disertai peningkatan volume, entry dekat area pivot, dan disiplin risiko yang ketat.
+Saya memakainya untuk mencari kandidat breakout berbasis momentum ala O'Neil/CAN SLIM, dengan perhatian khusus pada konfirmasi volume.
 
-<b>3) Momentum</b>
+### 6.3 Momentum
 
-Aturan di aplikasi:
+**Rule di aplikasi**
 
 - EMA10 aktif
 - EMA20 aktif
 - RSI 50 sampai 75
 - MACD Bull
 
-Penjelasan tambahan:
+**Konteks berpikir pribadi**
 
-Preset ini konsisten dengan gagasan Elder Impulse: menggabungkan arah tren dan percepatan momentum. Secara konsep klasik Elder, tren dibaca dari kemiringan EMA dan momentum dari perubahan MACD histogram. Artinya, setup momentum yang baik menuntut keduanya mengarah selaras.
+Saya memakainya saat ingin menumpang laju tren yang sudah berjalan, mendekati kerangka Elder Impulse (tren dan momentum harus searah).
 
-<b>4) Akumulasi Vol</b>
+### 6.4 Akumulasi Vol
 
-Aturan di aplikasi:
+**Rule di aplikasi**
 
 - Minimal 4 dari 7 VMA aktif
 - EMA20 aktif
 
-Penjelasan tambahan:
+**Konteks berpikir pribadi**
 
-Preset ini menangkap indikasi akumulasi, yaitu saat partisipasi beli meningkat dan volume menguat lebih luas dari rata-rata normal. Dalam literatur stage analysis, fase awal transisi dari dasar ke uptrend sering ditandai oleh aktivitas akumulasi dan volume yang semakin dominan, terutama menjelang breakout yang valid.
+Saya memakainya untuk menangkap indikasi partisipasi beli yang mulai meningkat, terutama di fase transisi menuju tren naik.
 
-<b>5) Jenuh Jual</b>
+### 6.5 Jenuh Jual
 
-Aturan di aplikasi:
+**Rule di aplikasi**
 
 - RSI <35
 
-Penjelasan tambahan:
+**Konteks berpikir pribadi**
 
-Preset ini bersifat kontra-tren jangka pendek (mencari potensi pantulan). Secara teori RSI klasik, area oversold sering berada di bawah 30. Namun pada tren turun kuat, RSI dapat bertahan lama di area lemah, sehingga sinyal oversold perlu konfirmasi tambahan (misalnya support, pembalikan candle, atau perbaikan volume).
+Saya memakainya untuk skenario kontra-tren jangka pendek. Ini bukan sinyal otomatis; saya tetap menunggu konfirmasi tambahan di chart.
 
-<b>6) Golden Cross</b>
+### 6.6 Golden Cross
 
-Aturan di aplikasi:
+**Rule di aplikasi**
 
 - EMA10 aktif
 - EMA20 aktif
@@ -351,61 +395,77 @@ Aturan di aplikasi:
 - MACD Bull
 - Ada MACD Cross
 
-Penjelasan tambahan:
+**Konteks berpikir pribadi**
 
-Preset ini adalah versi cepat untuk mendeteksi fase transisi bullish awal. Dalam definisi klasik, golden cross biasanya memakai MA pendek (contoh 50) yang menembus MA panjang (contoh 200). Sinyal ini sering dipakai sebagai konfirmasi perubahan rezim tren, tetapi tetap bisa memberikan sinyal palsu saat pasar sideways.
+Saya memakainya sebagai deteksi dini potensi transisi bullish, sambil sadar bahwa sinyal crossover dapat gagal di pasar sideways.
 
-<u><b>Catatan Implementasi Preset</b></u>
+---
 
-- Preset di aplikasi adalah rule-based filter praktis, bukan salinan identik seluruh rule strategi asli.
-- Rule dibuat agar cepat dipakai pada alur screening harian.
-- Hasil preset tetap perlu validasi chart dan manajemen risiko sebelum keputusan trading.
+## Bab 7 - Versi Ringkas untuk User Umum
 
-<u><b>Versi Ringkas untuk User Umum</b></u>
+### 7.1 Cara Saya Membaca Tabel Secara Cepat
 
-<b>Cara saya membaca cepat tabel</b>
+- Saya melihat skor dulu: >=8 kandidat lebih kuat, 6 sampai <8 masih sehat, 4 sampai <6 tahap pantau, <4 bukan prioritas.
+- Saya cek MA/Vol untuk menilai kekuatan tren dan aktivitas transaksi.
+- Saya cek MACD dan RSI untuk menilai apakah momentum cukup sehat.
+- Saya cek ATR/ADR untuk menilai besar kecilnya gerak harga.
+- Saya cocokkan 1% transaksi dengan ukuran modal agar tidak memaksa likuiditas.
 
-- Saya biasanya melihat <b>Skor</b> lebih dulu: >=8 kandidat paling kuat, 6 sampai <8 tren masih sehat, 4 sampai <6 tahap pantau, <4 belum prioritas.
-- Setelah itu saya cek <b>MA / Vol</b>: makin banyak indikator aktif, biasanya tren dan minat pasar makin baik.
-- Lalu saya lihat <b>MACD</b> dan <b>RSI</b>: MACD Bull + RSI 50 sampai 70 biasanya menunjukkan momentum lebih seimbang; RSI >80 bisa lanjut naik tetapi risiko pullback juga meningkat.
-- Berikutnya saya lihat <b>ATR / ADR</b>: Lesu berarti gerak kecil, Normal berarti gerak wajar, Aktif berarti gerak besar sehingga peluang dan risiko sama-sama meningkat.
-- Terakhir saya cocokkan <b>1% Transaksi 1D/20D</b> untuk menilai apakah ukuran modal saya sesuai likuiditas saham.
+### 7.2 Cara Saya Memakai Preset
 
-<b>Kapan saya memakai preset tertentu</b>
+- Trend Kuat: saat saya mencari saham pemimpin tren.
+- Siap Breakout: saat saya fokus ke kandidat tembus resistance.
+- Momentum: saat saya mencari kelanjutan tren.
+- Akumulasi Vol: saat saya mencari penguatan minat beli.
+- Jenuh Jual: saat saya mencari pantulan jangka pendek.
+- Golden Cross: saat saya mencari fase awal perubahan tren.
 
-- <b>Trend Kuat</b>: saat saya ingin fokus ke saham yang sudah stabil naik.
-- <b>Siap Breakout</b>: saat saya mencari kandidat menembus resistance dengan dukungan momentum.
-- <b>Momentum</b>: saat saya mencari saham yang sedang lanjut naik, bukan yang baru mulai.
-- <b>Akumulasi Vol</b>: saat saya mencari tanda minat beli yang mulai menguat.
-- <b>Jenuh Jual</b>: saat saya mencari peluang pantulan jangka pendek.
-- <b>Golden Cross</b>: saat saya mencari fase awal perubahan tren naik.
+### 7.3 Alur Harian yang Biasanya Saya Pakai
 
-<b>Alur harian sederhana yang biasanya saya pakai</b>
+1. Pilih preset sesuai konteks pasar yang saya lihat.
+2. Kecilkan universe pakai papan, sektor, dan indeks.
+3. Sesuaikan filter harga dengan tipe saham dan ukuran modal.
+4. Prioritaskan kandidat dengan skor, momentum, dan likuiditas yang lebih baik.
+5. Validasi ulang chart sebelum mengeksekusi rencana.
 
-- Saya mulai dari preset sesuai tujuan saya (tren lanjut atau rebound).
-- Saya perkecil universe pakai papan, sektor, dan indeks.
-- Saya pakai filter harga untuk menyesuaikan tipe saham dan ukuran modal.
-- Saya memprioritaskan saham dengan kombinasi skor lebih tinggi, MACD Bull, MA aktif yang konsisten, dan likuiditas cukup (1% transaksi memadai).
-- Sebelum eksekusi, saya tetap validasi ulang di chart.
+---
 
-<b>Batasan penting</b>
+## Bab 8 - Keterbatasan Data dan Metode
 
-- Hasil screener adalah daftar kandidat, bukan sinyal beli otomatis.
-- Keputusan tetap perlu level entry, stop loss, dan batas risiko per transaksi.
-- Jika sinyal teknikal bertentangan, prioritaskan manajemen risiko daripada memaksakan entry.
+### 8.1 Keterbatasan Sumber Data
 
-<u><b>Rujukan Eksternal untuk Penjelasan Preset</b></u>
+- Data berasal dari Yahoo Finance (pihak ketiga), bukan feed resmi bursa.
+- Data dapat mengalami keterlambatan, ketidaklengkapan, atau perbedaan penyesuaian dibanding sumber lain.
 
-- Minervini trend template dan kriteria uptrend: [ChartMill](https://www.chartmill.com/documentation/stock-screener/technical-analysis-trading-strategies/496-Mark-Minervini-Trend-Template-A-Step-by-Step-Guide-for-Beginners)
-- Prinsip CAN SLIM (ringkasan kerangka O'Neil): [Investopedia CANSLIM](https://www.investopedia.com/terms/c/canslim.asp)
-- Konsep buy zone 5% dan disiplin 7%-8% (metodologi IBD): [Investor's Business Daily](https://www.investors.com/how-to-invest/investors-corner/buy-zone-nvidia-stock/)
-- Elder Impulse System (EMA + MACD Histogram): [StockCharts ChartSchool](https://chartschool.stockcharts.com/table-of-contents/chart-analysis/chart-types/elder-impulse-system)
-- Stage Analysis (Stage 1 sampai Stage 4): [Investopedia Stage Analysis](https://www.investopedia.com/articles/investing/070715/trading-stage-analysis.asp)
-- Golden Cross dan interpretasi crossover MA: [StockCharts Golden Cross](https://chartschool.stockcharts.com/table-of-contents/trading-strategies-and-models/trading-strategies/moving-average-trading-strategies/trading-using-the-golden-cross)
-- Konfirmasi breakout dengan volume: [StockCharts PVO](https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/percentage-volume-oscillator-pvo)
-- RSI dan batas overbought/oversold: [Fidelity RSI](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/RSI)
-- StochRSI dan formula: [Fidelity StochRSI](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/stochrsi)
+### 8.2 Keterbatasan Metode Pengambilan Data
 
-<u><b>Disclaimer</b></u>
+- Pengambilan data bergantung endpoint publik dan kondisi jaringan.
+- Permintaan memiliki timeout; sebagian ticker bisa gagal terambil pada siklus tertentu.
+- Data mingguan dibangun dari agregasi data harian, bukan data mingguan native.
+- Pipeline update memakai ambang cakupan minimum 90%; jadi pada kondisi tertentu, hasil dapat tetap dipublikasikan walau sebagian ticker gagal.
+- Proses update bergantung job terjadwal; jika job gagal atau tertunda, data bisa tidak sepenuhnya mutakhir.
 
-Dokumen ini untuk edukasi penggunaan screener. Konten ini bukan rekomendasi beli atau jual efek. Keputusan investasi dan risiko sepenuhnya tanggung jawab pengguna.
+### 8.3 Implikasi Penggunaan
+
+- Output screener saya perlakukan sebagai daftar kandidat, bukan keputusan akhir.
+- Keputusan transaksi tetap memerlukan validasi manual, skenario risiko, dan batas kerugian yang jelas.
+
+---
+
+## Lampiran Referensi
+
+- Minervini trend template: [ChartMill](https://www.chartmill.com/documentation/stock-screener/technical-analysis-trading-strategies/496-Mark-Minervini-Trend-Template-A-Step-by-Step-Guide-for-Beginners)
+- CAN SLIM (ringkasan): [Investopedia](https://www.investopedia.com/terms/c/canslim.asp)
+- Buy zone dan disiplin risiko (IBD): [Investor's Business Daily](https://www.investors.com/how-to-invest/investors-corner/buy-zone-nvidia-stock/)
+- Elder Impulse System: [StockCharts ChartSchool](https://chartschool.stockcharts.com/table-of-contents/chart-analysis/chart-types/elder-impulse-system)
+- Stage analysis: [Investopedia](https://www.investopedia.com/articles/investing/070715/trading-stage-analysis.asp)
+- Golden cross: [StockCharts](https://chartschool.stockcharts.com/table-of-contents/trading-strategies-and-models/trading-strategies/moving-average-trading-strategies/trading-using-the-golden-cross)
+- Konfirmasi volume breakout (PVO): [StockCharts](https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/percentage-volume-oscillator-pvo)
+- RSI: [Fidelity](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/RSI)
+- StochRSI: [Fidelity](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/stochrsi)
+
+---
+
+## Penutup
+
+Dokumen ini adalah dokumentasi kerja pribadi untuk membantu konsistensi proses screening saya. Silakan dipakai sebagai bahan belajar, tetapi keputusan investasi/trading tetap harus berbasis pertimbangan dan tanggung jawab masing-masing pengguna.
