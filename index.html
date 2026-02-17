@@ -70,6 +70,9 @@
                 --font:
                     system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu,
                     "Noto Sans", sans-serif;
+                --num-font:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                    "Helvetica Neue", Arial, sans-serif;
                 --mono:
                     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
                     "Liberation Mono", "Courier New", monospace;
@@ -97,6 +100,13 @@
                 --score-lo-bg: rgba(200, 148, 79, 0.12);
                 --score-vlo: #5f6a80;
                 --score-vlo-bg: rgba(95, 106, 128, 0.18);
+                --mobile-head-bg: linear-gradient(
+                    90deg,
+                    rgba(199, 165, 111, 0.16),
+                    rgba(16, 19, 26, 0.78)
+                );
+                --mobile-head-border: rgba(199, 165, 111, 0.32);
+                --mobile-head-shadow: inset 0 0 0 1px rgba(199, 165, 111, 0.08);
             }
             /* Light mode palette locked */
             [data-theme="light"] {
@@ -144,6 +154,13 @@
                 --score-lo-bg: rgba(92, 84, 73, 0.19);
                 --score-vlo: #6f675b;
                 --score-vlo-bg: rgba(111, 103, 91, 0.22);
+                --mobile-head-bg: linear-gradient(
+                    90deg,
+                    rgba(79, 70, 58, 0.16),
+                    rgba(225, 216, 201, 0.9)
+                );
+                --mobile-head-border: rgba(79, 70, 58, 0.34);
+                --mobile-head-shadow: inset 0 0 0 1px rgba(79, 70, 58, 0.1);
             }
 
             /* ═══════════════════════════════════════════════
@@ -364,11 +381,14 @@
                 margin: 0 auto;
                 padding: 0.85rem var(--page-pad-x) 2rem;
                 box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
             }
             .page > .dbpanel,
             .page > .card {
                 width: var(--content-sync-w);
-                min-width: 100%;
+                min-width: 0;
                 box-sizing: border-box;
             }
 
@@ -522,7 +542,7 @@
             .af-reset {
                 padding: 0.12rem 0.4rem;
                 border-radius: 3px;
-                border: 1px solid var(--red);
+                border: none;
                 background: var(--red-bg);
                 color: var(--red);
                 font-family: var(--font);
@@ -545,7 +565,7 @@
                 font-weight: 600;
                 background: var(--gold-bg);
                 color: var(--gold);
-                border: 1px solid var(--gold);
+                border: none;
                 white-space: nowrap;
             }
             .af-tag.preset {
@@ -775,7 +795,7 @@
                 z-index: 10;
                 background: var(--row-bg, var(--surface));
             }
-            .twrap.scrolled .csticky::after {
+            .twrap.scrolled tbody td.csticky::after {
                 content: "";
                 position: absolute;
                 top: 0;
@@ -789,7 +809,7 @@
                 );
                 pointer-events: none;
             }
-            [data-theme="light"] .twrap.scrolled .csticky::after {
+            [data-theme="light"] .twrap.scrolled tbody td.csticky::after {
                 background: linear-gradient(
                     to right,
                     rgba(0, 0, 0, 0.08),
@@ -848,13 +868,13 @@
                 transition: color 0.12s;
                 position: sticky;
                 top: calc(var(--topbar-h) + var(--controls-h) + var(--table-gap));
-                z-index: 240;
+                z-index: 260;
                 box-shadow:
                     0 2px 0 var(--bg2),
                     0 -2px 0 var(--bg2);
             }
             tr.crow th.csticky {
-                z-index: 250;
+                z-index: 260;
             }
             tr.crow th:first-child {
                 text-align: left;
@@ -1248,16 +1268,10 @@
                 gap: 2px;
             }
             .osc-track {
-                width: 100%;
-                height: 3px;
-                background: var(--surface3);
-                border-radius: 2px;
-                overflow: hidden;
-                flex-shrink: 0;
+                display: none;
             }
             .osc-fill {
-                height: 100%;
-                border-radius: 2px;
+                display: none;
             }
             .osc-row {
                 display: flex;
@@ -1349,6 +1363,18 @@
                 font-family: var(--mono);
                 font-size: 0.71rem;
                 font-weight: 400;
+            }
+            .score-badge,
+            .cnum,
+            .pct-badge,
+            .ma-sq,
+            .trend-score,
+            .vol-sq,
+            .osc-val,
+            .atr-val,
+            .adr-pct {
+                font-family: var(--num-font);
+                font-variant-numeric: tabular-nums lining-nums;
             }
             .adr-label {
                 font-size: 0.58rem;
@@ -1597,6 +1623,11 @@
                 }
                 .page {
                     padding-top: 0.5rem;
+                    align-items: stretch;
+                }
+                .page > .dbpanel,
+                .page > .card {
+                    min-width: 100%;
                 }
                 html {
                     font-size: 16.5px;
@@ -1735,8 +1766,12 @@
                 }
                 tbody td:first-child {
                     grid-column: 1 / -1;
-                    padding-left: 0.28rem;
+                    padding: 0.3rem 0.4rem;
                     text-align: left;
+                    background: var(--mobile-head-bg);
+                    border: none;
+                    border-radius: 4px;
+                    box-shadow: none;
                 }
                 tbody tr.full-row td {
                     padding: 0;
@@ -1828,13 +1863,14 @@
                     max-width: none;
                 }
                 .ctk {
-                    font-size: 0.75rem;
+                    font-size: 0.9rem;
                 }
                 .ctk-row {
                     display: flex;
                     align-items: center;
-                    gap: 0.22rem;
+                    gap: 3ch;
                     min-width: 0;
+                    min-height: 1.18rem;
                 }
                 .ctk-row .ctk {
                     flex: 0 0 auto;
@@ -1857,6 +1893,7 @@
                     align-items: center;
                     flex: 1 1 auto;
                     min-width: 0;
+                    max-width: none;
                     width: auto;
                     margin-top: 0;
                     text-align: left;
@@ -1867,13 +1904,16 @@
                 .name-tag-row .cmeta-inline {
                     display: inline-flex;
                     align-items: center;
-                    justify-content: flex-start;
+                    justify-content: flex-end;
                     width: auto;
                     max-width: 100%;
                     flex: 0 0 auto;
                     flex-wrap: nowrap;
                     white-space: nowrap;
                     gap: 0.08rem;
+                    margin-left: auto;
+                    text-align: right;
+                    min-height: 1.06rem;
                 }
                 .name-tag-row .cmeta-inline .bpapan,
                 .name-tag-row .cmeta-inline .bidx,
@@ -1882,15 +1922,16 @@
                     align-items: center;
                 }
                 .cco {
-                    font-size: 0.62rem;
-                    line-height: 1.2;
+                    font-size: 0.86rem;
+                    line-height: 1.1;
+                    color: var(--text2);
                 }
                 .bpapan,
                 .bidx,
                 .bsektor {
-                    font-size: 0.54rem;
-                    line-height: 1.25;
-                    padding: 0.03rem 0.22rem;
+                    font-size: 0.75rem;
+                    line-height: 1.2;
+                    padding: 0.03rem 0.24rem;
                 }
                 .cnum.lg {
                     font-size: 0.72rem;
@@ -1964,7 +2005,11 @@
                 html.mobile-legible .bpapan,
                 html.mobile-legible .bidx,
                 html.mobile-legible .bsektor {
-                    font-size: 0.54rem;
+                    font-size: 0.78rem;
+                }
+                html.mobile-legible .cco {
+                    font-size: 0.88rem;
+                    line-height: 1.1;
                 }
                 html.mobile-legible .lot-info {
                     font-size: 0.56rem;
@@ -2016,6 +2061,21 @@
                 }
                 .tbtn .tlbl {
                     display: none;
+                }
+            }
+            @media (min-width: 721px) {
+                thead tr.crow th {
+                    height: 2.35rem;
+                    min-height: 2.35rem;
+                    box-sizing: border-box;
+                    padding-top: 0;
+                    padding-bottom: 0;
+                    line-height: 1.1;
+                    vertical-align: middle;
+                    background-clip: border-box;
+                }
+                thead tr.crow th.csticky {
+                    background: var(--bg2);
                 }
             }
 
@@ -3172,6 +3232,31 @@
                     .replace(/>/g, "&gt;")
                     .replace(/"/g, "&quot;")
                     .replace(/'/g, "&#39;");
+            }
+            function _companyDisplayName(v) {
+                const raw = String(v ?? "").trim();
+                if (!raw) return "—";
+                let s = raw.replace(
+                    /^\s*(?:P\s*\.?\s*T\s*\.?)(?:\s+|$)/i,
+                    "",
+                );
+                let prev = "";
+                while (s && s !== prev) {
+                    prev = s;
+                    s = s
+                        .replace(
+                            /\s*[,.-]?\s*(?:T\s*\.?\s*B\s*\.?\s*K\s*\.?)\s*$/i,
+                            "",
+                        )
+                        .replace(
+                            /\s*[,.-]?\s*\(?\s*PERSEROAN\s+TERBATAS\s*\)?\s*$/i,
+                            "",
+                        )
+                        .replace(/\s*[,.-]?\s*\(?\s*PERSERO\s*\)?\s*$/i, "")
+                        .replace(/\s*[,.-]+\s*$/g, "")
+                        .trim();
+                }
+                return s || raw;
             }
             function _getRawTfData(payload) {
                 if (!payload || typeof payload !== "object") return null;
@@ -4650,27 +4735,27 @@
                 if (tags.length > 0) {
                     if (!FEATURE_FLAGS.secureRender) {
                         tagsEl.innerHTML =
+                            `<button class="af-reset" onclick="resetAll()">Reset</button>` +
                             tags
                                 .map(
                                     (t) =>
                                         `<span class="af-tag ${t.cls}">${t.label}</span>`,
                                 )
-                                .join("") +
-                            `<button class="af-reset" onclick="resetAll()">Reset</button>`;
+                                .join("");
                     } else {
                         tagsEl.replaceChildren();
-                        tags.forEach((t) => {
-                            const chip = document.createElement("span");
-                            chip.className = `af-tag ${t.cls || ""}`.trim();
-                            chip.textContent = String(t.label || "");
-                            tagsEl.appendChild(chip);
-                        });
                         const resetBtn = document.createElement("button");
                         resetBtn.className = "af-reset";
                         resetBtn.type = "button";
                         resetBtn.textContent = "Reset";
                         resetBtn.addEventListener("click", () => resetAll());
                         tagsEl.appendChild(resetBtn);
+                        tags.forEach((t) => {
+                            const chip = document.createElement("span");
+                            chip.className = `af-tag ${t.cls || ""}`.trim();
+                            chip.textContent = String(t.label || "");
+                            tagsEl.appendChild(chip);
+                        });
                     }
                 } else {
                     if (!FEATURE_FLAGS.secureRender) {
@@ -4915,7 +5000,7 @@
                     bPapan || bSektor || bIdx
                         ? `<div class="cmeta-inline">${bPapan}${bSektor}${bIdx}</div>`
                         : "";
-                const companyRaw = d.company || "—";
+                const companyRaw = _companyDisplayName(d.company || "—");
                 const companySafe = FEATURE_FLAGS.secureRender
                     ? _esc(companyRaw)
                     : companyRaw;
