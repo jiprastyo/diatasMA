@@ -27,6 +27,12 @@
     --header-gap: 14px;
     --radius: 2px;
     --radius-sm: 1px;
+
+    --hint-tungsten: #5f6772;
+    --hint-tungsten-soft: #7a8390;
+    --hint-bg: #f4f5f7;
+    --hint-border: #b5bcc6;
+    --hint-shadow: rgba(34, 39, 46, 0.22);
 }
 
 [data-theme="dark"] {
@@ -50,6 +56,12 @@
     --red: #ff9b9b;
     --red-dim: rgba(255, 155, 155, 0.16);
     --warn-dim: rgba(226, 190, 122, 0.16);
+
+    --hint-tungsten: #c3c9d2;
+    --hint-tungsten-soft: #d6dbe3;
+    --hint-bg: #11151b;
+    --hint-border: #707a89;
+    --hint-shadow: rgba(0, 0, 0, 0.55);
 }
 
 * {
@@ -177,8 +189,7 @@ body {
     max-height: calc(var(--filter-panel-max) * var(--filter-open-ratio));
     opacity: calc(0.12 + (0.88 * var(--filter-open-ratio)));
     transform: translateY(calc((1 - var(--filter-open-ratio)) * -5px));
-    transition: max-height 80ms linear, opacity 80ms linear, transform 80ms linear, border-width 120ms ease,
-        padding 120ms ease;
+    transition: none;
     will-change: max-height, opacity, transform;
 }
 
@@ -208,7 +219,7 @@ body {
     max-height: calc(88px * var(--filter-open-ratio));
     opacity: calc(0.08 + (0.92 * var(--filter-open-ratio)));
     border-width: calc(1px * var(--filter-open-ratio));
-    transition: max-height 260ms ease, opacity 220ms ease, padding 220ms ease, border-width 200ms ease;
+    transition: none;
 }
 
 .filter-row {
@@ -577,10 +588,158 @@ select {
     font-family: var(--font-main);
     font-size: 10.6px;
     font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+}
+
+.card-kv .k .k-text {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     min-width: 0;
+}
+
+.hint-btn {
+    border: 1px solid color-mix(in srgb, var(--hint-tungsten) 28%, transparent);
+    width: 13px;
+    height: 13px;
+    min-width: 13px;
+    min-height: 13px;
+    border-radius: 999px;
+    padding: 0;
+    line-height: 1;
+    font-size: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    color: color-mix(in srgb, var(--hint-tungsten) 70%, var(--text-sub));
+    background: transparent;
+    opacity: 0.42;
+    transition: opacity 0.16s ease, background-color 0.16s ease, color 0.16s ease,
+        border-color 0.16s ease;
+}
+
+.hint-btn:hover,
+.hint-btn:focus-visible {
+    background: color-mix(in srgb, var(--hint-tungsten) 12%, transparent);
+    color: color-mix(in srgb, var(--hint-tungsten-soft) 88%, var(--text-main));
+    border-color: color-mix(in srgb, var(--hint-tungsten-soft) 42%, transparent);
+    opacity: 0.82;
+}
+
+.hint-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 5000;
+    display: block;
+    background: transparent;
+    pointer-events: none;
+}
+
+.hint-modal[hidden] {
+    display: none !important;
+}
+
+.hint-dialog {
+    position: fixed;
+    width: min(340px, calc(100vw - 16px));
+    border: 1px solid var(--hint-border);
+    border-radius: 14px;
+    background: var(--hint-bg);
+    box-shadow: 0 12px 26px var(--hint-shadow);
+    padding: 12px 34px 12px 12px;
+    pointer-events: auto;
+    transform-origin: center top;
+    animation: hint-pop-in 0.14s ease-out;
+}
+
+.hint-dialog::before {
+    content: "";
+    position: absolute;
+    left: var(--hint-arrow-x, 24px);
+    width: 10px;
+    height: 10px;
+    border-left: 1px solid var(--hint-border);
+    border-top: 1px solid var(--hint-border);
+    background: var(--hint-bg);
+}
+
+.hint-modal[data-place="bottom"] .hint-dialog::before {
+    top: -6px;
+    transform: translateX(-50%) rotate(45deg);
+}
+
+.hint-modal[data-place="top"] .hint-dialog::before {
+    bottom: -6px;
+    transform: translateX(-50%) rotate(225deg);
+}
+
+@keyframes hint-pop-in {
+    0% {
+        opacity: 0;
+        transform: translateY(-3px) scale(0.98);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.hint-close {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    border: none;
+    background: color-mix(in srgb, var(--hint-tungsten) 16%, transparent);
+    color: color-mix(in srgb, var(--hint-tungsten) 88%, var(--text-main));
+    border-radius: 999px;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+}
+
+.hint-close:hover {
+    background: color-mix(in srgb, var(--hint-tungsten) 26%, transparent);
+}
+
+.hint-title {
+    font-size: 12.8px;
+    color: color-mix(in srgb, var(--hint-tungsten-soft) 82%, var(--text-main));
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.hint-text {
+    font-size: 11px;
+    color: color-mix(in srgb, var(--hint-tungsten) 74%, var(--text-main));
+    line-height: 1.42;
+    margin-bottom: 8px;
+}
+
+.hint-sections {
+    display: grid;
+    gap: 6px;
+}
+
+.hint-section {
+    border: 1px solid color-mix(in srgb, var(--hint-border) 82%, transparent);
+    background: color-mix(in srgb, var(--hint-bg) 88%, var(--bg-chip));
+    border-radius: 10px;
+    padding: 6px 7px;
+}
+
+.hint-subtitle {
+    font-size: 10px;
+    color: color-mix(in srgb, var(--hint-tungsten-soft) 84%, var(--text-main));
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.hint-subtext {
+    font-size: 10.3px;
+    line-height: 1.35;
+    color: color-mix(in srgb, var(--hint-tungsten) 76%, var(--text-main));
 }
 
 .card-kv .v {
@@ -609,6 +768,13 @@ select {
     border: 1px solid transparent;
 }
 
+.metric.metric-borderless {
+    border: none;
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+}
+
 .metric.good {
     color: var(--green);
     background: var(--green-dim);
@@ -629,6 +795,14 @@ select {
 
 .metric.neutral {
     color: var(--text-sub);
+}
+
+.metric.metric-borderless.good,
+.metric.metric-borderless.bad,
+.metric.metric-borderless.warn,
+.metric.metric-borderless.neutral {
+    background: transparent;
+    border-color: transparent;
 }
 
 .ma-squares,

@@ -81,6 +81,86 @@
             "Entry: close-2 tick, syarat EMA short bullish, RSI 50-70.",
     };
 
+    const INDICATOR_HELP = {
+        PxMA: {
+            title: "PxMA",
+            meaning:
+                "Status harga terhadap moving average harga (EMA/SMA). Kotak hijau = harga di atas MA terkait, merah = di bawah.",
+            pros: "Mudah baca arah tren jangka pendek-menengah dan cepat menyaring saham yang masih bullish structure.",
+            cons: "Lagging saat market berbalik cepat dan rentan false signal saat harga sideways sempit.",
+        },
+        VxMA: {
+            title: "VxMA",
+            meaning:
+                "Status volume terhadap moving average volume (VMA). Kotak hijau = volume di atas VMA terkait, merah = di bawah.",
+            pros: "Memberi konteks validasi minat pasar, terutama saat breakout atau pullback penting.",
+            cons: "Volume spike sesaat bisa menipu; perlu dikonfirmasi dengan struktur harga dan level.",
+        },
+        "1% Trx Hari Ini": {
+            title: "1% Trx Hari Ini",
+            meaning:
+                "Estimasi nilai 1% dari transaksi hari ini. Dipakai untuk cek kecocokan ukuran entry terhadap likuiditas harian.",
+            pros: "Praktis untuk membatasi dampak slippage terhadap ukuran transaksi harian saat entry.",
+            cons: "Sangat dipengaruhi kondisi intraday hari itu, sehingga bisa berubah cepat dan kurang stabil.",
+        },
+        "1% Trx 20 Hari": {
+            title: "1% Trx 20 Hari",
+            meaning:
+                "Estimasi nilai 1% dari rata-rata transaksi 20 hari. Digunakan sebagai patokan likuiditas yang lebih stabil.",
+            pros: "Lebih stabil dibanding harian, cocok untuk baseline kapasitas entry normal strategi.",
+            cons: "Kurang responsif pada perubahan likuiditas mendadak akibat berita atau rotasi sektor.",
+        },
+        MFI: {
+            title: "MFI",
+            meaning:
+                "Money Flow Index (14) menggabungkan harga dan volume. <=20 cenderung oversold, >=80 cenderung overbought.",
+            pros: "Menggabungkan dimensi harga dan volume sehingga sinyal ekstrem sering lebih bermakna.",
+            cons: "Bisa lama berada di area ekstrem saat tren kuat, sehingga timing entry bisa terlalu cepat.",
+        },
+        RSI: {
+            title: "RSI",
+            meaning:
+                "Relative Strength Index (14) mengukur kekuatan momentum harga. Zona 50-70 umumnya dipakai sebagai momentum sehat.",
+            pros: "Sederhana, cepat, dan efektif untuk membaca momentum lanjutan dalam tren yang sehat.",
+            cons: "Pada saham sangat volatil RSI sering whipsaw; butuh filter tren agar sinyal lebih bersih.",
+        },
+        StochRSI: {
+            title: "StochRSI",
+            meaning:
+                "Oscillator dari RSI. <20 cenderung jenuh jual (oversold), >80 cenderung jenuh beli (overbought).",
+            pros: "Sangat sensitif untuk menangkap pullback pendek dan potensi rebound cepat.",
+            cons: "Sensitivitas tinggi membuat noise besar; tanpa filter tren mudah memberi sinyal palsu.",
+        },
+        ATR: {
+            title: "ATR",
+            meaning:
+                "Average True Range (14) mengukur volatilitas. Di kartu ditampilkan juga estimasi SL berbasis 1.5 x ATR.",
+            pros: "Objektif untuk sizing stop loss dinamis sesuai karakter volatilitas masing-masing saham.",
+            cons: "Tidak memberi arah tren; hanya besar gerak, jadi tetap perlu indikator arah terpisah.",
+        },
+        ADR: {
+            title: "ADR",
+            meaning:
+                "Average Daily Range (14) versi persentase. Menunjukkan lebar gerak harian rata-rata saham.",
+            pros: "Membantu menilai ruang gerak harian realistis terhadap target TP dan manajemen ekspektasi.",
+            cons: "Kurang akurat saat terjadi regime shift volatilitas karena berbasis rata-rata historis.",
+        },
+        MACD: {
+            title: "MACD",
+            meaning:
+                "MACD (12,26,9) untuk momentum tren. Bull/Cross/Bear membantu membaca arah dan perubahan momentum.",
+            pros: "Bagus untuk konfirmasi momentum tren menengah dan mendeteksi transisi fase momentum.",
+            cons: "Sering terlambat pada reversal cepat dan bisa whipsaw saat pasar datar.",
+        },
+        Skor: {
+            title: "Skor",
+            meaning:
+                "Skor komposit (0-10) dari MA, RSI, MACD, dan volume. Makin tinggi skor, makin kuat struktur setup menurut rule internal.",
+            pros: "Mempercepat ranking kandidat karena banyak sinyal sudah diringkas dalam satu angka.",
+            cons: "Abstraksi tinggi bisa menutupi detail indikator; tetap perlu cek konteks chart sebelum entry.",
+        },
+    };
+
     const TIMEFRAME_OPTIONS = [
         { value: "reset", label: "Timeframe (1D)" },
         { value: "1d", label: "1D" },
@@ -315,9 +395,14 @@
         sortDir: "desc",
         forceView: "grid",
         mobileFiltersOpen: true,
+        filterOpenRatio: 1,
+        filterTargetRatio: 1,
+        filterAnimRaf: 0,
         searchTimer: null,
         pullStartY: null,
         pullArmed: false,
+        scrollRaf: 0,
+        helpAnchorEl: null,
     };
 
     const els = {
@@ -343,6 +428,13 @@
         activeFilters: document.getElementById("activeFilters"),
         cardList: document.getElementById("cardList"),
         themeToggle: document.getElementById("themeToggle"),
+        helpModal: null,
+        helpDialog: null,
+        helpTitle: null,
+        helpText: null,
+        helpPros: null,
+        helpCons: null,
+        helpClose: null,
     };
 
     if (!els.cardList) {
@@ -358,6 +450,7 @@
         }
 
         window.SCREENER_ARCHIVED_PRESETS = ARCHIVED_PRESET_OPTIONS.slice();
+        ensureHelpModal();
         hydrateTheme();
         updateViewMode();
         setupSelectOptions();
@@ -505,6 +598,17 @@
             toggleMobileFilters();
         });
 
+        els.cardList.addEventListener("click", function (event) {
+            const hintBtn = event.target.closest(".hint-btn");
+            if (!hintBtn) {
+                return;
+            }
+            event.preventDefault();
+            event.stopPropagation();
+            const key = hintBtn.getAttribute("data-help-key") || "";
+            openIndicatorHelp(key, hintBtn);
+        });
+
         els.themeToggle.addEventListener("click", function () {
             const root = document.documentElement;
             const nextTheme = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
@@ -514,11 +618,21 @@
             } catch (_) {}
         });
 
-        window.addEventListener("resize", syncMobileFilterState);
+        window.addEventListener("resize", function () {
+            syncMobileFilterState(false);
+            placeIndicatorHelp();
+        });
         window.addEventListener(
             "scroll",
             function () {
-                updateMobileCompactState(true);
+                if (state.scrollRaf) {
+                    return;
+                }
+                state.scrollRaf = window.requestAnimationFrame(function () {
+                    state.scrollRaf = 0;
+                    updateMobileCompactState(true);
+                    placeIndicatorHelp();
+                });
             },
             { passive: true },
         );
@@ -561,7 +675,27 @@
             },
             { passive: true },
         );
-        syncMobileFilterState();
+
+        if (els.helpClose) {
+            els.helpClose.addEventListener("click", closeIndicatorHelp);
+        }
+        document.addEventListener("click", function (event) {
+            if (!els.helpModal || els.helpModal.hidden) {
+                return;
+            }
+            const inDialog = event.target.closest("#indicatorHelpModal .hint-dialog");
+            const isHintBtn = event.target.closest(".hint-btn");
+            if (!inDialog && !isHintBtn) {
+                closeIndicatorHelp();
+            }
+        });
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
+                closeIndicatorHelp();
+            }
+        });
+
+        syncMobileFilterState(false);
     }
 
     function bindSelect(selectEl, stateKey) {
@@ -624,43 +758,36 @@
         return window.matchMedia("(max-width: 820px)").matches;
     }
 
-    function syncMobileFilterState() {
+    function syncMobileFilterState(animateFilters) {
         if (!els.controlsPanel || !els.filterToggleBtn) {
             return;
         }
         els.controlsPanel.classList.toggle("mobile-open", state.mobileFiltersOpen);
         els.controlsPanel.classList.toggle("filter-collapsed", !state.mobileFiltersOpen);
         els.filterToggleBtn.textContent = state.mobileFiltersOpen ? "Tutup Filter ▴" : "Buka Filter ▾";
-        updateMobileCompactState(false);
+        updateMobileCompactState(false, animateFilters === true);
         updatePresetInfo();
     }
 
     function toggleMobileFilters() {
         state.mobileFiltersOpen = !state.mobileFiltersOpen;
-        syncMobileFilterState();
+        syncMobileFilterState(true);
     }
 
-    function updateMobileCompactState(fromScroll) {
+    function updateMobileCompactState(fromScroll, forceAnimated) {
         const scrollY = window.scrollY || 0;
-        const collapseDistance = isMobileViewport() ? 300 : 420;
-        let collapseProgress = Math.max(0, Math.min(1, scrollY / collapseDistance));
+        const collapseDistance = isMobileViewport() ? 360 : 520;
+        let collapseProgress = clamp01(scrollY / collapseDistance);
+        collapseProgress = easeInOut(collapseProgress);
 
         if (!state.mobileFiltersOpen) {
             collapseProgress = 1;
-        } else if (!fromScroll) {
+        } else if (!fromScroll && scrollY <= 0) {
             collapseProgress = 0;
         }
 
         const openRatio = 1 - collapseProgress;
-        if (els.controlsPanel) {
-            els.controlsPanel.style.setProperty("--filter-open-ratio", openRatio.toFixed(3));
-        }
-
-        if (fromScroll && state.mobileFiltersOpen && collapseProgress >= 1) {
-            state.mobileFiltersOpen = false;
-            syncMobileFilterState();
-            return;
-        }
+        setFilterOpenRatio(openRatio, !fromScroll && !forceAnimated);
 
         if (!isMobileViewport()) {
             document.body.classList.remove("mobile-compact");
@@ -670,14 +797,187 @@
     }
 
     function revealFiltersByPull(shouldReveal) {
-        if (!shouldReveal || state.mobileFiltersOpen) {
+        if (!shouldReveal) {
             return;
         }
         if ((window.scrollY || 0) > 0) {
             return;
         }
+        if (state.mobileFiltersOpen && state.filterOpenRatio > 0.98) {
+            return;
+        }
         state.mobileFiltersOpen = true;
-        syncMobileFilterState();
+        syncMobileFilterState(true);
+    }
+
+    function clamp01(value) {
+        return Math.max(0, Math.min(1, value));
+    }
+
+    function easeInOut(value) {
+        const v = clamp01(value);
+        return v < 0.5 ? 2 * v * v : 1 - Math.pow(-2 * v + 2, 2) / 2;
+    }
+
+    function setFilterOpenRatio(nextRatio, immediate) {
+        state.filterTargetRatio = clamp01(nextRatio);
+        if (immediate) {
+            if (state.filterAnimRaf) {
+                window.cancelAnimationFrame(state.filterAnimRaf);
+                state.filterAnimRaf = 0;
+            }
+            applyFilterOpenRatio(state.filterTargetRatio);
+            return;
+        }
+        ensureFilterRatioAnimation();
+    }
+
+    function ensureFilterRatioAnimation() {
+        if (state.filterAnimRaf) {
+            return;
+        }
+        const step = function () {
+            const current = state.filterOpenRatio;
+            const target = state.filterTargetRatio;
+            const delta = target - current;
+
+            if (Math.abs(delta) < 0.004) {
+                applyFilterOpenRatio(target);
+                state.filterAnimRaf = 0;
+                return;
+            }
+
+            applyFilterOpenRatio(current + delta * 0.24);
+            state.filterAnimRaf = window.requestAnimationFrame(step);
+        };
+
+        state.filterAnimRaf = window.requestAnimationFrame(step);
+    }
+
+    function applyFilterOpenRatio(nextRatio) {
+        const openRatio = clamp01(nextRatio);
+        state.filterOpenRatio = openRatio;
+        if (els.controlsPanel) {
+            els.controlsPanel.style.setProperty("--filter-open-ratio", openRatio.toFixed(3));
+        }
+    }
+
+    function ensureHelpModal() {
+        if (document.getElementById("indicatorHelpModal")) {
+            els.helpModal = document.getElementById("indicatorHelpModal");
+            els.helpDialog = els.helpModal.querySelector(".hint-dialog");
+            els.helpTitle = document.getElementById("indicatorHelpTitle");
+            els.helpText = document.getElementById("indicatorHelpText");
+            els.helpPros = document.getElementById("indicatorHelpPros");
+            els.helpCons = document.getElementById("indicatorHelpCons");
+            els.helpClose = document.getElementById("indicatorHelpClose");
+            return;
+        }
+        document.body.insertAdjacentHTML(
+            "beforeend",
+            '<div id="indicatorHelpModal" class="hint-modal" hidden>' +
+                '<div class="hint-dialog" role="dialog" aria-labelledby="indicatorHelpTitle">' +
+                '<button type="button" class="hint-close" id="indicatorHelpClose" aria-label="Tutup bantuan">&times;</button>' +
+                '<h3 id="indicatorHelpTitle" class="hint-title"></h3>' +
+                '<p id="indicatorHelpText" class="hint-text"></p>' +
+                '<div class="hint-sections">' +
+                '<div class="hint-section">' +
+                '<p class="hint-subtitle">Kelebihan</p>' +
+                '<p id="indicatorHelpPros" class="hint-subtext"></p>' +
+                "</div>" +
+                '<div class="hint-section">' +
+                '<p class="hint-subtitle">Kekurangan</p>' +
+                '<p id="indicatorHelpCons" class="hint-subtext"></p>' +
+                "</div>" +
+                "</div>" +
+                "</div>" +
+                "</div>",
+        );
+        els.helpModal = document.getElementById("indicatorHelpModal");
+        els.helpDialog = els.helpModal.querySelector(".hint-dialog");
+        els.helpTitle = document.getElementById("indicatorHelpTitle");
+        els.helpText = document.getElementById("indicatorHelpText");
+        els.helpPros = document.getElementById("indicatorHelpPros");
+        els.helpCons = document.getElementById("indicatorHelpCons");
+        els.helpClose = document.getElementById("indicatorHelpClose");
+    }
+
+    function openIndicatorHelp(key, anchorEl) {
+        if (
+            !els.helpModal ||
+            !els.helpDialog ||
+            !els.helpTitle ||
+            !els.helpText ||
+            !els.helpPros ||
+            !els.helpCons
+        ) {
+            return;
+        }
+        const help = INDICATOR_HELP[key];
+        if (!help) {
+            return;
+        }
+        els.helpTitle.textContent = help.title;
+        els.helpText.textContent = help.meaning;
+        els.helpPros.textContent = help.pros || "-";
+        els.helpCons.textContent = help.cons || "-";
+        els.helpModal.hidden = false;
+        state.helpAnchorEl = anchorEl || null;
+        placeIndicatorHelp(anchorEl);
+    }
+
+    function closeIndicatorHelp() {
+        if (!els.helpModal) {
+            return;
+        }
+        els.helpModal.hidden = true;
+        state.helpAnchorEl = null;
+    }
+
+    function placeIndicatorHelp(nextAnchor) {
+        if (!els.helpModal || !els.helpDialog || els.helpModal.hidden) {
+            return;
+        }
+
+        const anchor = nextAnchor || state.helpAnchorEl;
+        if (!anchor || !anchor.isConnected) {
+            closeIndicatorHelp();
+            return;
+        }
+        state.helpAnchorEl = anchor;
+
+        const gap = 8;
+        const margin = 8;
+        const anchorRect = anchor.getBoundingClientRect();
+
+        els.helpDialog.style.left = "-9999px";
+        els.helpDialog.style.top = "-9999px";
+        const dialogW = els.helpDialog.offsetWidth;
+        const dialogH = els.helpDialog.offsetHeight;
+
+        const viewportW = window.innerWidth;
+        const viewportH = window.innerHeight;
+        const anchorCenter = anchorRect.left + anchorRect.width / 2;
+
+        let left = anchorCenter - dialogW / 2;
+        left = Math.max(margin, Math.min(viewportW - dialogW - margin, left));
+
+        let top = anchorRect.bottom + gap;
+        let place = "bottom";
+        if (top + dialogH > viewportH - margin) {
+            top = anchorRect.top - dialogH - gap;
+            place = "top";
+        }
+        if (top < margin) {
+            top = Math.max(margin, Math.min(viewportH - dialogH - margin, top));
+        }
+
+        const arrowX = Math.max(16, Math.min(dialogW - 16, anchorCenter - left));
+        els.helpModal.style.setProperty("--hint-arrow-x", arrowX + "px");
+        els.helpModal.setAttribute("data-place", place);
+
+        els.helpDialog.style.left = left + "px";
+        els.helpDialog.style.top = top + "px";
     }
 
     async function loadData() {
@@ -1081,14 +1381,17 @@
                 const mfiText = metricChip(
                     formatDec(item.mfi, 1) + " (" + mfiLabel(item.mfi) + ")",
                     toneByMfi(item.mfi),
+                    true,
                 );
                 const rsiText = metricChip(
                     formatDec(item.rsi, 1) + " (" + rsiZone + ")",
                     toneByRsi(item.rsi),
+                    true,
                 );
                 const srsiText = metricChip(
                     formatDec(item.stochRsi, 1) + " (" + srsiZone + ")",
                     toneByStochRsi(item.stochRsi),
+                    true,
                 );
                 const atrText = metricChip(
                     formatDec(item.atrV, 1) +
@@ -1099,12 +1402,18 @@
                         ") · SL 1.5x: " +
                         formatPrice(slAtrPrice),
                     toneByRange(item.atrPct),
+                    true,
                 );
                 const adrText = metricChip(
                     formatDec(item.adrPct, 2) + "% (" + adrZone + ")",
                     toneByRange(item.adrPct),
+                    true,
                 );
-                const macdChip = metricChip(macdText, item.macdBull ? "good" : item.macdCross ? "warn" : "bad");
+                const macdChip = metricChip(
+                    macdText,
+                    item.macdBull ? "good" : item.macdCross ? "warn" : "bad",
+                    true,
+                );
                 const symbolUrl = stockbitSymbolUrl(item.ticker);
                 const indexBadges = (item.indeks || [])
                     .map(function (idx) {
@@ -1163,12 +1472,29 @@
 
     function cardItem(key, valueHtml, className) {
         const cls = className ? "card-kv " + className : "card-kv";
-        return '<div class="' + cls + '"><div class="k">' + escapeHtml(key) + '</div><div class="v">' + valueHtml + "</div></div>";
+        return '<div class="' + cls + '"><div class="k">' + renderIndicatorKeyLabel(key) + '</div><div class="v">' + valueHtml + "</div></div>";
     }
 
-    function metricChip(text, tone) {
+    function renderIndicatorKeyLabel(key) {
+        const safeKey = escapeHtml(key);
+        if (!INDICATOR_HELP[key]) {
+            return '<span class="k-text">' + safeKey + "</span>";
+        }
+        return (
+            '<span class="k-text">' +
+            safeKey +
+            '</span><button type="button" class="hint-btn" data-help-key="' +
+            safeKey +
+            '" aria-label="Bantuan ' +
+            safeKey +
+            '">?</button>'
+        );
+    }
+
+    function metricChip(text, tone, borderless) {
         const safeTone = tone || "neutral";
-        return '<span class="metric ' + safeTone + '">' + escapeHtml(text) + "</span>";
+        const noBorder = borderless ? " metric-borderless" : "";
+        return '<span class="metric ' + safeTone + noBorder + '">' + escapeHtml(text) + "</span>";
     }
 
     function toneByRsi(value) {
