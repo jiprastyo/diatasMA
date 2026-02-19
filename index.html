@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="id" data-theme="light">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="robots"
+            content="noindex, nofollow, noarchive, nosnippet, noimageindex, max-snippet:0, max-image-preview:none, max-video-preview:0, notranslate"
+        />
+        <meta
+            name="googlebot"
+            content="noindex, nofollow, noarchive, nosnippet, noimageindex, max-snippet:0, max-image-preview:none, max-video-preview:0, notranslate"
+        />
+        <meta
+            name="bingbot"
+            content="noindex, nofollow, noarchive, nosnippet, noimageindex, max-snippet:0, max-image-preview:none, max-video-preview:0, notranslate"
+        />
+        <meta
+            http-equiv="X-Robots-Tag"
+            content="noindex, nofollow, noarchive, nosnippet, noimageindex"
+        />
+        <meta name="referrer" content="no-referrer" />
+        <title>Skriner</title>
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body>
+        <a class="skip-link" href="#results">Lewati ke hasil</a>
+
+        <header class="header" id="mainHeader">
+            <div class="container">
+                <div class="header-top">
+                    <div class="title-cluster">
+                        <h1 class="site-title">SKRINER</h1>
+                        <div class="dashboard-meta" role="status" aria-live="polite">
+                            <span id="tsText">Memuat data...</span>
+                            <span aria-hidden="true">/</span>
+                            <span id="statsCount">0 saham</span>
+                        </div>
+                    </div>
+                    <div class="header-actions">
+                        <button type="button" class="btn icon" id="themeToggle" title="Tema">◐</button>
+                    </div>
+                </div>
+
+                <section class="controls" id="controlsPanel" aria-label="Kontrol screener">
+                    <div class="filter-matrix">
+                        <div class="filter-pair">
+                            <select id="sektorSelect" class="filter-select fit-select"></select>
+                            <select id="idxSelect" class="filter-select fit-select"></select>
+                        </div>
+                        <div class="filter-pair">
+                            <select id="presetSelect" class="filter-select fit-select"></select>
+                        </div>
+                        <div class="preset-note" id="presetInfo" aria-live="polite"></div>
+                        <div class="filter-pair">
+                            <select id="maSelect" class="filter-select fit-select"></select>
+                            <select id="vmaSelect" class="filter-select fit-select"></select>
+                        </div>
+                        <div class="filter-pair">
+                            <select id="rsiSelect" class="filter-select fit-select"></select>
+                            <select id="srsiSelect" class="filter-select fit-select"></select>
+                        </div>
+                        <div class="filter-pair">
+                            <select id="atrSelect" class="filter-select fit-select"></select>
+                            <select id="adrSelect" class="filter-select fit-select"></select>
+                        </div>
+                    </div>
+
+                    <div class="filter-row input-row">
+                        <input
+                            id="searchInput"
+                            class="text-input search-input"
+                            placeholder="Cari ticker/multi ticker"
+                            autocomplete="off"
+                            spellcheck="false"
+                        />
+                    </div>
+
+                    <div class="filter-bar">
+                        <select id="timeframeSelect" class="filter-select fit-select"></select>
+                        <select id="sortSelect" class="filter-select fit-select">
+                            <option value="score:desc">Urut: Skor tertinggi</option>
+                            <option value="ticker:asc">Urut: Ticker A-Z</option>
+                            <option value="price:desc">Urut: Harga tertinggi</option>
+                            <option value="pct:desc">Urut: %Chg tertinggi</option>
+                            <option value="pct1today:desc">Urut: 1%Trx1D tertinggi</option>
+                            <option value="pct120d:desc">Urut: 1%Trx20D tertinggi</option>
+                            <option value="atrPct:desc">Urut: ATR tertinggi</option>
+                            <option value="rsi:desc">Urut: RSI tertinggi</option>
+                            <option value="macdHist:desc">Urut: MACD tertinggi</option>
+                            <option value="adrPct:desc">Urut: ADR tertinggi</option>
+                        </select>
+                        <button type="button" class="btn reset-soft" id="resetBtn">Reset</button>
+                        <div class="active-filters" id="activeFilters"></div>
+                    </div>
+                </section>
+
+                <div class="mobile-toolbar">
+                    <button type="button" class="btn filter-toggle-soft" id="filterToggleBtn">Buka Filter ▾</button>
+                    <button type="button" class="btn" id="resetBtnSticky">Reset Filter</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="container" id="results" tabindex="-1">
+            <div class="result-wrap" id="resultWrap">
+                <div class="cards" id="cardList" aria-live="polite"></div>
+            </div>
+        </main>
+
+        <script src="stocks_database.js" defer></script>
+        <script src="app.js" defer></script>
+    </body>
+</html>
