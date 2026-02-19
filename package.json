@@ -1,0 +1,14 @@
+{
+  "name": "screener-card",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "fetch": "node scripts/fetch.mjs",
+    "fetch:touch": "node scripts/fetch.mjs --touch",
+    "update-data": "node scripts/update-data.mjs",
+    "serve": "node scripts/serve.mjs",
+    "backtest:presets": "node scripts/backtest-presets.mjs",
+    "backtest:refresh": "node scripts/run-backtest-refresh.mjs",
+    "tune:presets": "node scripts/tune-presets.mjs"
+  }
+}

@@ -1,196 +1,144 @@
-<h1 align="center">Screener Saham Pribadi</h1>
-<p align="center"><em>Dokumentasi Istilah, Formula, dan Kerangka Pikir</em></p>
+<h1 align="center">Skriner Saham Pribadi</h1>
+<p align="center"><em>Dokumentasi istilah, formula, preset, dan hasil backtest terbaru</em></p>
 
 ---
 
 ## Daftar Isi
 
 1. [Prolog](#prolog)
-2. [Bab 1 - Tujuan Dokumen](#bab-1---tujuan-dokumen)
-3. [Bab 2 - Istilah Utama di Aplikasi](#bab-2---istilah-utama-di-aplikasi)
-4. [Bab 3 - Penjelasan Kolom dan Filter](#bab-3---penjelasan-kolom-dan-filter)
-5. [Bab 4 - Formula Indikator](#bab-4---formula-indikator)
-6. [Bab 5 - Formula Skor Setup](#bab-5---formula-skor-setup)
-7. [Bab 6 - Preset Strategi](#bab-6---preset-strategi)
-8. [Bab 7 - Versi Ringkas untuk User Umum](#bab-7---versi-ringkas-untuk-user-umum)
-9. [Bab 8 - Keterbatasan Data dan Metode](#bab-8---keterbatasan-data-dan-metode)
-10. [Lampiran Referensi](#lampiran-referensi)
-11. [Penutup](#penutup)
+2. [Tujuan Dokumen](#tujuan-dokumen)
+3. [Ruang Lingkup Sistem](#ruang-lingkup-sistem)
+4. [Istilah Utama di Aplikasi](#istilah-utama-di-aplikasi)
+5. [Penjelasan Kolom dan Filter](#penjelasan-kolom-dan-filter)
+6. [Formula Indikator](#formula-indikator)
+7. [Formula Skor Setup](#formula-skor-setup)
+8. [Preset Strategi Aktif di UI (6 Preset)](#preset-strategi-aktif-di-ui-6-preset)
+9. [Preset Arsip (Untuk Compare Internal)](#preset-arsip-untuk-compare-internal)
+10. [Kerangka Backtest Long-Only](#kerangka-backtest-long-only)
+11. [Hasil Backtest Terbaru](#hasil-backtest-terbaru)
+12. [Operasional Data dan Perintah Penting](#operasional-data-dan-perintah-penting)
+13. [Keterbatasan Data dan Metode](#keterbatasan-data-dan-metode)
+14. [Lampiran Referensi](#lampiran-referensi)
+15. [Penutup](#penutup)
 
 ---
 
 ## Prolog
 
-> Screener ini saya buat sebagai alat bantu pribadi.
+> Skriner ini dibuat sebagai alat bantu pribadi, bukan sinyal beli/jual otomatis.
 
-Dokumen ini bukan rekomendasi pemilihan saham, bukan sinyal beli, dan bukan ajakan untuk mengikuti sistem saya.
+Dokumen ini adalah dokumentasi kerja untuk menjaga konsistensi cara baca data, aturan preset, dan evaluasi hasil backtest.
 
-Setiap orang yang menggunakan output screener ini untuk keputusan investasi atau trading bertanggung jawab penuh atas keputusan dan risikonya sendiri.
-
-Pengguna wajib memahami bahwa investasi dan trading memiliki risiko nyata, termasuk kemungkinan kehilangan sebagian atau seluruh modal.
+Semua keputusan trading tetap tanggung jawab pengguna.
 
 ---
 
-## Bab 1 - Tujuan Dokumen
+## Tujuan Dokumen
 
-Dokumen ini disusun untuk tiga tujuan utama:
+Dokumen ini disusun untuk:
 
-- Menjelaskan istilah yang tampil di screener dalam bahasa non-teknis.
-- Menjelaskan cara hitung indikator dan skor yang dipakai aplikasi.
-- Menjelaskan kerangka pikir pribadi saya saat memakai screener, tanpa mengarahkan pengguna untuk meniru keputusan.
+- Menjelaskan istilah yang tampil di aplikasi dalam bahasa praktis.
+- Menjelaskan formula indikator dan skor yang dipakai.
+- Mendokumentasikan preset aktif terbaru dan hasil backtest terakhir.
+- Menjaga jejak metodologi agar update berikutnya tetap konsisten.
 
 ---
 
-## Bab 2 - Istilah Utama di Aplikasi
+## Ruang Lingkup Sistem
 
-### 2.1 Identitas Saham
+Sistem saat ini mencakup 3 komponen:
 
-**Ticker**
+1. **Skriner UI** (card view) untuk shortlist kandidat saham.
+2. **Backtest long-only** untuk evaluasi preset dan tuning parameter.
+3. **Pipeline data offline** (cache + incremental update) agar rerun cepat dan repeatable.
 
-Kode saham emiten, misalnya `BBCA`, `BBRI`, `TLKM`.
+Ringkasannya:
 
-**Company**
+- Universe utama: data ISSI dengan metadata indeks/sektor/papan.
+- Timeframe UI: `1D` dan `1W`.
+- Backtest history default: `5y`.
+- Data disimpan lokal di `data/` dan cache di `data/offline-cache/` + `data/backtest-cache/`.
 
-Nama perusahaan emiten.
+---
 
-**Harga / Chg**
+## Istilah Utama di Aplikasi
 
-Harga penutupan terakhir dan perubahan harian.
+### Identitas saham
 
-Formula:
+- **Ticker**: kode emiten, mis. `BBCA`, `BBRI`, `TLKM`.
+- **Company**: nama perusahaan.
+- **Harga / %Chg**: harga terakhir dan perubahan harian.
 
 ```text
 %Chg = ((Harga_Terakhir - Harga_Sebelumnya) / Harga_Sebelumnya) x 100%
 ```
 
-### 2.2 Klasifikasi Emiten
+### Klasifikasi emiten (tag)
 
-**Papan**
+Urutan tampilan tag di kartu saham:
 
-- Utama
-- Pengembangan
-- Akselerasi
-- Ekonomi Baru
-- Pemantauan Khusus
+1. **Indeks** (ISSI/LQ45/KOMPAS100/BUMN)
+2. **Sektor**
+3. **Papan**
 
-**Sektor**
+### Timeframe
 
-- Bahan Baku
-- Consumer
-- Energi
-- Industri
-- Infrastruktur
-- Kesehatan
-- Keuangan
-- Properti
-- Siklikal
-- Teknologi
-- Transportasi
-
-**Indeks (yang tersedia di filter)**
-
-- ISSI
-- LQ45
-- KOMPAS100
-- BUMN
-
-### 2.3 Timeframe
-
-- `1D`: data harian.
-- `1W`: data mingguan (dibentuk dari agregasi data harian).
-
-### 2.4 Referensi Resmi IDX untuk Tag di Screener
-
-- **Tag Papan** pada screener merujuk kategori papan pencatatan di BEI: [Papan Pencatatan](https://www.idx.id/id/produk/saham/papan-pencatatan/)
-- **Tag Sektor** pada screener merujuk klasifikasi sektor IDX-IC: [Pengenalan Klasifikasi IDX-IC](https://www.idx.id/id/berita/artikel/pengenalan-klasifikasi-industri-idx-ic-indonesia-stock-exchange-industrial-classification/)
-- **Tag Indeks** pada screener merujuk kelompok produk indeks BEI (misalnya keluarga LQ45, KOMPAS100, ISSI, dan indeks bertema BUMN): [Produk Indeks](https://www.idx.id/id/produk/indeks/)
-- **Tag Fraksi Harga** pada screener merujuk ketentuan satuan perdagangan dan fraksi harga BEI: [SK Perubahan Peraturan II-A (Fraksi Harga)](https://www.idx.id/media/15715/sk-kep-00071-bei_112023-perubahan-peraturan-nomor-ii-a-tentang-perdagangan-efek-bersifat-ekuitas.pdf)
+- `1D`: harian.
+- `1W`: mingguan (agregasi dari data harian).
 
 ---
 
-## Bab 3 - Penjelasan Kolom dan Filter
+## Penjelasan Kolom dan Filter
 
-### 3.1 Kolom MA / Vol
+### 1) PxMA dan VxMA
 
-Kolom ini memperlihatkan apakah harga dan volume saat ini berada di atas rata-ratanya.
+`PxMA` dan `VxMA` ditampilkan sebagai 7 kotak status:
 
-**MA labels**
+- **PxMA**: `P3`, `P5`, `P10`, `P20`, `P50`, `P1`, `P2`
+  - arti: EMA3, EMA5, EMA10, EMA20, SMA50, SMA100, SMA200
+- **VxMA**: `V3`, `V5`, `V10`, `V20`, `V50`, `V1`, `V2`
+  - arti: VMA3, VMA5, VMA10, VMA20, VMA50, VMA100, VMA200
 
-- `E3`, `E5`, `E10`, `E20` = EMA 3, 5, 10, 20
-- `S50`, `S1`, `S2` = SMA 50, 100, 200
+### 2) Likuiditas praktis (1% transaksi)
 
-**Vol labels**
+- `1% Trx Hari Ini`
+- `1% Trx 20 Hari`
 
-- `V3`, `V5`, `V10`, `V20`, `V50`, `V1`, `V2` = VMA 3, 5, 10, 20, 50, 100, 200
-
-Interpretasi umum:
-
-- Makin banyak MA aktif, tren harga cenderung lebih kuat.
-- Makin banyak VMA ditembus, aktivitas transaksi cenderung lebih tinggi.
-
-### 3.2 Kolom 1% Transaksi
-
-**1% Transaksi 1D**
+Dipakai untuk menilai kecocokan ukuran transaksi terhadap likuiditas saham.
 
 ```text
 1%Trx1D = (Volume_Hari_Ini x Harga_Hari_Ini) x 0.01
-```
-
-**1% Transaksi 20D**
-
-```text
 AvgValue20 = rata-rata(Volume x Harga) 20 hari
 1%Trx20D = AvgValue20 x 0.01
 ```
 
-Fungsi praktis: membantu menilai apakah ukuran modal sesuai dengan likuiditas saham.
+### 3) Oscillator dan volatilitas
 
-### 3.3 Kolom RSI / StochRSI
+- **MFI**: Oversold / Lemah / Normal / Overbought
+- **RSI**: Oversold / Lemah / Sweet / Kuat / Overbought
+- **StochRSI**: Oversold / Netral / Overbought
+- **ATR**: nilai ATR + ATR% + kategori + estimasi `SL 1.5x`
+- **ADR**: ADR% + kategori Lesu/Normal/Aktif
+- **MACD**: Bull / Cross / Bear-Netral
 
-**RSI**
+### 4) Sort yang tersedia
 
-- `<30`: Oversold
-- `30 sampai <50`: Lemah
-- `50 sampai 70`: Sweet
-- `>70 sampai 80`: Kuat
-- `>80`: Overbought
+- Skor, Ticker, Harga, %Chg, 1%Trx1D, 1%Trx20D, **ATR**, RSI, MACD, ADR.
 
-**StochRSI**
+### 5) Ringkas logika filter
 
-- `<20`: Oversold
-- `20 sampai 80`: Netral
-- `>80`: Overbought
-
-### 3.4 Kolom ATR / ADR
-
-- `ATR`: volatilitas nominal harian.
-- `ADR`: rata-rata rentang gerak harian.
-
-Kategori aktivitas volatilitas di aplikasi:
-
-- `Lesu`: <1.5%
-- `Normal`: 1.5% sampai <5%
-- `Aktif`: >=5%
-
-### 3.5 Kolom MACD
-
-- `MACD Bull`: histogram positif.
-- `MACD Bear`: histogram negatif.
-- `MACD Cross`: tanda histogram berubah dari periode sebelumnya.
-
-### 3.6 Logika Filter
-
-- Preset aktif menjadi filter utama.
-- Indeks memakai mode **AND** (harus memenuhi semua indeks yang dipilih).
-- Papan, sektor, rentang harga, rentang RSI, rentang StochRSI, rentang ATR, rentang ADR memakai **OR** di dalam grup masing-masing.
-- MA dan VMA memakai **AND** antar item yang dipilih.
-- Min/Max harga manual membatasi harga absolut.
+- Preset: filter utama.
+- Indeks: single select (`all` atau satu indeks).
+- Sektor: single select (`all` atau satu sektor).
+- PxMA/VxMA: multi-select, logika **AND** antar item terpilih.
+- RSI/StochRSI/ATR/ADR: range-based filter sesuai opsi.
+- Search: ticker tunggal atau multi ticker (dipisah spasi).
 
 ---
 
-## Bab 4 - Formula Indikator
+## Formula Indikator
 
-### 4.1 EMA
+### 1) EMA
 
 ```text
 k = 2 / (p + 1)
@@ -198,15 +146,13 @@ EMA_awal = rata-rata p data awal
 EMA_baru = Harga_sekarang x k + EMA_sebelumnya x (1 - k)
 ```
 
-### 4.2 SMA
+### 2) SMA
 
 ```text
 SMA = rata-rata p data terakhir
 ```
 
-### 4.3 RSI (14)
-
-Implementasi aplikasi memakai 15 data penutupan terakhir untuk menghasilkan RSI 14.
+### 3) RSI (14)
 
 ```text
 AvgGain = total kenaikan / 14
@@ -216,14 +162,26 @@ RS = AvgGain / AvgLoss
 RSI = 100 - (100 / (1 + RS))
 ```
 
-### 4.4 StochRSI
+### 4) StochRSI
 
 ```text
 StochRSI = ((RSI_terakhir - RSI_min14) / (RSI_max14 - RSI_min14)) x 100
-Jika RSI_max14 = RSI_min14, nilai dikembalikan 50
+Jika RSI_max14 = RSI_min14, nilai = 50
 ```
 
-### 4.5 MACD (12,26,9)
+### 5) MFI (14)
+
+```text
+TP = (High + Low + Close) / 3
+RawMoneyFlow = TP x Volume
+PositiveFlow = RawMoneyFlow saat TP > TP_prev
+NegativeFlow = RawMoneyFlow saat TP < TP_prev
+MoneyRatio = sum(PositiveFlow14) / sum(NegativeFlow14)
+MFI = 100 - 100/(1 + MoneyRatio)
+Jika NegativeFlow = 0, MFI = 100
+```
+
+### 6) MACD (12,26,9)
 
 ```text
 MACD_Line = EMA12 - EMA26
@@ -233,250 +191,235 @@ macdBull = Histogram > 0
 macdCross = tanda(Histogram) berubah vs periode sebelumnya
 ```
 
-### 4.6 ATR (14)
+### 7) ATR (14)
 
 ```text
 TR = max(High-Low, abs(High-Close_prev), abs(Low-Close_prev))
 ATR14 = rata-rata 14 TR terakhir
+ATR_pct = (ATR / Harga) x 100
 ```
 
-### 4.7 ADR (14)
+### 8) ADR (14)
 
 ```text
 ADR_nom = rata-rata(High-Low) 14 hari
 ADR_pct = rata-rata((High-Low)/Low) 14 hari x 100
 ```
 
-### 4.8 ATR% untuk Klasifikasi Volatilitas
+### 9) Estimasi SL ATR di UI
 
 ```text
-ATR_pct = (ATR / Harga) x 100
+SL_est = Harga - (1.5 x ATR)
 ```
 
-### 4.9 Konversi Nilai ke Lot
+### 10) Fraksi harga IDX (tick size)
 
-```text
-Lembar = Nilai_Uang / Harga
-Lot = floor(Lembar / 100)
-```
-
-Catatan: 1 lot = 100 lembar.
-
-### 4.10 Fraksi Harga (Tick Size)
-
-- Harga <200: tick 1
-- 200 sampai <500: tick 2
-- 500 sampai <2000: tick 5
-- 2000 sampai <5000: tick 10
-- >=5000: tick 25
+- `<200`: tick 1
+- `200 sampai <500`: tick 2
+- `500 sampai <2000`: tick 5
+- `2000 sampai <5000`: tick 10
+- `>=5000`: tick 25
 
 ```text
 Harga_Fraksi_Bawah = floor(Harga / tick) x tick
 ```
 
-### 4.11 Estimasi SL pada Kolom ATR
-
-```text
-SL = pembulatan fraksi dari (Harga - 2 x ATR)
-```
-
 ---
 
-## Bab 5 - Formula Skor Setup
+## Formula Skor Setup
 
-Skor setup adalah skor komposit `0 sampai 10`.
+Skor setup = komposit `0 sampai 10`.
 
 ```text
 Skor = Poin_MA + Poin_RSI + Poin_MACD + Poin_Volume
 ```
 
-Skor dibatasi maksimum 10 dan dibulatkan 1 desimal.
+Komponen:
 
-### 5.1 Komponen MA (maks 7)
+- **MA**: +1 untuk tiap kondisi harga di atas EMA3/5/10/20 dan SMA50/100/200 (maks 7)
+- **RSI**:
+  - 50-70: +1.5
+  - >70-80: +0.5
+  - >=40-<50: +0.5
+- **MACD Bull**: +1
+- **Volume > VMA20**: +0.5
 
-+1 poin untuk setiap kondisi benar:
+Label praktis:
 
-- Harga > EMA3
-- Harga > EMA5
-- Harga > EMA10
-- Harga > EMA20
-- Harga > SMA50
-- Harga > SMA100
-- Harga > SMA200
-
-### 5.2 Komponen RSI (maks 1.5)
-
-- RSI 50 sampai 70: +1.5
-- RSI >70 sampai 80: +0.5
-- RSI >=40 sampai <50: +0.5
-
-### 5.3 Komponen MACD (maks 1)
-
-- Jika `macdBull = true`: +1
-
-### 5.4 Komponen Volume (maks 0.5)
-
-- Jika `Volume > VMA20`: +0.5
-
-### 5.5 Label Skor
-
-- `>=8`: KUAT
-- `>=6 sampai <8`: BAGUS
-- `>=4 sampai <6`: PANTAU
-- `<4`: LEMAH
+- `>=8`: kuat
+- `>=6 dan <8`: bagus
+- `<6`: pantau/lemah
 
 ---
 
-## Bab 6 - Preset Strategi
+## Preset Strategi Aktif di UI (6 Preset)
 
-Bagian ini menjelaskan rule preset di aplikasi, lalu konteks teori yang saya pakai sebagai referensi berpikir.
+Preset yang tampil di dropdown UI saat ini:
 
-### 6.1 Trend Kuat
+1. `EMA<=2 + StochOS + RSI + MFIOS`
+2. `EMA<=2 + StochOS + MFIOS`
+3. `EMA<=2 + RSI + MFIOS`
+4. `EMA<=2 + StochOS + RSI`
+5. `EMA<=2 + StochOS`
+6. `EMA<=2 + RSI50-70`
 
-**Rule di aplikasi**
+Karakter umum rule baru:
 
-- Minimal 5 dari 7 MA aktif
-- EMA20 aktif
-- SMA50 aktif
-- MACD Bull
-- RSI 45 sampai 80
+- Basis tren: `EMA short bullish` (EMA3, EMA5, EMA10, EMA20 aktif)
+- Jarak harga ke EMA short terdekat: `<= 2%`
+- Mayoritas entry mode yang performanya lebih baik: **buy close - 2 tick**
 
-**Konteks berpikir pribadi**
+Catatan implementasi UI:
 
-Saya memakainya untuk fokus ke saham yang sudah menunjukkan struktur uptrend relatif matang, selaras dengan konsep *trend template* Minervini.
-
-### 6.2 Siap Breakout
-
-**Rule di aplikasi**
-
-- EMA3, EMA5, EMA10, EMA20 aktif
-- RSI 50 sampai 70
-- MACD Bull
-- Salah satu dari VMA3 atau VMA5 atau VMA20 aktif
-
-**Konteks berpikir pribadi**
-
-Saya memakainya untuk mencari kandidat breakout berbasis momentum ala O'Neil/CAN SLIM, dengan perhatian khusus pada konfirmasi volume.
-
-### 6.3 Momentum
-
-**Rule di aplikasi**
-
-- EMA10 aktif
-- EMA20 aktif
-- RSI 50 sampai 75
-- MACD Bull
-
-**Konteks berpikir pribadi**
-
-Saya memakainya saat ingin menumpang laju tren yang sudah berjalan, mendekati kerangka Elder Impulse (tren dan momentum harus searah).
-
-### 6.4 Akumulasi Vol
-
-**Rule di aplikasi**
-
-- Minimal 4 dari 7 VMA aktif
-- EMA20 aktif
-
-**Konteks berpikir pribadi**
-
-Saya memakainya untuk menangkap indikasi partisipasi beli yang mulai meningkat, terutama di fase transisi menuju tren naik.
-
-### 6.5 Jenuh Jual
-
-**Rule di aplikasi**
-
-- RSI <35
-
-**Konteks berpikir pribadi**
-
-Saya memakainya untuk skenario kontra-tren jangka pendek. Ini bukan sinyal otomatis; saya tetap menunggu konfirmasi tambahan di chart.
-
-### 6.6 Golden Cross
-
-**Rule di aplikasi**
-
-- EMA10 aktif
-- EMA20 aktif
-- Belum di atas SMA200
-- MACD Bull
-- Ada MACD Cross
-
-**Konteks berpikir pribadi**
-
-Saya memakainya sebagai deteksi dini potensi transisi bullish, sambil sadar bahwa sinyal crossover dapat gagal di pasar sideways.
+- Note preset menjelaskan aturan entry ringkas per preset.
+- Ticker di kartu bisa diklik untuk buka halaman simbol di Stockbit.
 
 ---
 
-## Bab 7 - Versi Ringkas untuk User Umum
+## Preset Arsip (Untuk Compare Internal)
 
-### 7.1 Cara Saya Membaca Tabel Secara Cepat
+Preset lama tidak tampil di dropdown utama, tapi tetap tersedia untuk compare/backtest internal, misalnya:
 
-- Saya melihat skor dulu: >=8 kandidat lebih kuat, 6 sampai <8 masih sehat, 4 sampai <6 tahap pantau, <4 bukan prioritas.
-- Saya cek MA/Vol untuk menilai kekuatan tren dan aktivitas transaksi.
-- Saya cek MACD dan RSI untuk menilai apakah momentum cukup sehat.
-- Saya cek ATR/ADR untuk menilai besar kecilnya gerak harga.
-- Saya cocokkan 1% transaksi dengan ukuran modal agar tidak memaksa likuiditas.
+- `Trend Kuat`
+- `Siap Breakout`
+- `Momentum`
+- `Akumulasi Vol`
+- `Jenuh Jual`
+- `Golden Cross`
+- varian `EMA short near`, `pullback breakout`, dan varian MFI lama lainnya
 
-### 7.2 Cara Saya Memakai Preset
+Tujuan arsip:
 
-- Trend Kuat: saat saya mencari saham pemimpin tren.
-- Siap Breakout: saat saya fokus ke kandidat tembus resistance.
-- Momentum: saat saya mencari kelanjutan tren.
-- Akumulasi Vol: saat saya mencari penguatan minat beli.
-- Jenuh Jual: saat saya mencari pantulan jangka pendek.
-- Golden Cross: saat saya mencari fase awal perubahan tren.
-
-### 7.3 Alur Harian yang Biasanya Saya Pakai
-
-1. Pilih preset sesuai konteks pasar yang saya lihat.
-2. Kecilkan universe pakai papan, sektor, dan indeks.
-3. Sesuaikan filter harga dengan tipe saham dan ukuran modal.
-4. Prioritaskan kandidat dengan skor, momentum, dan likuiditas yang lebih baik.
-5. Validasi ulang chart sebelum mengeksekusi rencana.
+- menjaga kebersihan UI (fokus ke preset terbaik aktif)
+- tetap bisa rerun jika dibutuhkan pembanding
 
 ---
 
-## Bab 8 - Keterbatasan Data dan Metode
+## Kerangka Backtest Long-Only
 
-### 8.1 Keterbatasan Sumber Data
+Konfigurasi inti yang dipakai pada run terbaru:
 
-- Data berasal dari Yahoo Finance (pihak ketiga), bukan feed resmi bursa.
-- Data dapat mengalami keterlambatan, ketidaklengkapan, atau perbedaan penyesuaian dibanding sumber lain.
+- Mode: **long-only**
+- Universe: 956 ticker diminta, 938 berhasil diproses
+- History: 5 tahun
+- Modal acuan: IDR 200.000.000
+- Risk per trade: 0.5%
+- Minimum RR: 3R
+- Biaya broker:
+  - Buy 0.18%
+  - Sell 0.28%
+- Biaya bursa + slippage juga diperhitungkan di engine
 
-### 8.2 Keterbatasan Metode Pengambilan Data
+Entry/exit:
 
-- Pengambilan data bergantung endpoint publik dan kondisi jaringan.
-- Permintaan memiliki timeout; sebagian ticker bisa gagal terambil pada siklus tertentu.
-- Data mingguan dibangun dari agregasi data harian, bukan data mingguan native.
-- Pipeline update memakai ambang cakupan minimum 90%; jadi pada kondisi tertentu, hasil dapat tetap dipublikasikan walau sebagian ticker gagal.
-- Proses update bergantung job terjadwal; jika job gagal atau tertunda, data bisa tidak sepenuhnya mutakhir.
+- Entry bisa `next_day_open`, `same_day_close`, atau `same_day_close_minus_2_tick` (preset-specific).
+- Exit intraday berbasis high-low harian.
+- Prioritas same-bar: `sl-first`.
 
-### 8.3 Implikasi Penggunaan
+Update terbaru:
 
-- Output screener saya perlakukan sebagai daftar kandidat, bukan keputusan akhir.
-- Keputusan transaksi tetap memerlukan validasi manual, skenario risiko, dan batas kerugian yang jelas.
+- Rerun top strategy sudah diuji juga dengan varian **SL = 1.5 x ATR** untuk preset terkait.
+
+---
+
+## Hasil Backtest Terbaru
+
+Sumber:
+
+- `data/strategy-comparison-latest.md`
+- Generated: **2026-02-19T10:57:47.279Z** (setara **19 Feb 2026 17:57 WIB**)
+- Universe processed: **938/956**
+
+> Catatan penting: run terbaru bersifat **partial rerun** untuk preset tertentu lalu digabung dengan hasil sebelumnya (`mergedWithPreviousSummary = true`).
+
+### Top performa terbaru (rank by Profit Factor)
+
+| Rank | Strategy | Entry | Trades | Win Rate % | Expectancy % | Profit Factor | Max DD % |
+|---:|---|---|---:|---:|---:|---:|---:|
+| 1 | EMA <=2% + Stoch OS + RSI50-70 + MFI OS (Close-2Tick) | same_day_close_minus_2_tick | 58 | 60.34 | 5.8671 | 4.1158 | 29.89 |
+| 2 | EMA <=2% + Stoch OS + MFI OS (Close-2Tick) | same_day_close_minus_2_tick | 378 | 48.41 | 3.6341 | 2.3835 | 51.72 |
+| 3 | EMA <=2% + RSI50-70 + MFI OS (Close-2Tick) | same_day_close_minus_2_tick | 657 | 45.36 | 2.7880 | 2.1372 | 86.75 |
+| 4 | EMA Short <=2% + Stoch RSI Oversold + RSI50-70 (Buy Close-2Tick) | same_day_close_minus_2_tick | 5175 | 46.03 | 3.0219 | 1.7536 | 99.99 |
+| 5 | EMA Short <=2% + Stoch RSI Oversold (Buy Close-2Tick) | same_day_close_minus_2_tick | 9333 | 44.86 | 2.8137 | 1.7113 | 100.00 |
+| 6 | EMA Short <=2% + RSI50-70 (Buy Close-2Tick) | same_day_close_minus_2_tick | 25567 | 43.70 | 2.4240 | 1.6399 | 100.00 |
+
+Interpretasi cepat:
+
+- Entry `close-2tick` konsisten mengungguli varian `buy close` pada set rule yang sama.
+- Kombinasi EMA short + Stoch OS + RSI range + MFI OS saat ini paling kuat secara PF pada data run terbaru.
+- Drawdown tetap tinggi pada banyak preset dengan jumlah trade besar, sehingga risk management tetap wajib ketat.
+
+---
+
+## Operasional Data dan Perintah Penting
+
+### Update data
+
+```bash
+npm run fetch
+```
+
+### Workflow bulanan yang direkomendasikan
+
+```bash
+npm run backtest:refresh
+```
+
+(`backtest:refresh` = update data incremental dulu, lalu run backtest)
+
+### Backtest manual
+
+```bash
+npm run backtest:presets
+```
+
+### Tuning preset (SL / hold / liquidity) lalu rerun
+
+```bash
+npm run tune:presets
+```
+
+### Output utama
+
+- Summary: `data/backtest-presets-long-only.summary.json`
+- Comparison table: `data/strategy-comparison-latest.md`
+- Tuning report: `data/backtest-presets-tuning-report.json`
+- Offline cache: `data/offline-cache/`
+- Backtest cache: `data/backtest-cache/`
+
+---
+
+## Keterbatasan Data dan Metode
+
+- Sumber data pasar menggunakan feed pihak ketiga (bukan feed resmi exchange untuk eksekusi real-time).
+- Keterlambatan/ketidaklengkapan data tetap mungkin terjadi.
+- Backtest berbasis candle OHLC; urutan intraday detail tidak tersedia.
+- `sameBarExitPriority = sl-first` adalah asumsi konservatif model.
+- Hasil backtest adalah alat evaluasi rule, bukan jaminan performa ke depan.
 
 ---
 
 ## Lampiran Referensi
 
-- Referensi resmi BEI untuk tag Papan: [Papan Pencatatan](https://www.idx.id/id/produk/saham/papan-pencatatan/)
-- Referensi resmi BEI untuk tag Sektor (IDX-IC): [Pengenalan Klasifikasi IDX-IC](https://www.idx.id/id/berita/artikel/pengenalan-klasifikasi-industri-idx-ic-indonesia-stock-exchange-industrial-classification/)
-- Referensi resmi BEI untuk tag Indeks: [Produk Indeks](https://www.idx.id/id/produk/indeks/)
-- Referensi resmi BEI untuk fraksi harga: [SK Perubahan Peraturan II-A](https://www.idx.id/media/15715/sk-kep-00071-bei_112023-perubahan-peraturan-nomor-ii-a-tentang-perdagangan-efek-bersifat-ekuitas.pdf)
-- Minervini trend template: [ChartMill](https://www.chartmill.com/documentation/stock-screener/technical-analysis-trading-strategies/496-Mark-Minervini-Trend-Template-A-Step-by-Step-Guide-for-Beginners)
-- CAN SLIM (ringkasan): [Investopedia](https://www.investopedia.com/terms/c/canslim.asp)
-- Buy zone dan disiplin risiko (IBD): [Investor's Business Daily](https://www.investors.com/how-to-invest/investors-corner/buy-zone-nvidia-stock/)
-- Elder Impulse System: [StockCharts ChartSchool](https://chartschool.stockcharts.com/table-of-contents/chart-analysis/chart-types/elder-impulse-system)
-- Stage analysis: [Investopedia](https://www.investopedia.com/articles/investing/070715/trading-stage-analysis.asp)
-- Golden cross: [StockCharts](https://chartschool.stockcharts.com/table-of-contents/trading-strategies-and-models/trading-strategies/moving-average-trading-strategies/trading-using-the-golden-cross)
-- Konfirmasi volume breakout (PVO): [StockCharts](https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/percentage-volume-oscillator-pvo)
-- RSI: [Fidelity](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/RSI)
-- StochRSI: [Fidelity](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/stochrsi)
+### Referensi resmi IDX
+
+- Papan pencatatan: <https://www.idx.id/id/produk/saham/papan-pencatatan/>
+- Klasifikasi IDX-IC: <https://www.idx.id/id/berita/artikel/pengenalan-klasifikasi-industri-idx-ic-indonesia-stock-exchange-industrial-classification/>
+- Produk indeks: <https://www.idx.id/id/produk/indeks/>
+- Fraksi harga (Peraturan II-A): <https://www.idx.id/media/15715/sk-kep-00071-bei_112023-perubahan-peraturan-nomor-ii-a-tentang-perdagangan-efek-bersifat-ekuitas.pdf>
+
+### Referensi konsep teknikal
+
+- CAN SLIM ringkasan: <https://www.investopedia.com/terms/c/canslim.asp>
+- Elder Impulse: <https://chartschool.stockcharts.com/table-of-contents/chart-analysis/chart-types/elder-impulse-system>
+- Golden Cross: <https://chartschool.stockcharts.com/table-of-contents/trading-strategies-and-models/trading-strategies/moving-average-trading-strategies/trading-using-the-golden-cross>
+- RSI: <https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/RSI>
+- StochRSI: <https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/stochrsi>
 
 ---
 
 ## Penutup
 
-Dokumen ini adalah dokumentasi kerja pribadi untuk membantu konsistensi proses screening saya. Silakan dipakai sebagai bahan belajar, tetapi keputusan investasi/trading tetap harus berbasis pertimbangan dan tanggung jawab masing-masing pengguna.
+README ini adalah dokumen kerja yang hidup.
+
+Setiap kali preset aktif berubah, indikator ditambah/diubah, atau run backtest baru selesai, bagian terkait di dokumen ini perlu diperbarui agar tetap selaras dengan implementasi aktual.
